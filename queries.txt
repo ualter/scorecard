@@ -1,0 +1,1 @@
+select sum(parc.valor) from parcelapassivo parc, passivo p, conta c where passivo.id = parc.passivo_id and passivo.conta_id = conta.id and conta.nivel = '8.1.1' and parc.referencia >= 200801 and parc.referencia <= 200804

@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+        
+<hibernate-mapping>
+
+    <class name="br.ujr.scorecard.model.ativo.Ativo" table="ATIVO">
+    
+    	<id name="id" column="ID">
+    		<generator class="identity"/>
+    		<!--  
+	        <generator class="native">
+                <param name="sequence">ATIVO_SEQ</param>
+        	</generator>
+        	-->
+	    </id>
+	    
+	    <property name="referencia"/>
+	    <property name="dataMovimento"/>
+	    <property name="valor"/>
+	    <property name="historico"/>
+	    
+	    <!-- 
+	    Ativo Pertence a uma Conta Corrente
+	    -->
+	    <many-to-one name="contaCorrente"
+	    	column="CONTA_CORRENTE_ID"
+	    	unique="true"
+	    	not-null="true"
+	    	fetch="join">
+	    </many-to-one>
+	    
+	    <!--  
+	    Ativo associa-se a 1 Conta Contábil
+	    -->
+	    <many-to-one name="conta"
+	    		column="CONTA_ID"
+	    		unique="true"
+	    		not-null="true"
+	    		fetch="join">
+	    </many-to-one>
+	    
+       <!-- 
+	   Ativo "pode" ter sido criado através de uma Transferência, por isso desta associação
+	    -->
+	   <many-to-one name="transferencia"
+	    		column="TRANSFERENCIA_ID"
+	    		unique="true"
+	    		not-null="false">
+	   </many-to-one>
+	    
+	    <joined-subclass name="br.ujr.scorecard.model.ativo.salario.Salario" table="SALARIO">
+	    	<key column="ATIVO_ID"/>
+	    </joined-subclass>
+	    
+	    <joined-subclass name="br.ujr.scorecard.model.ativo.investimento.Investimento" table="INVESTIMENTO">
+	    	<key column="ATIVO_ID"/>
+	    </joined-subclass>
+	    
+	    <joined-subclass name="br.ujr.scorecard.model.ativo.deposito.Deposito" table="DEPOSITO">
+	    	<key column="ATIVO_ID"/>
+	    </joined-subclass>
+	    
+	    <joined-subclass name="br.ujr.scorecard.model.ativo.saldoanterior.SaldoAnterior" table="SALDOANTERIOR">
+	    	<key column="ATIVO_ID"/>
+	    </joined-subclass>
+	    
+	</class>
+    
+</hibernate-mapping>

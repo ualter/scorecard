@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+    
+<beans>
+
+	<!-- Local Datasource - Rodar COM MAVEN -->      
+    <bean id="scorecardDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	    <property name="driverClassName"><value>com.mysql.jdbc.Driver</value></property>
+	    <property name="url"><value>${url.database}</value></property>
+	    <property name="username"><value>Scorecard</value></property>
+	    <property name="password"><value>card</value></property>
+	</bean>
+	<!-- Local Datasource - Rodar SEM MAVEN       
+    <bean id="scorecardDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	    <property name="driverClassName"><value>com.mysql.jdbc.Driver</value></property>
+	    <property name="url"><value>jdbc:mysql:///Scorecard_PRD</value></property>
+	    <property name="username"><value>Scorecard</value></property>
+	    <property name="password"><value>card</value></property>
+	</bean> -->
+	
+	<!-- Session Factory for Hibernate -->
+	<bean id="scorecardSessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+       <property name="mappingResources">
+           <list>
+               <value>mapping-resources/conta.hbm.xml</value>
+               <value>mapping-resources/passivo.hbm.xml</value>
+               <value>mapping-resources/parcela.hbm.xml</value>
+               <value>mapping-resources/ativo.hbm.xml</value>
+               <value>mapping-resources/observacao.hbm.xml</value>
+               <value>mapping-resources/contaCorrente.hbm.xml</value>
+               <value>mapping-resources/banco.hbm.xml</value>
+               <value>mapping-resources/orcamento.hbm.xml</value>
+               <value>mapping-resources/transferencia.hbm.xml</value>
+           </list>
+       </property>
+       <property name="hibernateProperties">
+           <props>
+               <prop key="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</prop>
+               <prop key="hibernate.show_sql">false</prop>
+               <!-- 
+               <prop key="hibernate.connection.shutdown">true</prop>
+               <prop key="hibernate.connection.autocommit">true</prop>
+                -->
+           </props>
+       </property>
+       <property name="dataSource">
+           <ref bean="scorecardDataSource"/>
+       </property>
+   </bean>
+   
+   <!--
+   <bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+	   <property name="sessionFactory">
+	     <ref bean="scorecardSessionFactory"/>
+	   </property>
+   </bean>
+   -->
+   
+   <!-- Data Access Object's -->
+   <bean id="contaDAO" class="br.ujr.scorecard.model.conta.ContaDAOHibernate">
+       <property name="sessionFactory">
+          <ref bean="scorecardSessionFactory"/>
+       </property>
+   </bean>
+   <bean id="passivoDAO" class="br.ujr.scorecard.model.passivo.PassivoDAOHibernate">
+       <property name="sessionFactory">
+          <ref bean="scorecardSessionFactory"/>
+       </property>
+   </bean>
+   <bean id="chequeDAO" class="br.ujr.scorecard.model.passivo.cheque.ChequeDAOHibernate">
+       <property name="sessionFactory">
+          <ref bean="scorecardSessionFactory"/>
+       </property>
+   </bean>
+   <bean id="cartaoDAO" class="br.ujr.scorecard.model.passivo.cartao.CartaoDAOHibernate">
+       <property name="sessionFactory">
+          <ref bean="scorecardSessionFactory"/>
+       </property>
+   </bean>
+   <bean id="ativoDAO" class="br.ujr.scorecard.model.ativo.AtivoDAOHibernate">
+       <property name="sessionFactory">
+          <ref bean="scorecardSessionFactory"/>
+       </property>
+   </bean>
+   <bean id="observacaoDAO" class="br.ujr.scorecard.model.observacao.ObservacaoDAOHibernate">
+       <property name="sessionFactory">
+          <ref bean="scorecardSessionFactory"/>
+       </property>
+   </bean>
+   <bean id="contaCorrenteDAO" class="br.ujr.scorecard.model.cc.ContaCorrenteDAOHibernate">
+       <property name="sessionFactory">
+          <ref bean="scorecardSessionFactory"/>
+       </property>
+   </bean>
+   <bean id="bancoDAO" class="br.ujr.scorecard.model.banco.BancoDAOHibernate">
+       <property name="sessionFactory">
+          <ref bean="scorecardSessionFactory"/>
+       </property>
+   </bean>
+   <bean id="orcamentoDAO" class="br.ujr.scorecard.model.orcamento.OrcamentoDAOHibernate">
+       <property name="sessionFactory">
+          <ref bean="scorecardSessionFactory"/>
+       </property>
+   </bean>
+   <bean id="transferenciaDAO" class="br.ujr.scorecard.model.transferencia.TransferenciaDAOHibernate">
+       <property name="sessionFactory">
+          <ref bean="scorecardSessionFactory"/>
+       </property>
+   </bean>
+	
+   <bean id="scorecardManager" class="br.ujr.scorecard.model.ScorecardManagerImpl">
+	   <property name="contaDAO">
+		   <ref bean="contaDAO"/>
+	   </property>
+	   <property name="passivoDAO">
+		   <ref bean="passivoDAO"/>
+	   </property>
+	   <property name="chequeDAO">
+		   <ref bean="chequeDAO"/>
+	   </property>
+	   <property name="cartaoDAO">
+		   <ref bean="cartaoDAO"/>
+	   </property>
+	   <property name="ativoDAO">
+		   <ref bean="ativoDAO"/>
+	   </property>
+	   <property name="observacaoDAO">
+		   <ref bean="observacaoDAO"/>
+	   </property>
+	   <property name="contaCorrenteDAO">
+		   <ref bean="contaCorrenteDAO"/>
+	   </property>
+	   <property name="bancoDAO">
+		   <ref bean="bancoDAO"/>
+	   </property>
+	   <property name="orcamentoDAO">
+		   <ref bean="orcamentoDAO"/>
+	   </property>
+	   <property name="transferenciaDAO">
+		   <ref bean="transferenciaDAO"/>
+	   </property>
+	   <property name="mavenTests">
+   	   		<value>1</value>
+   	   </property>
+   </bean>
+   
+</beans>

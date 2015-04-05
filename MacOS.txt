@@ -1,0 +1,8 @@
+** VM Argument to change the Application Name in the Apple Mac OS Bar (Snow Leopard & JDK 1.6)
+-Xdock:name=Scorecard
+
+-Dfile.encoding=ISO-8859-1
+
+-Xdock:icon=images/Logo-Scorecard.png
+
+Main-Class: br.ujr.scorecard.gui.view.screen.ScorecardGUI

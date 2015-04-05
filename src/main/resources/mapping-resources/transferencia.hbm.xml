@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+        
+<hibernate-mapping>
+
+    <class name="br.ujr.scorecard.model.transferencia.Transferencia" table="TRANSFERENCIA">
+    
+    	<id name="id" column="ID">
+    		<generator class="identity"/>
+    		<!-- 
+	        <generator class="native">
+                <param name="sequence">TRANSFERENCIA_SEQ</param>
+        	</generator>
+        	-->
+	    </id>
+	    
+	    <property name="referencia"/>
+	    <property name="dataMovimento"/>
+	    <property name="valor"/>
+	    <property name="historico"/>
+	    
+	    <!-- 
+	    Ativo Pertence a uma Conta Corrente
+	    -->
+	    <many-to-one name="contaCorrente"
+	    	column="CONTA_CORRENTE_ID"
+	    	unique="true"
+	    	not-null="true"
+	    	fetch="join">
+	    </many-to-one>
+	    
+	    <!--  
+	    Passivo associa-se a 1 Conta
+	    -->
+	    <many-to-one name="conta"
+	    		column="CONTA_ID"
+	    		unique="true"
+	    		not-null="true"
+	    		fetch="join">
+	    </many-to-one>
+	    
+	    <!-- 
+	    Ativo Criado na Transferência para Ativo em Conta Corrente 
+	    	(Relacionamento com Ativo Transferido para outra C/C)
+	    -->
+	    <many-to-one name="ativoTransferido"
+	    	column="ATIVO_TRANSFERIDO"
+	    	unique="true"
+	    	not-null="true"
+	    	cascade="all-delete-orphan"
+	    	fetch="join">
+	    </many-to-one>
+	    
+	</class>
+    
+</hibernate-mapping>

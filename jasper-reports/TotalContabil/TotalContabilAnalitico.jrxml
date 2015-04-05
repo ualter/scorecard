@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TotalContabilAnalitico" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="Saldo" forecolor="#0000FF" fontName="Courier New" fontSize="7" isBold="true" pdfFontName="Courier-Bold">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{saldoAsDouble}.doubleValue() < 0)]]></conditionExpression>
+			<style forecolor="#FF0000" fontName="Courier New" fontSize="7" isBold="true" pdfFontName="Courier-Bold"/>
+		</conditionalStyle>
+	</style>
+	<style name="RowColor" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean( ($V{COLUMN_COUNT}.intValue() % 2) == 0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCCCFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="IMAGE_LOGO" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="REF_INI" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="REF_FIM" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="CABEC" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="VLRTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="VLRTOTALMENSAL" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\eclipse-workspace\\Scorecard\\jasper-reports\\TotalContabil\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CONTA_CORRENTE" class="java.lang.String" isForPrompting="false"/>
+	<field name="descricao" class="java.lang.String">
+		<fieldDescription><![CDATA[descricao]]></fieldDescription>
+	</field>
+	<field name="valor" class="java.lang.String">
+		<fieldDescription><![CDATA[valorTotal]]></fieldDescription>
+	</field>
+	<field name="nivel" class="java.lang.String">
+		<fieldDescription><![CDATA[nivel]]></fieldDescription>
+	</field>
+	<field name="valorTotalAsDouble" class="java.lang.Double">
+		<fieldDescription><![CDATA[valorTotalAsDouble]]></fieldDescription>
+	</field>
+	<field name="valorPorMes" class="java.lang.Object">
+		<fieldDescription><![CDATA[valorPorMes]]></fieldDescription>
+	</field>
+	<field name="valorPorMesArray" class="java.lang.Object">
+		<fieldDescription><![CDATA[valorPorMesArray]]></fieldDescription>
+	</field>
+	<field name="showMes01" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes01]]></fieldDescription>
+	</field>
+	<field name="showMes02" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes02]]></fieldDescription>
+	</field>
+	<field name="showMes03" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes03]]></fieldDescription>
+	</field>
+	<field name="showMes04" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes04]]></fieldDescription>
+	</field>
+	<field name="showMes05" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes05]]></fieldDescription>
+	</field>
+	<field name="showMes06" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes06]]></fieldDescription>
+	</field>
+	<field name="showMes07" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes07]]></fieldDescription>
+	</field>
+	<field name="showMes08" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes08]]></fieldDescription>
+	</field>
+	<field name="showMes09" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes09]]></fieldDescription>
+	</field>
+	<field name="showMes10" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes10]]></fieldDescription>
+	</field>
+	<field name="showMes11" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes11]]></fieldDescription>
+	</field>
+	<field name="showMes12" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[showMes12]]></fieldDescription>
+	</field>
+	<field name="passivos" class="java.lang.Object">
+		<fieldDescription><![CDATA[passivos]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="62" splitType="Stretch">
+			<image>
+				<reportElement key="image-1" x="1" y="1" width="184" height="60"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<graphicElement>
+					<pen lineWidth="0.0" lineStyle="Solid"/>
+				</graphicElement>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{IMAGE_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement key="staticText-14" x="191" y="10" width="590" height="26"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="18" isBold="true" isItalic="false" isUnderline="true" pdfFontName="Courier-Bold"/>
+				</textElement>
+				<text><![CDATA[Total Conta Contábil - Analítico]]></text>
+			</staticText>
+			<textField evaluationTime="Report" pattern="EEEEE dd MMMMM yyyy" isBlankWhenNull="false">
+				<reportElement key="textField" x="661" y="38" width="121" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-28" x="315" y="40" width="255" height="12"/>
+				<textElement>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["De   \"" + $P{REF_INI} + "\"   a   \"" + $P{REF_FIM} + "\""]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="191" y="39" width="122" height="12" forecolor="#0000FF" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{CONTA_CORRENTE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="49" splitType="Stretch">
+			<rectangle>
+				<reportElement key="rectangle-1" mode="Opaque" x="0" y="0" width="782" height="21" backcolor="#0000FF"/>
+			</rectangle>
+			<staticText>
+				<reportElement key="RowColor" x="0" y="0" width="782" height="21"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-1" x="6" y="1" width="434" height="20" forecolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="9" isBold="true" pdfFontName="Courier-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nivel} + " " + $F{descricao} + " - " + "Total...: R$ " + $F{valor}.trim()]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" x="30" y="27" width="742" height="16"/>
+				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource((List)$F{passivos})]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "TotalContabilAnalitico_passivos.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="313" y="5" width="118" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField" x="434" y="5" width="82" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER} + ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

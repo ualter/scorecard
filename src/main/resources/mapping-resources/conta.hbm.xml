@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="br.ujr.scorecard.model.conta.Conta" table="CONTA">
+
+	    <id name="id" column="ID">
+	    	<generator class="identity"/>
+	    	<!-- 
+	        <generator class="native">
+                <param name="sequence">CONTA_SEQ</param>
+        	</generator>
+        	 -->
+	    </id>
+	    
+	    <property name="nivel" column="NIVEL"/>
+	    <property name="descricao" column="DESCRICAO"/>
+	    
+	    <many-to-one 
+	    	name="contaPai" 
+	    	column="CONTAPAI_ID" 
+	    	class="br.ujr.scorecard.model.conta.Conta"
+	    	outer-join="true"
+	    	lazy="false"
+	    	not-null="false"/>
+	    
+	    <set name="contasFilhos" 
+	         inverse="true" 
+	         outer-join="true"
+	         lazy="false" 
+	         cascade="all-delete-orphan">
+	    	 <key column="CONTAPAI_ID"/>
+	    	 <one-to-many class="br.ujr.scorecard.model.conta.Conta"/>
+	    </set>
+	    
+	</class>
+	
+</hibernate-mapping>

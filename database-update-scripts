@@ -1,0 +1,6 @@
+******************************************************************************************
+*** Alterações DB Versão 4.8 ***
+1. ALTER TABLE BANCO ADD IS_ATIVO CHAR
+2. UPDATE BANCO SET IS_ATIVO = 'F' WHERE ID = 58 
+3. UPDATE BANCO SET IS_ATIVO = 'T' WHERE ID = 59 or ID = 60 
+******************************************************************************************
