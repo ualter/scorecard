@@ -1,8 +1,11 @@
 Info.plist
 appbundler-1.0.jar
+Scorecard*.app
 jarBundlerMacOS.xml
 target
 .classpath
 .settings/
 .svn/
 .project
+.DS_Store
+log
