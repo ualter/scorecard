@@ -15,6 +15,8 @@ public interface ScorecardPropertyKeys {
 	public static int IdCCSantander = 66;
 	public static int IdCCItau = 67;
 	
+	public static int IdCCDeutsche = 69;
+	
 	public static int IdSANTANDER = 59;
 	public static int IdITAU = 60; 
 	

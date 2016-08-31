@@ -34,6 +34,7 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
 import br.ujr.scorecard.analisador.extrato.contacorrente.bb.ProcessadorExtratoCCBancoBrasilGUI;
+import br.ujr.scorecard.analisador.extrato.contacorrente.deutsche.AnalisadorExtratoCCDeutscheGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.santander.AnalisadorExtratoCCSantanderGUI;
 import br.ujr.scorecard.analisador.fatura.cartao.AnalisadorLancamentosCartaoGUI;
 import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
@@ -207,6 +208,12 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
         Util.setToolTip(this, btnContaLctoCartaoCredito, "Analisar Lançamentos Cartão de Crédito");
         toolBar.add(btnContaLctoCartaoCredito);
         
+        JButton btnAnalisarExtratoDeutsche = new JButton(new ImageIcon(Util.loadImage(this, "deutsche_bank_logo.png")));
+        btnAnalisarExtratoDeutsche.setActionCommand("ANALISAR_EXTRATO_DEUTSCHE");
+        btnAnalisarExtratoDeutsche.addActionListener(this);
+        Util.setToolTip(this, btnAnalisarExtratoDeutsche, "Analisar Extrato Deutsche Bank em memória");
+        toolBar.add(btnAnalisarExtratoDeutsche);
+        
         toolBar.addSeparator();
         
         JButton btnSair = new JButton(new ImageIcon(Util.loadImage(this, "desligar.png")));
@@ -375,6 +382,11 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
 			AnalisadorLancamentosCartaoGUI anaFaturaCartaoSantanderGUI = new AnalisadorLancamentosCartaoGUI(this);
 			anaFaturaCartaoSantanderGUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			anaFaturaCartaoSantanderGUI.setVisible(true);
+		} else
+		if ("ANALISAR_EXTRATO_DEUTSCHE".equals(a)) {
+			AnalisadorExtratoCCDeutscheGUI analisadorExtratoCCDeutscheGUI = new AnalisadorExtratoCCDeutscheGUI(this);
+			analisadorExtratoCCDeutscheGUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			analisadorExtratoCCDeutscheGUI.setVisible(true);
 		}
 	}
 

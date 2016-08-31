@@ -14,7 +14,7 @@
 	<!-- Local Datasource - Rodar SEM MAVEN -->       
     <bean id="scorecardDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 	    <property name="driverClassName"><value>com.mysql.jdbc.Driver</value></property>
-	    <property name="url"><value>jdbc:mysql:///Scorecard_PRD</value></property>
+	    <property name="url"><value>jdbc:mysql:///Scorecard_DEV</value></property>
 	    <property name="username"><value>Scorecard</value></property>
 	    <property name="password"><value>card</value></property>
 	</bean> 
