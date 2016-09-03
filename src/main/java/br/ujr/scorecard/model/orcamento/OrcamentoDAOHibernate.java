@@ -212,8 +212,11 @@ public class OrcamentoDAOHibernate extends HibernateDaoSupport implements Orcame
 				 * Os alvos neste caso poderão ser "4.1", "4.2", "4.1.1", "4.3.2.1", etc.
 				 * 
 				 * Caso não seja raiz, seja por exemplo "4.2", nada é feito, busca-se filhas de "4.2", como "4.2.1", "4.2.1.2", etc.
+				 * 
+				 *   ...a condicional abaixo sobre o teste de tamanho (lenght <= 3) 
+				 *      é por causa de contas filhas que terminam com zero como 5.10 ou 6.10, etc. e não são contas "mestres", como a 5.0 ou 6.0
 				 */
-				if ( nivelContaOrcamento.endsWith("0") ) {
+				if ( nivelContaOrcamento.endsWith("0") && nivelContaOrcamento.length() <= 3) {
 					nivelContaOrcamento = nivelContaOrcamento.substring(0, 2);
 				}
 				

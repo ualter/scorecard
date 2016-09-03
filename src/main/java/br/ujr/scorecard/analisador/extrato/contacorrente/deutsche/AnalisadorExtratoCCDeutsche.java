@@ -15,6 +15,7 @@ import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
 import br.ujr.scorecard.model.ativo.investimento.Investimento;
+import br.ujr.scorecard.model.ativo.salario.Salario;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.Passivo;
@@ -109,19 +110,15 @@ public class AnalisadorExtratoCCDeutsche {
 					 * Como o valor do Depósito poder ser igual, utiliza-se tambem o parametro data
 					 * para confirmar se o registro do extrato esta mesmo lancado na base de dados 
 					 */
-					if ( ativo instanceof Deposito ) {
-						if ( !((Deposito)ativo).isOrigemTransferencia() ) {
+					if ( ativo instanceof Deposito || ativo instanceof Salario ) {
+						if ( !ativo.isOrigemTransferencia() ) {
 							if ( ativo.getDataMovimento().compareTo(linha.getDataOperacaoAsDate()) == 0 ) {
-								 encontrado = true;
-								 break;
+								if ( ativo.getValor().compareTo(linha.getValorAsBigDecimal()) == 0 ) {
+									encontrado = true;
+									break;
+								}
 							 }
-						} else {
-							encontrado = true;
-							break;
-						}
-					} else {
-						encontrado = true;
-						break;
+						} 
 					}
 					if ( encontrado ) break;
 				}
@@ -184,8 +181,6 @@ public class AnalisadorExtratoCCDeutsche {
 	    			// Copy-Paste the content of Deutsche-Bank Extrato 
 	    			// gets the first line without the TAB, thats why
 	    			// its treat differently
-	    			
-	    			
 	    			if ( i == 1 ) {
 	    				dataOperacao = columns[0];
 	    				dataValor    = columns[1];
@@ -398,7 +393,11 @@ public class AnalisadorExtratoCCDeutsche {
 		} else
 		if ( StringUtils.equalsIgnoreCase("Investimento",tipo) ) {
 			ativo = new Investimento();
-			ativo.setValor(linha.getValorAsBigDecimal().multiply(new BigDecimal(-1)));
+			ativo.setValor(linha.getValorAsBigDecimal());
+		} else
+		if ( StringUtils.equalsIgnoreCase("Estipêndios",tipo) ) {
+			ativo = new Salario();
+			ativo.setValor(linha.getValorAsBigDecimal());
 		}
 		ativo.setConta(conta);
 		ativo.setDataMovimento(linha.getDataOperacaoAsDate());

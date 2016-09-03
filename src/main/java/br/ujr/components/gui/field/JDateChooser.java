@@ -55,7 +55,7 @@ import br.ujr.scorecard.util.Util;
  * JTextFieldDateEditor is used as default.
  * 
  */
-public class JDateChooser extends JPanel implements ActionListener, PropertyChangeListener {
+public class JDateChooser extends JPanel implements ActionListener, PropertyChangeListener, KeyListener {
 
 	private static final long serialVersionUID = -4306412745720670722L;
 
@@ -267,6 +267,8 @@ public class JDateChooser extends JPanel implements ActionListener, PropertyChan
 		};
 		MenuSelectionManager.defaultManager().addChangeListener(changeListener);
 		// end of code provided by forum user podiatanapraia
+		
+		this.addKeyListener(this);
 
 		isInitialized = true;
 	}
@@ -572,21 +574,39 @@ public class JDateChooser extends JPanel implements ActionListener, PropertyChan
 		// ImageIcon icon = new ImageIcon(iconURL);
 		// dateChooser.setIcon(icon);
 		
-		dateChooser.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent arg0) {
-				System.out.println(" 111");
-			}
-			public void keyReleased(KeyEvent arg0) {
-				System.out.println(" 222");
-			}
-			public void keyTyped(KeyEvent arg0) {
-				System.out.println(" 333");
-			}
-		});
-
 		frame.getContentPane().add(dateChooser);
 		frame.pack();
 		frame.setVisible(true);
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		if ( arg0.getModifiers() == 1 || arg0.getModifiers() == 2  ) {
+			Date d = this.getDateEditor().getDate();
+			if (d != null) {
+				Calendar c = Calendar.getInstance();
+				c.setTime(d);
+				int type = Calendar.DATE;
+
+				if (arg0.getModifiers() == 2) {
+					type = Calendar.MONTH;
+				}
+				if (arg0.getKeyCode() == 46) {
+					c.add(type, 1);
+				} else if (arg0.getKeyCode() == 44) {
+					c.add(type, -1);
+				}
+				this.getDateEditor().setDate(c.getTime());
+			}
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
 	}
 
 }
