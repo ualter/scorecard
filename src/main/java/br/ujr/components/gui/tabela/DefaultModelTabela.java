@@ -13,7 +13,10 @@ public class DefaultModelTabela extends DefaultTableModel  {
 
 	@SuppressWarnings("unchecked")
 	public Class getColumnClass(int c) {
-		return this.getValueAt(0, c).getClass();
+		if (  this.getValueAt(0, c) != null) {
+			return this.getValueAt(0, c).getClass();
+		}
+		return null;
 	}
 
 	public boolean isCellEditable(int row, int col) {

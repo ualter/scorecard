@@ -12,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
-import br.ujr.scorecard.gui.view.screen.ScorecardGUI;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;

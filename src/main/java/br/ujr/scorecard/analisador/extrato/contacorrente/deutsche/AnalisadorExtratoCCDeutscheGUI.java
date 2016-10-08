@@ -158,7 +158,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		btnTranferir = new JButton(" Transferir");
 		btnTranferir.setIcon(new ImageIcon(Util.loadImage(this, "salvar.png")));
 		Util.setToolTip(this, btnTranferir, "Transfere o lançamento para a base de dados");
-		btnTranferir.setBounds(375, 25, 130, 50);
+		btnTranferir.setBounds(230, 25, 170, 50);
 		btnTranferir.setActionCommand("TRANSFERIR");
 		btnTranferir.addActionListener(this);
 
@@ -169,19 +169,27 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		btnRemover.setActionCommand("REMOVER");
 		btnRemover.addActionListener(this);
 
+		btnContaContabil = new JButton(" Conta Contábil ");
+		btnContaContabil.setIcon(new ImageIcon(Util.loadImage(this, "search2.png")));
+		btnContaContabil.setBounds(btnRemover.getX() + btnRemover.getWidth() + 10, btnRemover.getY(), btnRemover.getWidth(), btnRemover.getHeight());
+		btnContaContabil.setActionCommand("CONTA_CONTABIL");
+		btnContaContabil.addActionListener(this);
+		
 		btnSair = new JButton(" Sair");
 		btnSair.setIcon(new ImageIcon(Util.loadImage(this, "exit.png")));
-		btnSair.setBounds(btnRemover.getX() + btnRemover.getWidth() + 10, btnRemover.getY(), btnRemover.getWidth(), btnRemover.getHeight());
+		btnSair.setBounds(btnContaContabil.getX() + btnContaContabil.getWidth() + 10, btnContaContabil.getY(), btnContaContabil.getWidth(), btnContaContabil.getHeight());
 		btnSair.setActionCommand("SAIR");
 		btnSair.addActionListener(this);
 
 		this.btnRemover.setEnabled(false);
 		this.btnTranferir.setEnabled(false);
+		this.btnContaContabil.setEnabled(false);
 		JPanel panelBtn = new JPanel();
 		panelBtn.setLayout(null);
 		panelBtn.setBorder(BorderFactory.createEtchedBorder(1));
 		panelBtn.add(btnTranferir);
 		panelBtn.add(btnRemover);
+		panelBtn.add(btnContaContabil);
 		panelBtn.add(btnSair);
 		panelBtn.setBounds(10, 460, 1209, 100);
 
@@ -278,6 +286,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 				this.modelTabNaoEncontrados.addRow(row);
 			}
 			this.btnRemover.setEnabled(true);
+			this.btnContaContabil.setEnabled(true);
 		} else {
 			JOptionPane.showMessageDialog(this, "Problemas na leitura do Clipboard:\n\n" + status, "Atenção", JOptionPane.ERROR_MESSAGE);
 		}
@@ -296,6 +305,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 	private JButton				btnTranferir;
 	private JButton				btnRemover;
 	private JButton				btnSair;
+	private JButton				btnContaContabil;
 	private JLabel				lblSaldoAnterior;
 	private JLabel				lblSaldo;
 	private BigDecimal			bdSaldoExtrato;
@@ -644,6 +654,23 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 				this.sair();
 			}
 
+			if ( e.getActionCommand().indexOf("CONTA_CONTABIL") != -1 ){
+				if ( this.modelTabNaoEncontrados != null && this.modelTabNaoEncontrados.getRowCount() > 0) {
+					int rowSelected = this.tabNaoEncontrados.getSelectedRow();
+					if ( rowSelected > -1 ) {
+						ContaTableCellEditor contaEditor = (ContaTableCellEditor)this.tabNaoEncontrados.getCellEditor(rowSelected, 6);
+						contaEditor.cancelCellEditing();
+						
+						ContaFrame contaFrame = new ContaFrame(this);
+						contaFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+						contaFrame.setVisible(true);
+						
+						this.tabNaoEncontrados.setValueAt(contaFrame.getConta(), rowSelected, 6);
+						this.checkBotoes(rowSelected);
+					}
+				}
+			}
+
 			int rows[] = this.tabNaoEncontrados.getSelectedRows();
 
 			if (rows != null && rows.length > 0) {
@@ -743,6 +770,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 	public void focusGained(FocusEvent e) {
 		if (StringUtils.equalsIgnoreCase("MES_ANO", e.getComponent().getName())) {
 			this.btnRemover.setEnabled(false);
+			this.btnContaContabil.setEnabled(false);
 			while (this.modelTabNaoEncontrados.getRowCount() > 0) {
 				this.modelTabNaoEncontrados.removeRow(this.modelTabNaoEncontrados.getRowCount() - 1);
 			}
