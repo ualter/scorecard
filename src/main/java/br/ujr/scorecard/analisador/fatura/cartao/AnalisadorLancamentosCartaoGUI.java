@@ -108,7 +108,7 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 		this.btnOk.setIcon(new ImageIcon(Util.loadImage(this, "salvar.png")));
 		this.btnCancela.setIcon(new ImageIcon(Util.loadImage(this, "cancel.png")));
 		this.btnVerificar.setIcon(new ImageIcon(Util.loadImage(this, "button_ok.png")));
-		this.btnContas.setIcon(new ImageIcon(Util.loadImage(this, "Search2.png")));
+		this.btnContas.setIcon(new ImageIcon(Util.loadImage(this, "search2.png")));
 		
 	}
 	
