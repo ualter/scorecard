@@ -2,17 +2,12 @@ package br.ujr.scorecard.model.reports;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -22,16 +17,26 @@ import br.ujr.scorecard.model.reports.totalcontacontabil.TotalContaContabil;
 import br.ujr.scorecard.util.JarResources;
 import br.ujr.scorecard.util.ScorecardProperties;
 import br.ujr.scorecard.util.ScorecardPropertyKeys;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public class ReportManager {
 	
 	private static final String PDF_READER;
+	private static final String PDF_REPORT_PATH;
+	private static final String PDF_CLEAN;
+	private static final String PDF_READER_PARAMETERS;
 	private ArrayList<ReportManagerListener> listeners = new ArrayList<ReportManagerListener>();
 	
 	private static Logger logger = Logger.getLogger(ReportManager.class); 
 	
 	static {
 		PDF_READER = ScorecardProperties.getProperty(ScorecardPropertyKeys.PdfReader);
+		PDF_READER_PARAMETERS = ScorecardProperties.getProperty(ScorecardPropertyKeys.PdfReaderParameters);
+		PDF_REPORT_PATH = ScorecardProperties.getProperty(ScorecardPropertyKeys.PdfReportPath);
+		PDF_CLEAN = ScorecardProperties.getProperty(ScorecardPropertyKeys.PdfClean);
 	}
 	
 	public ReportManager() {
@@ -89,7 +94,7 @@ public class ReportManager {
 			String       subReportPath = "C://eclipse-workspace//Scorecard//jasper-reports//TotalContabil//";
 			*/
 			
-			String       reportFile    = report.getTargetFile();
+			String       reportFile    = report.getTargetFile(PDF_REPORT_PATH);
 			HashMap      parameters    = report.getParameters();
 			parameters.put("SUBREPORT_DIR", subReportPath);
 			parameters.put("IMAGE_LOGO", in);
@@ -104,7 +109,9 @@ public class ReportManager {
 				listener.reportFinished();
 			}
 			openPDF(reportFile);
-			cleanPDF(reportFile);
+			if ( Boolean.parseBoolean(PDF_CLEAN) ) {
+				cleanPDF(reportFile);
+			}
 		} catch (Throwable e) {
 			for(ReportManagerListener listener : this.listeners) {
 				listener.reportFinished();
@@ -122,7 +129,23 @@ public class ReportManager {
 	
 	private void openPDF(String pdf) {
 		try {
-			Process process = Runtime.getRuntime().exec(new String[] {PDF_READER, "-W", "-n", pdf});
+			// Get the parameters specifically for the PDF Reader
+			String parametersPdfReader[] = PDF_READER_PARAMETERS.split(",");
+			
+			// Building the Array for the Executing Process with the PDF Reader
+			List<String> executerParameters = new ArrayList<String>();
+			executerParameters.add(PDF_READER);
+			for(String s : parametersPdfReader) {
+				executerParameters.add(s);
+			}
+			executerParameters.add(pdf);
+			
+			// Converting the List Parameter Execution Process to an Array
+			String[] executerParametersArr = new String[executerParameters.size()];
+			executerParameters.toArray(executerParametersArr);
+			
+			// Execute the Process with the PDF Reader
+			Process process = Runtime.getRuntime().exec(executerParametersArr);
 			process.waitFor();
 		} catch (IllegalMonitorStateException stateExcpetion) {
 			String msg = "IllegalMonitorStateException at process.wait() execution. Verificar quando puder!!!";

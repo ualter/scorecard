@@ -21,11 +21,11 @@ public abstract class AbstractReport implements Report {
 		return parameters;
 	}
 
-	public String getTargetFile() {
+	public String getTargetFile(String pathFileReport) {
 		if ( this.targetFile == null ) {
 			Calendar calendar = Calendar.getInstance();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
-			this.targetFile = "/Users/ualter/Temp/" + sdf.format(calendar.getTime()) + ".pdf"; 
+			this.targetFile = pathFileReport + sdf.format(calendar.getTime()) + ".pdf"; 
 		}
 		return this.targetFile;
 	}

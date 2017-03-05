@@ -8,7 +8,7 @@ public interface Report {
 	
 	public String getJasperFileName();
 	public HashMap getParameters();
-	public String getTargetFile();
+	public String getTargetFile(String pathFileReport);
 	public Collection execute();
 	public void setCriteria(Object[] criteria);
 	public void setListeners(List<ReportManagerListener> listener); 
