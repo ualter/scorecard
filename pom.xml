@@ -6,7 +6,7 @@
   <groupId>br.ujr.scorecard</groupId>
   <artifactId>Scorecard</artifactId>
   <packaging>jar</packaging>
-  <version>5.8</version>
+  <version>5.9</version>
   <name>Scorecard</name>
   <url>http://maven.apache.org</url>
   <dependencies>

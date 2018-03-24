@@ -1,6 +1,10 @@
 package br.ujr.scorecard.analisador.extrato.contacorrente.deutsche;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -42,6 +46,11 @@ public class AnalisadorExtratoCCDeutsche {
 	
 
 	private static Logger logger = Logger.getLogger(AnalisadorExtratoCCDeutsche.class);
+	private static final DateTimeFormatter DATE_TIME_FORMATTER  = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final DateTimeFormatter DATE_TIME_FORMATTER2 = DateTimeFormatter.ofPattern("dd/M/yyyy");
+	private static final DateTimeFormatter DATE_TIME_FORMATTER3 = DateTimeFormatter.ofPattern("d/MM/yyyy");
+	private static final DateTimeFormatter DATE_TIME_FORMATTER4 = DateTimeFormatter.ofPattern("d/M/yyyy");
+	
 	
 	public static Date foundInThePath() {
 		/*try {
@@ -161,41 +170,55 @@ public class AnalisadorExtratoCCDeutsche {
 		return listaEncontrados;
 	}
 	
+	/**
+	 * Formato Esperado:
+	 * 
+	 * -- BEGIN --
+	 * Hoy
+     * 23/3/2018	TARJETA- CARNICERIA ALBARAKA	-8,74	4.468,04
+     * Hoy
+     * 23/3/2018	TARJETA- MERCADONA PASEO RUBIO I O	-25,87	4.476,78
+     * Ayer
+     * 22/3/2018	TARJETA- CAPRABO - 7651 SABADELL	-12,49	4.502,65
+     * Ayer
+     * 22/3/2018	COM. CAJ. LA CAIXA 029	-2,00	4.515,14
+     * Ayer
+     * 22/3/2018	REINTEGRO CAJERO LA CAIXA 029	-40,00	4.517,14
+     * 21/3/2018
+     * 21/3/2018	ELECTRON ZONA BLAVA-ESTA	-4,50	4.557,14
+     * -- END --
+     * 
+	 * @return
+	 */
 	public String analisarExtrato() {
 		this.extratoContaCorrente = new ArrayList<LinhaExtratoContaCorrenteDeutsche>();
 		
 		MappingAnalisadorDeutsche mappingAnalisadorDeutsche = new MappingAnalisadorDeutsche();
 		try {
 			int i = 0;
-			String dataOperacao;
-			String dataValor;
-			String historico;
-			String valor;
-			String saldo;
+			String dataOperacao = "";
+			String dataValor    = "";
+			String historico    = "";
+			String valor        = "";
+			String saldo        = "";
 			String[] linhas = this.conteudo.split("\\n");
 	    	for (String linhaClip : linhas) {
 	    		i++;
-	    		String columns[] = linhaClip.split("\\t");
-	    		if (columns.length > 4 ) {
+	    		// Lineas pares tienen Fecha Valor, Historico, Valor e Saldo
+	    		if ( (i % 2) == 0 ) {
+	    			String columns[] = linhaClip.split("\\t");
 	    			
-	    			// Copy-Paste the content of Deutsche-Bank Extrato 
-	    			// gets the first line without the TAB, thats why
-	    			// its treat differently
-	    			if ( i == 1 ) {
-	    				dataOperacao = columns[0];
-	    				dataValor    = columns[1];
-	    				historico    = columns[2];
-	    				valor        = columns[3];
-	    				saldo        = columns[4];
-	    			}  else {
-	    				dataOperacao = columns[1];
-	    				dataValor    = columns[2];
-	    				historico    = columns[3];
-	    				valor        = columns[4];
-	    				saldo        = columns[5];
-	    			}
-
-	    			if ( StringUtils.isBlank(valor) ) {
+	    			if (columns.length < 4 ) {
+		    			logger.info(this.conteudo);
+		    			return this.conteudo;
+		    		}
+	    			
+    				dataValor    = columns[0];
+    				historico    = columns[1];
+    				valor        = columns[2];
+    				saldo        = columns[3];
+    				
+    				if ( StringUtils.isBlank(valor) ) {
 	    				valor = "0,00";
 	    			}
 	    			if ( StringUtils.isBlank(saldo) ) {
@@ -204,7 +227,10 @@ public class AnalisadorExtratoCCDeutsche {
 	    			
 	    			LinhaExtratoContaCorrenteDeutsche linha = new LinhaExtratoContaCorrenteDeutsche();
 					linha.setDataOperacao(dataOperacao.replaceAll("\\.", "/"));
-					linha.setDataValor(dataValor.replaceAll("\\.", "/"));
+					
+					
+					 
+					linha.setDataValor(convertDate(dataValor));
 					linha.setHistorico(StringUtils.trim(historico));
 					linha.setValor(Util.cleanNumber(valor));
 					linha.setSaldo(Util.cleanNumber(saldo));
@@ -215,17 +241,45 @@ public class AnalisadorExtratoCCDeutsche {
 					mappingAnalisadorDeutsche.checkMappingDescricaoVsContaContabil(linha.getHistorico(),linha);
 
 					this.extratoContaCorrente.add(linha);
-					
+    				
+	    		// Lineas impares tienen solo la fecha de Operacion	
 	    		} else {
-	    			logger.info(this.conteudo);
-	    			return this.conteudo;
+	    			//String columns[] = linhaClip.split("\\t");
+	    			dataOperacao = linhaClip.trim();
+	    			if ( "Hoy".contentEquals(dataOperacao) ) {
+	    				dataOperacao = DATE_TIME_FORMATTER.format(LocalDate.now());
+	    			} else
+    				if ( "Ayer".contentEquals(dataOperacao) ) {
+    					dataOperacao = DATE_TIME_FORMATTER.format( LocalDate.now().minus(Period.ofDays(1)) );
+    				} else {
+    					dataOperacao = convertDate(dataOperacao);
+    				}
 	    		}
+	    		
 	    	}
 		} catch (Exception e) {
 			logger.fatal(e);
 			return this.conteudo;
 		}
 		return null;
+	}
+
+	private String convertDate(String dataValor) {
+		String dt = "";
+		try {
+			dt = DATE_TIME_FORMATTER.format(DATE_TIME_FORMATTER.parse(dataValor.replaceAll("\\.", "/")));
+		} catch (DateTimeParseException e) {
+			try {
+				dt = DATE_TIME_FORMATTER.format(DATE_TIME_FORMATTER2.parse(dataValor.replaceAll("\\.", "/")));
+			} catch (DateTimeParseException e1) {
+				try {
+					dt = DATE_TIME_FORMATTER.format(DATE_TIME_FORMATTER3.parse(dataValor.replaceAll("\\.", "/")));
+				} catch (DateTimeParseException e2) {
+					dt = DATE_TIME_FORMATTER.format(DATE_TIME_FORMATTER4.parse(dataValor.replaceAll("\\.", "/")));
+				}
+			}
+		}
+		return dt;
 	}
 	
 	public static class LinhaExtratoContaCorrenteDeutsche implements Comparable<LinhaExtratoContaCorrenteDeutsche>{

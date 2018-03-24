@@ -220,12 +220,14 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 			if ( banco.isAtivo() )
 				this.cmbBanco.addItem(banco);
 		}
+		this.cmbBanco.setSelectedIndex(this.cmbBanco.getModel().getSize() - 1);
 		
 		JLabel lblCartao = new JLabel("Cartão:");
 		lblCartao.setBounds(X + 180, Y, 100, 20);
 		this.cmbCartao.setBounds(X + 225,Y,150,20);
 		this.cmbCartao.addItem(Cartao.Operadora.MASTERCARD);
 		this.cmbCartao.addItem(Cartao.Operadora.VISA);
+		this.cmbCartao.setSelectedIndex(1);
 
 		lblVecto.setBounds(X+410, Y, WIDTH_LBLS, 20);
 		X += lblVecto.getWidth();
@@ -426,7 +428,11 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 			} else
 			if (banco == ScorecardPropertyKeys.IdITAU) {
 				this.setContaCorrente(this.scorecardBusiness.getInstance().getContaCorrentePorId(ScorecardPropertyKeys.IdCCItau));
+			} else
+			if (banco == ScorecardPropertyKeys.IdDeutsche) {
+				this.setContaCorrente(this.scorecardBusiness.getInstance().getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche));
 			}
+			
 			this.dispararCargaFatura();
 		} else
 		if ( e.getActionCommand().indexOf("CONTAS") != -1 ){
@@ -484,6 +490,12 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 					if (this.origem.equalsIgnoreCase("Fatura")) {
 						AnalisadorFaturaCartaoItau analisadorFaturaCartaoItau = new AnalisadorFaturaCartaoItau(this.ref, this.operadora);
 						linhasLancamentos = analisadorFaturaCartaoItau.getLista();
+					}
+				} else
+				if (this.banco == ScorecardPropertyKeys.IdDeutsche) {
+					if (this.origem.equalsIgnoreCase("Fatura")) {
+						AnalisadorFaturaCartaoDeutsche analisadorFaturaCartaoDeutsche = new AnalisadorFaturaCartaoDeutsche(this.ref, this.operadora);
+						linhasLancamentos = analisadorFaturaCartaoDeutsche.getLista();
 					}
 				}
 			} catch (Throwable e) {
