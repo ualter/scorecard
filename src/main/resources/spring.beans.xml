@@ -4,21 +4,22 @@
     
 <beans>
 
-	<!-- Local Datasource - Rodar COM MAVEN     
+	<!-- Local Datasource - Rodar COM MAVEN   -->  
     <bean id="scorecardDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-	    <property name="driverClassName"><value>com.mysql.jdbc.Driver</value></property>
-	    <property name="url"><value>${url.database}</value></property>
+	    <property name="driverClassName"><value>com.mysql.cj.jdbc.Driver</value></property>
+	    <!-- <property name="url"><value>${url.database}</value></property> -->
+	    <property name="url"><value>jdbc:mysql://localhost:3306/scorecard_prd?serverTimezone=Europe/Madrid&amp;autoReconnect=true&amp;useSSL=false</value></property>
 	    <property name="username"><value>Scorecard</value></property>
 	    <property name="password"><value>card</value></property>
-	</bean> -->
-	<!-- Local Datasource - Rodar SEM MAVEN -->          
+	</bean>
+	<!-- Local Datasource - Rodar SEM MAVEN           
     <bean id="scorecardDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 	    <property name="driverClassName"><value>com.mysql.cj.jdbc.Driver</value></property>
 	    <property name="url"><value>jdbc:mysql://localhost:3306/scorecard_prd?serverTimezone=UTC&amp;autoReconnect=true&amp;useSSL=false</value></property>
 	    <property name="username"><value>Scorecard</value></property>
 	    <property name="password"><value>card</value></property>
 	</bean> 
-	
+	-->
 	
 	<!-- Session Factory for Hibernate -->
 	<bean id="scorecardSessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
