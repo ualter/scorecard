@@ -80,6 +80,7 @@ import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
 import br.ujr.scorecard.model.ativo.investimento.Investimento;
 import br.ujr.scorecard.model.ativo.salario.Salario;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.extrato.LinhaExtratoCartao;
@@ -223,7 +224,9 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
     	this.scorecardBusinessDelegate.addScorecardManagerListener(this);
 
     	this.setUpDataInicialFinal();
-    	this.loadCheques();
+    	if ( this.getContaCorrente().isCheque() ) {
+    		this.loadCheques();
+    	}
     	this.loadVisaCredito();
     	this.loadVisaElectron();
     	this.loadMastercard();
@@ -420,7 +423,10 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		panTransferencia = new JPanel(null,true);
 		panSaque = new JPanel(null,true);
 		
-		buildPanelCheque();
+		if ( this.getContaCorrente().isCheque() ) {
+			buildPanelCheque();
+			tabs.addTab("Cheques", panCheque);
+		}
 		buildPanelVisaElectron();
 		buildPanelVisaCredito();
 		buildPanelMastercard();
@@ -432,10 +438,16 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		buildPanelSaque();
 		
 		//UIManager.put("TabbedPane.tabInsets", new Insets(1, 5, 1, 5) );
-		tabs.addTab("Cheques", panCheque);
+		
+		List<CartaoContratado> listCartoes = this.scorecardBusinessDelegate.listarCartoesContaCorrente(this.getContaCorrente());
+		for (CartaoContratado cartaoContratado : listCartoes) {
+			System.out.println(cartaoContratado.getNome());
+		}
+		
     	tabs.addTab("Visa", panVisaCredito);
     	tabs.addTab("Visa Electron",panVisaElectron);
     	tabs.addTab("Mastercard", panMastercard);
+    	
     	tabs.addTab("Saques", panSaque);
     	tabs.addTab("Débitos C/C", panDebito);
     	tabs.addTab("Transferências", panTransferencia);
@@ -2261,29 +2273,31 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	}
 	
 	private void loadCheques() {
-		this.tableModelCheque = new DefaultModelTabela(null,new Object[]{"Data","Valor","Descrição","Parc.","C/C","Cheque","ID","ID_PARCELA" });
-		Set<Passivo> setCheques = this.scorecardBusinessDelegate.getEspecificoPassivoPorReferencia(this.getContaCorrente(),Cheque.class, this.periodoDataInicial, this.periodoDataFinal);
-		List<Passivo> cheques   = new ArrayList<Passivo>(setCheques);
-		List<Parcela> parcelasCheques = new ArrayList<Parcela>();
-		Collections.sort(parcelasCheques,ParcelaOrdenador.DATA_LANCAMENTO);
-		for (Passivo passivo : cheques) {
-			Cheque cheque = (Cheque)passivo;
-			parcelasCheques.addAll(cheque.getParcelas());
-		}
-		this.scorecardBusinessDelegate.ordenarParcelas(parcelasCheques, ParcelaOrdenador.DATA_LANCAMENTO);
-		Object row[];
-		for(Parcela parcela : parcelasCheques) {
-			row = new Object[]{
-				Util.formatDate(parcela.getPassivo().getDataMovimento()),
-				Util.formatCurrency(parcela.getValor()),
-				parcela.getPassivo().getHistorico(),
-				parcela.getLabelNumeroTotalParcelas(),
-				parcela.isEfetivado(),
-				parcela.getNumeroCheque(),
-				parcela.getPassivo().getId(),
-				parcela.getId()
-			};
-			this.tableModelCheque.addRow(row);
+		if ( this.getContaCorrente().isCheque() ) {
+			this.tableModelCheque = new DefaultModelTabela(null,new Object[]{"Data","Valor","Descrição","Parc.","C/C","Cheque","ID","ID_PARCELA" });
+			Set<Passivo> setCheques = this.scorecardBusinessDelegate.getEspecificoPassivoPorReferencia(this.getContaCorrente(),Cheque.class, this.periodoDataInicial, this.periodoDataFinal);
+			List<Passivo> cheques   = new ArrayList<Passivo>(setCheques);
+			List<Parcela> parcelasCheques = new ArrayList<Parcela>();
+			Collections.sort(parcelasCheques,ParcelaOrdenador.DATA_LANCAMENTO);
+			for (Passivo passivo : cheques) {
+				Cheque cheque = (Cheque)passivo;
+				parcelasCheques.addAll(cheque.getParcelas());
+			}
+			this.scorecardBusinessDelegate.ordenarParcelas(parcelasCheques, ParcelaOrdenador.DATA_LANCAMENTO);
+			Object row[];
+			for(Parcela parcela : parcelasCheques) {
+				row = new Object[]{
+					Util.formatDate(parcela.getPassivo().getDataMovimento()),
+					Util.formatCurrency(parcela.getValor()),
+					parcela.getPassivo().getHistorico(),
+					parcela.getLabelNumeroTotalParcelas(),
+					parcela.isEfetivado(),
+					parcela.getNumeroCheque(),
+					parcela.getPassivo().getId(),
+					parcela.getId()
+				};
+				this.tableModelCheque.addRow(row);
+			}
 		}
 	}
 	

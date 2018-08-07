@@ -11,6 +11,7 @@ public class ContaCorrente extends BusinessObject implements Comparable<ContaCor
 	private String numero;
 	private Banco banco;
 	private Integer ordem;
+	private boolean cheque;
 	
 	public Integer getOrdem() {
 		return ordem;
@@ -93,6 +94,14 @@ public class ContaCorrente extends BusinessObject implements Comparable<ContaCor
 		sb.append(StringUtils.rightPad(this.getNumero(),12));
 		sb.append(this.getDescricao());
 		return sb.toString();
+	}
+
+	public boolean isCheque() {
+		return cheque;
+	}
+
+	public void setCheque(boolean cheque) {
+		this.cheque = cheque;
 	}
 	
 	

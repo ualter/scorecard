@@ -16,6 +16,7 @@ import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.salario.Salario;
 import br.ujr.scorecard.model.ativo.saldoanterior.SaldoAnterior;
 import br.ujr.scorecard.model.banco.Banco;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
@@ -350,6 +351,11 @@ public class ScorecardBusinessDelegate implements ScorecardManager {
 	
 	public Set<Cartao> getCartaoPorFiltro(long referenciaInicial, long referenciaFinal, Cartao cartao) {
 		return this.manager.getCartaoPorFiltro(referenciaInicial, referenciaFinal, cartao);
+	}
+
+	@Override
+	public List<CartaoContratado> listarCartoesContaCorrente(ContaCorrente contaCorrente) {
+		return this.manager.listarCartoesContaCorrente(contaCorrente);
 	}
 
 }

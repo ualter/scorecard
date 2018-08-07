@@ -14,6 +14,7 @@ import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.salario.Salario;
 import br.ujr.scorecard.model.ativo.saldoanterior.SaldoAnterior;
 import br.ujr.scorecard.model.banco.Banco;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
@@ -195,5 +196,7 @@ public interface ScorecardManager
     public Set<Passivo> getPassivosPorNiveisContaContabil(ContaCorrente contaCorrente, String[] niveis, boolean incluirDescendentes, long refIni, long refFim);
     
     public Set<Passivo> getPassivosAssociadosOrcamento(ContaCorrente contaCorrente, long referenciaInicial, long referenciaFinal, String nivelConta);
+    
+    public List<CartaoContratado> listarCartoesContaCorrente(ContaCorrente contaCorrente);
 
 }

@@ -5,7 +5,7 @@
         
 <hibernate-mapping>
 
-    <class name="br.ujr.scorecard.model.cc.ContaCorrente" table="CONTA_CORRENTE">
+    <class name="br.ujr.scorecard.model.cartao.contratado.CartaoContratado" table="CARTAO_CONTRATADO">
     
 	    <id name="id" column="ID">
 	    	<generator class="identity"/>
@@ -16,23 +16,19 @@
         	-->
 	    </id>
 	    
-	    <property name="descricao"/>
-	    <property name="numero"/>
+	    <property name="operadora"/>
+	    <property name="nome"/>
 	    
 	    <!-- 
-	     ContaCorrente pertence a um Banco
+	     CartaoContratado pertence a uma ContaCorrente
 	     -->
-	    <many-to-one name="banco"
-	    		column="BANCO_ID"
+	    <many-to-one name="contaCorrente"
+	    		column="CONTA_CORRENTE_ID"
 	    		unique="true"
 	    		not-null="true"
 	    		lazy="false"
 	    		fetch="join">
 	    </many-to-one> 
-	    
-	    <property name="ordem"/>
-	    
-	    <property name="cheque" type="true_false" column="HAS_CHEQUE"/>
 	    
 	</class>
     

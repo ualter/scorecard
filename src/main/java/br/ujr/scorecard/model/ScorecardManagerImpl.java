@@ -24,6 +24,8 @@ import br.ujr.scorecard.model.ativo.salario.Salario;
 import br.ujr.scorecard.model.ativo.saldoanterior.SaldoAnterior;
 import br.ujr.scorecard.model.banco.Banco;
 import br.ujr.scorecard.model.banco.BancoDAO;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratadoDAO;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.cc.ContaCorrenteDAO;
 import br.ujr.scorecard.model.conta.Conta;
@@ -601,6 +603,14 @@ public class ScorecardManagerImpl implements ScorecardManager
 		this.contaCorrenteDAO = contaCorrenteDAO;
 	}
 	
+	private CartaoContratadoDAO cartaoContratadoDAO;
+	public void setCartaoContratadoDAO(CartaoContratadoDAO cartaoContratadoDAO) {
+		this.cartaoContratadoDAO = cartaoContratadoDAO;
+	}
+	public CartaoContratadoDAO getCartaoContratadoDAO() {
+		return  this.cartaoContratadoDAO;
+	}
+	
 	private BancoDAO bancoDAO;
 	public BancoDAO getBancoDAO() {
 		return bancoDAO;
@@ -696,6 +706,10 @@ public class ScorecardManagerImpl implements ScorecardManager
 
 	public List<Banco> listarBanco() {
 		return this.getBancoDAO().list();
+	}
+	
+	public List<CartaoContratado> listarCartoesContaCorrente(ContaCorrente contaCorrente) {
+		return this.getCartaoContratadoDAO().findByContaCorrente(contaCorrente);
 	}
 
 	public void saveBanco(Banco banco) {

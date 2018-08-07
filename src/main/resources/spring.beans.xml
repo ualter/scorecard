@@ -34,6 +34,7 @@
                <value>mapping-resources/banco.hbm.xml</value>
                <value>mapping-resources/orcamento.hbm.xml</value>
                <value>mapping-resources/transferencia.hbm.xml</value>
+               <value>mapping-resources/cartaoContratado.hbm.xml</value>
            </list>
        </property>
        <property name="hibernateProperties">
@@ -110,6 +111,11 @@
           <ref bean="scorecardSessionFactory"/>
        </property>
    </bean>
+   <bean id="cartaoContratadoDAO" class="br.ujr.scorecard.model.cartao.contratado.CartaoContratadoDAOHibernate">
+       <property name="sessionFactory">
+          <ref bean="scorecardSessionFactory"/>
+       </property>
+   </bean>
 	
    <bean id="scorecardManager" class="br.ujr.scorecard.model.ScorecardManagerImpl">
 	   <property name="contaDAO">
@@ -141,6 +147,9 @@
 	   </property>
 	   <property name="transferenciaDAO">
 		   <ref bean="transferenciaDAO"/>
+	   </property>
+	   <property name="cartaoContratadoDAO">
+		   <ref bean="cartaoContratadoDAO"/>
 	   </property>
 	   <property name="mavenTests">
    	   		<value>1</value>

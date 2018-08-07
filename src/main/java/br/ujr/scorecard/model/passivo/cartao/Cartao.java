@@ -42,4 +42,6 @@ public class Cartao extends Passivo
 		Operadora enumOperadora = Operadora.values()[this.operadora];
 		return enumOperadora.name();
 	}
+	
+	
 }
