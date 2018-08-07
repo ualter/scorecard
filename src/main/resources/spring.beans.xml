@@ -8,7 +8,7 @@
     <bean id="scorecardDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 	    <property name="driverClassName"><value>com.mysql.cj.jdbc.Driver</value></property>
 	    <!-- <property name="url"><value>${url.database}</value></property> -->
-	    <property name="url"><value>jdbc:mysql://localhost:3306/scorecard_prd?serverTimezone=Europe/Madrid&amp;autoReconnect=true&amp;useSSL=false</value></property>
+	    <property name="url"><value>jdbc:mysql://localhost:3306/scorecard_dev?serverTimezone=Europe/Madrid&amp;autoReconnect=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</value></property>
 	    <property name="username"><value>Scorecard</value></property>
 	    <property name="password"><value>card</value></property>
 	</bean>
