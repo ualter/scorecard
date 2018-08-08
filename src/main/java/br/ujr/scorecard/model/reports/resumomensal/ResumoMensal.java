@@ -45,7 +45,7 @@ public class ResumoMensal extends AbstractReport {
 				listener.reportProgress("",++progress);
 			}
 			
-			ResumoPeriodo resumo =  this.scorecardBusinessDelegate.getResumoPeriodo(conta, i, i, true);
+			ResumoPeriodo resumo =  this.scorecardManager.getResumoPeriodo(conta, i, i, true);
 			
 			ResumoMensalValue value = new ResumoMensalValue();
 			

@@ -43,19 +43,17 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXPanel;
 
 import br.ujr.components.gui.combo.UjrComboBox;
 import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
 import br.ujr.components.gui.tabela.DefaultModelTabela;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.ContaFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
-import br.ujr.scorecard.gui.view.screen.ScorecardGUI;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.UtilTableCells;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.banco.Banco;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
@@ -298,7 +296,7 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 		
 		tableFatura.setRowHeight(18);
 		
-		ScorecardBusinessDelegate bd = ScorecardBusinessDelegate.getInstance();
+		ScorecardManager manager = (ScorecardManager)Util.getBean("scorecardManager");
 		UjrComboBox cmbCC = new UjrComboBox();
 		List<Conta> list = this.scorecardBusiness.listarContas(ContaOrdenador.Descricao);
 		for (Conta conta : list) {
@@ -422,15 +420,18 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 			}
 		} else
 		if ( e.getActionCommand().indexOf("VERIFICAR") != -1 ){
+			if ( this.scorecardBusiness == null ) {
+				this.scorecardBusiness = (ScorecardManager)Util.getBean("scorecardManager");
+			}
 			int banco = getSelectedBanco();
 			if (banco == ScorecardPropertyKeys.IdSANTANDER) {
-				this.setContaCorrente(this.scorecardBusiness.getInstance().getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander));
+				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander));
 			} else
 			if (banco == ScorecardPropertyKeys.IdITAU) {
-				this.setContaCorrente(this.scorecardBusiness.getInstance().getContaCorrentePorId(ScorecardPropertyKeys.IdCCItau));
+				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(ScorecardPropertyKeys.IdCCItau));
 			} else
 			if (banco == ScorecardPropertyKeys.IdDeutsche) {
-				this.setContaCorrente(this.scorecardBusiness.getInstance().getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche));
+				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche));
 			}
 			
 			this.dispararCargaFatura();
@@ -506,7 +507,7 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 			}
 			loadingFrame.setMaxProgress(linhasLancamentos.size());
 			
-			ScorecardBusinessDelegate bd = ScorecardBusinessDelegate.getInstance();
+			ScorecardManager bd = (ScorecardManager)Util.getBean("scorecardManager");
 			Conta conta = bd.getContaPorId(756);
 			
 			Object row[];

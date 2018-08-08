@@ -5,6 +5,7 @@
 package br.ujr.scorecard.model;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import br.ujr.scorecard.model.orcamento.Orcamento;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.PassivoOrdenador;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
+import br.ujr.scorecard.model.passivo.cartao.Cartao.Operadora;
 import br.ujr.scorecard.model.passivo.cheque.Cheque;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
 import br.ujr.scorecard.model.passivo.parcela.ParcelaOrdenador;
@@ -101,6 +103,8 @@ public interface ScorecardManager
     public Observacao getObservacao(int id);
 
     public void deleteObservacao(Observacao obs);
+    
+    public ResumoPeriodo getResumoPeriodo(ContaCorrente contaCorrente, Date dateInicial, Date dateFinal, boolean considerarOrcamento);
 
     /**
      * Reuni as informações de movimento de um período encapsulando em objeto Resumo
@@ -198,5 +202,15 @@ public interface ScorecardManager
     public Set<Passivo> getPassivosAssociadosOrcamento(ContaCorrente contaCorrente, long referenciaInicial, long referenciaFinal, String nivelConta);
     
     public List<CartaoContratado> listarCartoesContaCorrente(ContaCorrente contaCorrente);
+    
+    public List<Ativo> getAtivosPorReferencia(ContaCorrente contaCorrente, Class clazz, Date referenciaInicial, Date referenciaFinal);
+    
+    public List<Transferencia> getTransferenciasPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal);
+    
+    public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, Operadora enumOperadora, Date referenciaInicial, Date referenciaFinal);
+    
+    public Set<Passivo> getEspecificoPassivoPorReferencia(ContaCorrente contaCorrente, Class clazz, java.util.Date referenciaInicial, java.util.Date referenciaFinal);
+    
+    public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal);
 
 }

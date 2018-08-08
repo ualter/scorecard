@@ -2,10 +2,12 @@ package br.ujr.scorecard.model;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,6 +41,7 @@ import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.PassivoDAO;
 import br.ujr.scorecard.model.passivo.PassivoOrdenador;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
+import br.ujr.scorecard.model.passivo.cartao.Cartao.Operadora;
 import br.ujr.scorecard.model.passivo.cartao.CartaoDAO;
 import br.ujr.scorecard.model.passivo.cheque.Cheque;
 import br.ujr.scorecard.model.passivo.cheque.ChequeDAO;
@@ -304,6 +307,18 @@ public class ScorecardManagerImpl implements ScorecardManager
 		/*ScorecardManager s = (ScorecardManager)Util.getBean("scorecardManager");
 		ResumoPeriodo resumo = s.getResumoPeriodo(200710, 200710);*/
 		
+	}
+	
+	public ResumoPeriodo getResumoPeriodo(ContaCorrente contaCorrente, Date dateInicial, Date dateFinal, boolean considerarOrcamento) {
+		DecimalFormat df2 = new DecimalFormat("00");
+		DecimalFormat df4 = new DecimalFormat("0000");
+		Calendar calendarInicial = Calendar.getInstance();
+		Calendar calendarFinal = Calendar.getInstance();
+		calendarInicial.setTime(dateInicial);
+		calendarFinal.setTime(dateFinal);
+		long referenciaInicial = Long.parseLong(df4.format(calendarInicial.get(Calendar.YEAR)) + df2.format((calendarInicial.get(Calendar.MONTH))+1));
+		long referenciaFinal = Long.parseLong(df4.format(calendarFinal.get(Calendar.YEAR)) + df2.format((calendarFinal.get(Calendar.MONTH))+1));
+		return this.getResumoPeriodo(contaCorrente, referenciaInicial, referenciaFinal, considerarOrcamento);
 	}
 	
 	public ResumoPeriodo getResumoPeriodo(long referenciaInicial, long referenciaFinal) {
@@ -959,6 +974,26 @@ public class ScorecardManagerImpl implements ScorecardManager
 
 	public Set<Cartao> getCartaoPorFiltro(long referenciaInicial, long referenciaFinal, Cartao cartao) {
 		return this.getCartaoDAO().getCartaoPorFiltro(referenciaInicial, referenciaFinal, cartao);
+	}
+	
+	public List<Ativo> getAtivosPorReferencia(ContaCorrente contaCorrente,Class clazz, Date referenciaInicial, Date referenciaFinal) {
+		return this.getAtivosPorReferencia(contaCorrente, clazz, Util.extrairReferencia(referenciaInicial), Util.extrairReferencia(referenciaFinal));
+	}
+	
+	public List<Transferencia> getTransferenciasPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal) {
+		return this.getTransferenciasPorReferencia(contaCorrente, Util.extrairReferencia(referenciaInicial), Util.extrairReferencia(referenciaFinal));
+	}
+	
+	public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, Operadora enumOperadora, Date referenciaInicial, Date referenciaFinal) {
+		return this.getCartaoPorOperadora(contaCorrente, enumOperadora, Util.extrairReferencia(referenciaInicial), Util.extrairReferencia(referenciaFinal));
+	}
+	
+	public Set<Passivo> getEspecificoPassivoPorReferencia(ContaCorrente contaCorrente, Class clazz, java.util.Date referenciaInicial, java.util.Date referenciaFinal) {
+		return this.getEspecificoPassivoPorReferencia(contaCorrente, clazz, Util.extrairReferencia(referenciaInicial), Util.extrairReferencia(referenciaFinal));
+	}
+	
+	public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal) {
+		return this.getOrcamentosPorReferencia(contaCorrente, Util.extrairReferencia(referenciaInicial), Util.extrairReferencia(referenciaFinal));
 	}
 	
 }

@@ -51,7 +51,6 @@ import br.ujr.components.gui.tabela.OrcamentoOrdenadorTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
 import br.ujr.scorecard.analisador.fatura.cartao.AnalisadorSMSCartaoSaqueSantander;
 import br.ujr.scorecard.analisador.fatura.cartao.LinhaLancamento;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.DepositoFrame;
 import br.ujr.scorecard.gui.view.screen.InvestimentoFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
@@ -75,6 +74,7 @@ import br.ujr.scorecard.gui.view.screen.passivo.VisaCreditoFrame;
 import br.ujr.scorecard.gui.view.screen.passivo.VisaElectronFrame;
 import br.ujr.scorecard.model.ResumoPeriodo;
 import br.ujr.scorecard.model.SaldoProcessadoEvent;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ScorecardManagerListener;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
@@ -82,7 +82,6 @@ import br.ujr.scorecard.model.ativo.investimento.Investimento;
 import br.ujr.scorecard.model.ativo.salario.Salario;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
-import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.extrato.LinhaExtratoCartao;
 import br.ujr.scorecard.model.extrato.VerificarExtratoCartao;
 import br.ujr.scorecard.model.orcamento.Orcamento;
@@ -204,7 +203,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	protected JPanel panTransferencia;
 	protected JPanel panSaque;
 	
-	protected ScorecardBusinessDelegate scorecardBusinessDelegate = ScorecardBusinessDelegate.getInstance();
+	protected ScorecardManager scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
 	private static Logger logger = Logger.getLogger("br.ujr.scorecard"); 
 	protected DefaultModelTabela tableModelResumo;
 	private JLabel lblPeriodoResumo;
@@ -221,15 +220,20 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
     public BankPanel(JFrame owner, ContaCorrente contaCorrente) {
     	this.owner         = owner;
     	this.contaCorrente = contaCorrente;
-    	this.scorecardBusinessDelegate.addScorecardManagerListener(this);
+    	this.scorecardManager.addScorecardManagerListener(this);
 
     	this.setUpDataInicialFinal();
     	if ( this.getContaCorrente().isCheque() ) {
     		this.loadCheques();
     	}
+    	
+    	// Load Cartoes
+    	
+    	
     	this.loadVisaCredito();
     	this.loadVisaElectron();
     	this.loadMastercard();
+    	
     	this.loadSaque();
     	this.loadDebito();
     	this.loadOrcamento();
@@ -439,7 +443,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		
 		//UIManager.put("TabbedPane.tabInsets", new Insets(1, 5, 1, 5) );
 		
-		List<CartaoContratado> listCartoes = this.scorecardBusinessDelegate.listarCartoesContaCorrente(this.getContaCorrente());
+		List<CartaoContratado> listCartoes = this.scorecardManager.listarCartoesContaCorrente(this.getContaCorrente());
 		for (CartaoContratado cartaoContratado : listCartoes) {
 			System.out.println(cartaoContratado.getNome());
 		}
@@ -724,7 +728,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		 * desconsiderando cada um por vez ou todos selecionando(amarelo) ou não.
 		 */
 		boolean considerarOrcamento = true;
-		ResumoPeriodo resumoPeriodo = this.scorecardBusinessDelegate.getResumoPeriodo(this.getContaCorrente(),this.periodoDataInicial,this.periodoDataFinal, considerarOrcamento);
+		ResumoPeriodo resumoPeriodo = this.scorecardManager.getResumoPeriodo(this.getContaCorrente(),this.periodoDataInicial,this.periodoDataFinal, considerarOrcamento);
 		return resumoPeriodo;
 	}
 
@@ -1411,7 +1415,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			Orcamento orcamento = this.getSelectedOrcamento();
 			BigDecimal totalOrcado    = orcamento.getOrcado();
 			VerPassivosOrcamentos verPassivosOrcamentos = 
-				new VerPassivosOrcamentos(scorecardBusinessDelegate,this.contaCorrente,orcamento, this.periodoDataInicial, this.periodoDataFinal,totalOrcado);
+				new VerPassivosOrcamentos(scorecardManager,this.contaCorrente,orcamento, this.periodoDataInicial, this.periodoDataFinal,totalOrcado);
 			verPassivosOrcamentos.setVisible(true);
 		} else
 		if (actionCommand.equals("DESCONSIDERAR_ORCAMENTO")) {
@@ -1460,8 +1464,8 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			parcela.setValor(Util.parseCurrency(linha.getValor()));
 			parcela.setEfetivado(false);
 			saque.addParcela(parcela);
-			this.scorecardBusinessDelegate.savePassivo(saque);
-			saque = this.scorecardBusinessDelegate.getPassivoPorId(saque.getId());
+			this.scorecardManager.savePassivo(saque);
+			saque = this.scorecardManager.getPassivoPorId(saque.getId());
 		}
 	}
 
@@ -1739,7 +1743,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			table.updateUI();
 
 			UtilGUI.coverBlinder(this.getOwner());
-			ResultadoConferenciaExtratoCartao resultadoConferenciaExtratoCartao = new ResultadoConferenciaExtratoCartao(operadora,this,scorecardBusinessDelegate,
+			ResultadoConferenciaExtratoCartao resultadoConferenciaExtratoCartao = new ResultadoConferenciaExtratoCartao(operadora,this,scorecardManager,
 					this.contaCorrente, verificarExtratoCartao.getValorTotal(), linhasNaoEncontradas, registrosEmExcesso);
 			resultadoConferenciaExtratoCartao.setVisible(true);
 			UtilGUI.uncoverBlinder(this.getOwner());
@@ -1753,7 +1757,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	public Cheque getSelectedCheque() {
 		if ( this.tableCheque.getSelectedRow() > -1 ) {
 			int chequeId = ((Integer)this.tableModelCheque.getValueAt(this.tableCheque.getSelectedRow(), 6)).intValue();
-			Cheque cheque = (Cheque)this.scorecardBusinessDelegate.getPassivoPorId(chequeId);
+			Cheque cheque = (Cheque)this.scorecardManager.getPassivoPorId(chequeId);
 			return cheque;
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecione o registro do Cheque","Cheques",JOptionPane.WARNING_MESSAGE);
@@ -1764,7 +1768,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	public Cartao getSelectedVisaCredito() {
 		if ( this.tableVisaCredito.getSelectedRow() > -1 ) {
 			int cartaoId = ((Integer)this.tableModelVisaCredito.getValueAt(this.tableVisaCredito.getSelectedRow(), 5)).intValue();
-			Cartao cartao = (Cartao)this.scorecardBusinessDelegate.getPassivoPorId(cartaoId);
+			Cartao cartao = (Cartao)this.scorecardManager.getPassivoPorId(cartaoId);
 			return cartao;
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecione o registro do Visa Crédito","Cartões",JOptionPane.WARNING_MESSAGE);
@@ -1775,7 +1779,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	public Cartao getSelectedMastercard() {
 		if ( this.tableMastercard.getSelectedRow() > -1 ) {
 			int cartaoId = ((Integer)this.tableModelMastercard.getValueAt(this.tableMastercard.getSelectedRow(), 5)).intValue();
-			Cartao cartao = (Cartao)this.scorecardBusinessDelegate.getPassivoPorId(cartaoId);
+			Cartao cartao = (Cartao)this.scorecardManager.getPassivoPorId(cartaoId);
 			return cartao;
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecione o registro do MasterCard","Cartões",JOptionPane.WARNING_MESSAGE);
@@ -1787,7 +1791,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	public DebitoCC getSelectedDebito() {
 		if ( this.tableDebito.getSelectedRow() > -1 ) {
 			int debitoId = ((Integer)this.tableModelDebito.getValueAt(this.tableDebito.getSelectedRow(), 5)).intValue();
-			DebitoCC debitoCC = (DebitoCC)this.scorecardBusinessDelegate.getPassivoPorId(debitoId);
+			DebitoCC debitoCC = (DebitoCC)this.scorecardManager.getPassivoPorId(debitoId);
 			return debitoCC;
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecione o registro de Débito C/C","Débito",JOptionPane.WARNING_MESSAGE);
@@ -1805,14 +1809,14 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	}
 	private Orcamento getSelectedOrcamento(int row) {
 		int orcamentoId = ((Integer)this.tableModelOrcamento.getValueAt(row, 5)).intValue();
-		Orcamento orcamento = (Orcamento)this.scorecardBusinessDelegate.getOrcamentoPorId(orcamentoId);
+		Orcamento orcamento = (Orcamento)this.scorecardManager.getOrcamentoPorId(orcamentoId);
 		return orcamento;
 	}
 	
 	private Investimento getSelectedInvestimento() {
 		if ( this.tableInvestimento.getSelectedRow() > -1 ) {
 			int id = ((Integer)this.tableModelInvestimento.getValueAt(this.tableInvestimento.getSelectedRow(), 3)).intValue();
-			Investimento investimento = (Investimento)this.scorecardBusinessDelegate.getAtivoPorId(id);
+			Investimento investimento = (Investimento)this.scorecardManager.getAtivoPorId(id);
 			return investimento;
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecione o registro de Investimento","Investimento",JOptionPane.WARNING_MESSAGE);
@@ -1823,7 +1827,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private Transferencia getSelectedTransferencia() {
 		if ( this.tableTransferencia.getSelectedRow() > -1 ) {
 			int id = ((Integer)this.tableModelTransferencia.getValueAt(this.tableTransferencia.getSelectedRow(), 4)).intValue();
-			Transferencia investimento = (Transferencia)this.scorecardBusinessDelegate.getTransferenciaPorId(id);
+			Transferencia investimento = (Transferencia)this.scorecardManager.getTransferenciaPorId(id);
 			return investimento;
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecione o registro de Transferência","Transferência",JOptionPane.WARNING_MESSAGE);
@@ -1834,7 +1838,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	public Saque getSelectedSaque() {
 		if ( this.tableSaque.getSelectedRow() > -1 ) {
 			int id = ((Integer)this.tableModelSaque.getValueAt(this.tableSaque.getSelectedRow(), 5)).intValue();
-			Saque saque = (Saque)this.scorecardBusinessDelegate.getPassivoPorId(id);
+			Saque saque = (Saque)this.scorecardManager.getPassivoPorId(id);
 			return saque;
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecione o registro de Saque","Saque",JOptionPane.WARNING_MESSAGE);
@@ -1845,7 +1849,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private Deposito getSelectedDeposito() {
 		if ( this.tableDeposito.getSelectedRow() > -1 ) {
 			int id = ((Integer)this.tableModelDeposito.getValueAt(this.tableDeposito.getSelectedRow(), 3)).intValue();
-			Deposito investimento = (Deposito)this.scorecardBusinessDelegate.getAtivoPorId(id);
+			Deposito investimento = (Deposito)this.scorecardManager.getAtivoPorId(id);
 			return investimento;
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecione o registro de Depósito","Depósito",JOptionPane.WARNING_MESSAGE);
@@ -1856,7 +1860,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private Salario getSelectedSalario() {
 		if ( this.tableSalario.getSelectedRow() > -1 ) {
 			int id = ((Integer)this.tableModelSalario.getValueAt(this.tableSalario.getSelectedRow(), 3)).intValue();
-			Salario investimento = (Salario)this.scorecardBusinessDelegate.getAtivoPorId(id);
+			Salario investimento = (Salario)this.scorecardManager.getAtivoPorId(id);
 			return investimento;
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecione o registro de Salário","Salário",JOptionPane.WARNING_MESSAGE);
@@ -1867,7 +1871,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	public Cartao getSelectedVisaElectron() {
 		if ( this.tableVisaElectron.getSelectedRow() > -1 ) {
 			int cartaoId = ((Integer)this.tableModelVisaElectron.getValueAt(this.tableVisaElectron.getSelectedRow(), 5)).intValue();
-			Cartao cartao = (Cartao)this.scorecardBusinessDelegate.getPassivoPorId(cartaoId);
+			Cartao cartao = (Cartao)this.scorecardManager.getPassivoPorId(cartaoId);
 			return cartao;
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecione o registro do Visa Electron","Cartões",JOptionPane.WARNING_MESSAGE);
@@ -2275,7 +2279,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private void loadCheques() {
 		if ( this.getContaCorrente().isCheque() ) {
 			this.tableModelCheque = new DefaultModelTabela(null,new Object[]{"Data","Valor","Descrição","Parc.","C/C","Cheque","ID","ID_PARCELA" });
-			Set<Passivo> setCheques = this.scorecardBusinessDelegate.getEspecificoPassivoPorReferencia(this.getContaCorrente(),Cheque.class, this.periodoDataInicial, this.periodoDataFinal);
+			Set<Passivo> setCheques = this.scorecardManager.getEspecificoPassivoPorReferencia(this.getContaCorrente(),Cheque.class, this.periodoDataInicial, this.periodoDataFinal);
 			List<Passivo> cheques   = new ArrayList<Passivo>(setCheques);
 			List<Parcela> parcelasCheques = new ArrayList<Parcela>();
 			Collections.sort(parcelasCheques,ParcelaOrdenador.DATA_LANCAMENTO);
@@ -2283,7 +2287,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 				Cheque cheque = (Cheque)passivo;
 				parcelasCheques.addAll(cheque.getParcelas());
 			}
-			this.scorecardBusinessDelegate.ordenarParcelas(parcelasCheques, ParcelaOrdenador.DATA_LANCAMENTO);
+			this.scorecardManager.ordenarParcelas(parcelasCheques, ParcelaOrdenador.DATA_LANCAMENTO);
 			Object row[];
 			for(Parcela parcela : parcelasCheques) {
 				row = new Object[]{
@@ -2303,7 +2307,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	
 	private void loadVisaCredito() {
 		this.tableModelVisaCredito    = new DefaultModelTabela(null,new Object[]{"Data","Valor","Descrição","Parc.","C/C","ID","ID_PARCELA","SELECTED" });
-		Set<Cartao>  setCartoes       = this.scorecardBusinessDelegate.getCartaoPorOperadora(this.getContaCorrente(),Cartao.Operadora.VISA, this.periodoDataInicial, this.periodoDataFinal);
+		Set<Cartao>  setCartoes       = this.scorecardManager.getCartaoPorOperadora(this.getContaCorrente(),Cartao.Operadora.VISA, this.periodoDataInicial, this.periodoDataFinal);
 		List<Cartao> cartoes          = new ArrayList<Cartao>(setCartoes);
 		List<Parcela> parcelasCartao  = new ArrayList<Parcela>();
 		Collections.sort(parcelasCartao,ParcelaOrdenador.DATA_LANCAMENTO);
@@ -2311,7 +2315,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			Cartao cartao = (Cartao)passivo;
 			parcelasCartao.addAll(cartao.getParcelas());
 		}
-		this.scorecardBusinessDelegate.ordenarParcelas(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
+		this.scorecardManager.ordenarParcelas(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
 		Object row[];
 		for(Parcela parcela : parcelasCartao) {
 			row = new Object[]{
@@ -2330,7 +2334,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	
 	private void loadVisaElectron() {
 		this.tableModelVisaElectron   = new DefaultModelTabela(null,new Object[]{"Data","Valor","Descrição","Parc.","C/C","ID","ID_PARCELA" });
-		Set<Cartao>  setCartoes       = this.scorecardBusinessDelegate.getCartaoPorOperadora(this.getContaCorrente(),Cartao.Operadora.VISA_ELECTRON, this.periodoDataInicial, this.periodoDataFinal);
+		Set<Cartao>  setCartoes       = this.scorecardManager.getCartaoPorOperadora(this.getContaCorrente(),Cartao.Operadora.VISA_ELECTRON, this.periodoDataInicial, this.periodoDataFinal);
 		List<Cartao> cartoes          = new ArrayList<Cartao>(setCartoes);
 		List<Parcela> parcelasCartao  = new ArrayList<Parcela>();
 		Collections.sort(parcelasCartao,ParcelaOrdenador.DATA_LANCAMENTO);
@@ -2338,7 +2342,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			Cartao cartao = (Cartao)passivo;
 			parcelasCartao.addAll(cartao.getParcelas());
 		}
-		this.scorecardBusinessDelegate.ordenarParcelas(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
+		this.scorecardManager.ordenarParcelas(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
 		Object row[];
 		for(Parcela parcela : parcelasCartao) {
 			row = new Object[]{
@@ -2356,7 +2360,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	
 	private void loadMastercard() {
 		this.tableModelMastercard    = new DefaultModelTabela(null,new Object[]{"Data","Valor","Descrição","Parc.","C/C","ID","ID_PARCELA","SELECTED" });
-		Set<Cartao>  setCartoes       = this.scorecardBusinessDelegate.getCartaoPorOperadora(this.getContaCorrente(),Cartao.Operadora.MASTERCARD, this.periodoDataInicial, this.periodoDataFinal);
+		Set<Cartao>  setCartoes       = this.scorecardManager.getCartaoPorOperadora(this.getContaCorrente(),Cartao.Operadora.MASTERCARD, this.periodoDataInicial, this.periodoDataFinal);
 		List<Cartao> cartoes          = new ArrayList<Cartao>(setCartoes);
 		List<Parcela> parcelasCartao  = new ArrayList<Parcela>();
 		Collections.sort(parcelasCartao,ParcelaOrdenador.DATA_LANCAMENTO);
@@ -2364,7 +2368,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			Cartao cartao = (Cartao)passivo;
 			parcelasCartao.addAll(cartao.getParcelas());
 		}
-		this.scorecardBusinessDelegate.ordenarParcelas(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
+		this.scorecardManager.ordenarParcelas(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
 		Object row[];
 		for(Parcela parcela : parcelasCartao) {
 			row = new Object[]{
@@ -2383,7 +2387,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	
 	private void loadDebito() {
 		this.tableModelDebito         = new DefaultModelTabela(null,new Object[]{"Data","Valor","Descrição","Parc.","C/C","ID","ID_PARCELA" });
-		Set<Passivo>  setDebitos      = this.scorecardBusinessDelegate.getEspecificoPassivoPorReferencia(this.getContaCorrente(), DebitoCC.class, this.periodoDataInicial, this.periodoDataFinal);
+		Set<Passivo>  setDebitos      = this.scorecardManager.getEspecificoPassivoPorReferencia(this.getContaCorrente(), DebitoCC.class, this.periodoDataInicial, this.periodoDataFinal);
 		List<Passivo> debitos         = new ArrayList<Passivo>(setDebitos);
 		List<Parcela> parcelasDebito  = new ArrayList<Parcela>();
 		Collections.sort(parcelasDebito,ParcelaOrdenador.DATA_LANCAMENTO);
@@ -2391,7 +2395,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			DebitoCC debito = (DebitoCC)passivo;
 			parcelasDebito.addAll(debito.getParcelas());
 		}
-		this.scorecardBusinessDelegate.ordenarParcelas(parcelasDebito, ParcelaOrdenador.DATA_LANCAMENTO);
+		this.scorecardManager.ordenarParcelas(parcelasDebito, ParcelaOrdenador.DATA_LANCAMENTO);
 		Object row[];
 		for(Parcela parcela : parcelasDebito) {
 			row = new Object[]{
@@ -2409,7 +2413,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	
 	private void loadSaque() {
 		this.tableModelSaque         = new DefaultModelTabela(null,new Object[]{"Data","Valor","Descrição","Parc.","C/C","ID","ID_PARCELA" });
-		Set<Passivo>  setSaques      = this.scorecardBusinessDelegate.getEspecificoPassivoPorReferencia(this.getContaCorrente(), Saque.class, this.periodoDataInicial, this.periodoDataFinal);
+		Set<Passivo>  setSaques      = this.scorecardManager.getEspecificoPassivoPorReferencia(this.getContaCorrente(), Saque.class, this.periodoDataInicial, this.periodoDataFinal);
 		List<Passivo> debitos        = new ArrayList<Passivo>(setSaques);
 		List<Parcela> parcelasSaque  = new ArrayList<Parcela>();
 		Collections.sort(parcelasSaque,ParcelaOrdenador.DATA_LANCAMENTO);
@@ -2417,7 +2421,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			Saque saque = (Saque)passivo;
 			parcelasSaque.addAll(saque.getParcelas());
 		}
-		this.scorecardBusinessDelegate.ordenarParcelas(parcelasSaque, ParcelaOrdenador.DATA_LANCAMENTO);
+		this.scorecardManager.ordenarParcelas(parcelasSaque, ParcelaOrdenador.DATA_LANCAMENTO);
 		Object row[];
 		for(Parcela parcela : parcelasSaque) {
 			row = new Object[]{
@@ -2435,7 +2439,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	
 	private void loadOrcamento() {
 		this.tableModelOrcamento      = new DefaultModelTabela(null,new Object[]{"Ref.","Orçado","Realizado","Restante","Conta","ID","SELECTED" });
-		Set<Orcamento>  setOrcamentos = this.scorecardBusinessDelegate.getOrcamentosPorReferencia(this.getContaCorrente(), this.periodoDataInicial, this.periodoDataFinal);
+		Set<Orcamento>  setOrcamentos = this.scorecardManager.getOrcamentosPorReferencia(this.getContaCorrente(), this.periodoDataInicial, this.periodoDataFinal);
 		List<Orcamento> orcamentos    = new ArrayList<Orcamento>(setOrcamentos);
 		Object row[];
 		for(Orcamento orcamento : orcamentos) {
@@ -2454,7 +2458,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	
 	private void loadInvestimento() {
 		this.tableModelInvestimento = new DefaultModelTabela(null,new Object[]{"Ref.","Valor","Histórico","ID" });
-		List<Ativo> ativos = this.scorecardBusinessDelegate.getAtivosPorReferencia(this.getContaCorrente(),Investimento.class, this.periodoDataInicial, this.periodoDataFinal);
+		List<Ativo> ativos = this.scorecardManager.getAtivosPorReferencia(this.getContaCorrente(),Investimento.class, this.periodoDataInicial, this.periodoDataFinal);
 		Object row[];
 		for(Ativo ativo : ativos) {
 			row = new Object[]{
@@ -2469,7 +2473,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	
 	private void loadDeposito() {
 		this.tableModelDeposito = new DefaultModelTabela(null,new Object[]{"Ref.","Valor","Histórico","ID" });
-		List<Ativo> ativos = this.scorecardBusinessDelegate.getAtivosPorReferencia(this.getContaCorrente(), Deposito.class,this.periodoDataInicial, this.periodoDataFinal);
+		List<Ativo> ativos = this.scorecardManager.getAtivosPorReferencia(this.getContaCorrente(), Deposito.class,this.periodoDataInicial, this.periodoDataFinal);
 		Object row[];
 		for(Ativo ativo : ativos) {
 			row = new Object[]{
@@ -2484,7 +2488,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	
 	private void loadSalario() {
 		this.tableModelSalario = new DefaultModelTabela(null,new Object[]{"Ref.","Valor","Histórico","ID" });
-		List<Ativo> ativos = this.scorecardBusinessDelegate.getAtivosPorReferencia(this.getContaCorrente(),Salario.class, this.periodoDataInicial, this.periodoDataFinal);
+		List<Ativo> ativos = this.scorecardManager.getAtivosPorReferencia(this.getContaCorrente(),Salario.class, this.periodoDataInicial, this.periodoDataFinal);
 		Object row[];
 		for(Ativo ativo : ativos) {
 			row = new Object[]{
@@ -2499,7 +2503,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	
 	private void loadTransferencia() {
     	this.tableModelTransferencia = new DefaultModelTabela(null,new Object[]{"Ref.","Valor","Destino","Histórico","ID" });
-		List<Transferencia> transfs = this.scorecardBusinessDelegate.getTransferenciasPorReferencia(this.getContaCorrente(),this.periodoDataInicial, this.periodoDataFinal);
+		List<Transferencia> transfs = this.scorecardManager.getTransferenciasPorReferencia(this.getContaCorrente(),this.periodoDataInicial, this.periodoDataFinal);
 		Object row[];
 		for(Transferencia transferencia : transfs) {
 			row = new Object[]{

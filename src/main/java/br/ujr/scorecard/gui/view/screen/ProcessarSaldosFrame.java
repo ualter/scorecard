@@ -27,9 +27,9 @@ import org.apache.log4j.Logger;
 import br.ujr.components.gui.combo.UjrComboBox;
 import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
 import br.ujr.scorecard.model.SaldoProcessadoEvent;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ScorecardManagerListener;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.cc.ContaCorrente;
@@ -50,7 +50,7 @@ public class ProcessarSaldosFrame extends AbstractDialog implements FocusListene
 	protected JDateChooser     txtDtIni         = new JDateChooser("MM/yyyy","##/####",'_');
 	protected JDateChooser     txtDtFim         = new JDateChooser("MM/yyyy","##/####",'_');
 	protected UjrComboBox      txtContaCorrente = new UjrComboBox(); 
-	protected ScorecardBusinessDelegate scoreBusinessDelegate = ScorecardBusinessDelegate.getInstance();
+	protected ScorecardManager scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
 	private JButton btnProcessarSaldo;
 	private JButton btnSair;
 	private JScrollPane scrollPane;
@@ -60,7 +60,7 @@ public class ProcessarSaldosFrame extends AbstractDialog implements FocusListene
 		super(owner);
 		this.title = "Processar Saldos";
 		this.createUI();
-		scoreBusinessDelegate.addScorecardManagerListener(this);
+		scorecardManager.addScorecardManagerListener(this);
 		this.componentsReady();
 	}
 
@@ -111,7 +111,7 @@ public class ProcessarSaldosFrame extends AbstractDialog implements FocusListene
 		lblConta.setBounds(X,Y,100,20);
 		this.txtContaCorrente.setBounds(X + 100, Y, 280, 20);
 		this.txtContaCorrente.setEditable(false);
-		List<ContaCorrente> ccs = scoreBusinessDelegate.listarContaCorrente();
+		List<ContaCorrente> ccs = scorecardManager.listarContaCorrente();
 		for(ContaCorrente cc : ccs) {
 			this.txtContaCorrente.addItem(cc);
 		}
@@ -208,7 +208,7 @@ public class ProcessarSaldosFrame extends AbstractDialog implements FocusListene
 			this.cc = cc;
 			this.refIni = refIni;
 			this.refFim = refFim;
-			scoreBusinessDelegate.addScorecardManagerListener(this);
+			scorecardManager.addScorecardManagerListener(this);
 			/**
 			 * Calculando total de meses a serem processados
 			 */
@@ -223,7 +223,7 @@ public class ProcessarSaldosFrame extends AbstractDialog implements FocusListene
 			
 			frame.btnProcessarSaldo.setEnabled(false);
 			frame.btnSair.setEnabled(false);
-			scoreBusinessDelegate.consistirSaldosAnteriores(this.cc,this.refIni,this.refFim,true);
+			scorecardManager.consistirSaldosAnteriores(this.cc,this.refIni,this.refFim,true);
 			
 			loadingFrame.dispose();
 			return null;

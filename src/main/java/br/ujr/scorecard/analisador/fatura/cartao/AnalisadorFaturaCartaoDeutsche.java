@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
@@ -23,7 +23,7 @@ public class AnalisadorFaturaCartaoDeutsche {
 	private Date mesAnoRefencia;
 	private Cartao.Operadora operadora;
 	private ContaCorrente deutsche;
-	private ScorecardBusinessDelegate bd;
+	private ScorecardManager bd;
 	private static Logger logger = Logger.getLogger(AnalisadorFaturaCartaoDeutsche.class);
 	
 	public static void main(String[] args) {
@@ -35,7 +35,7 @@ public class AnalisadorFaturaCartaoDeutsche {
 	public AnalisadorFaturaCartaoDeutsche(Date mesAnoRefencia, Cartao.Operadora operadora) {
 		try {
 			
-			this.bd = ScorecardBusinessDelegate.getInstance();
+			this.bd = (ScorecardManager)Util.getBean("scorecardManager");
 			this.deutsche = bd.getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche);
 			
 			this.mesAnoRefencia = mesAnoRefencia;

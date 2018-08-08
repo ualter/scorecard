@@ -13,7 +13,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,16 +24,16 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import br.ujr.components.gui.tabela.DefaultModelTabela;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.ResumoTableCellRenderer;
 import br.ujr.scorecard.model.ResumoPeriodo;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.util.Util;
 import br.ujr.scorecard.util.UtilGUI;
 
 @SuppressWarnings("serial")
 public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 	
-	private ScorecardBusinessDelegate scorecardBusinessDelegate;
+	private ScorecardManager scorecardBusinessDelegate;
 	private Date dataInicial;
 	private Date dataFinal;
 	private JPanel panelParent;
@@ -48,7 +47,7 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 		return resumoPeriodo;
 	}
 	
-	public ResumoPeriodoGeral(JFrame frameParent, JPanel panelParent, ScorecardBusinessDelegate scorecardBusinessDelegate) {
+	public ResumoPeriodoGeral(JFrame frameParent, JPanel panelParent, ScorecardManager scorecardBusinessDelegate) {
 		this.frameParent = frameParent;
 		this.panelParent = panelParent;
 		this.scorecardBusinessDelegate = scorecardBusinessDelegate;

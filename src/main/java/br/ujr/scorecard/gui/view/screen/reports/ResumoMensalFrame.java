@@ -3,34 +3,27 @@ package br.ujr.scorecard.gui.view.screen.reports;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.DefaultFocusTraversalPolicy;
-import java.awt.DefaultKeyboardFocusManager;
-import java.awt.FocusTraversalPolicy;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultFocusManager;
 import javax.swing.ImageIcon;
-import javax.swing.InternalFrameFocusTraversalPolicy;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import br.ujr.components.gui.combo.UjrComboBox;
 import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
-import br.ujr.scorecard.gui.view.screen.FocusListenerHelper;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.reports.ReportManager;
 import br.ujr.scorecard.model.reports.ReportManagerListener;
@@ -45,7 +38,7 @@ public class ResumoMensalFrame extends AbstractDialog  {
 	protected JDateChooser     txtDtIni         = new JDateChooser("MM/yyyy","##/####",'_');
 	protected JDateChooser     txtDtFim         = new JDateChooser("MM/yyyy","##/####",'_');
 	protected UjrComboBox      txtContaCorrente = new UjrComboBox(); 
-	protected ScorecardBusinessDelegate scoreBusinessDelegate = ScorecardBusinessDelegate.getInstance();
+	protected ScorecardManager scoreBusinessDelegate = (ScorecardManager)Util.getBean("scorecardManager");
 	private JButton btnProcessarSaldo;
 	private JButton btnSair;
 	

@@ -29,8 +29,8 @@ import javax.swing.table.TableColumn;
 import br.ujr.components.gui.field.UjrNumberField;
 import br.ujr.components.gui.field.UjrTextField;
 import br.ujr.components.gui.tabela.DefaultModelTabela;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.banco.Banco;
 import br.ujr.scorecard.model.banco.BancoOrdenador;
 import br.ujr.scorecard.util.Util;
@@ -48,7 +48,7 @@ public class BancoFrame extends AbstractDialog implements FocusListener, MouseLi
 	protected UjrTextField  txtCodigo     = new UjrTextField();
 	protected UjrNumberField  txtDiaVencVisa       = new UjrNumberField();
 	protected UjrNumberField  txtDiaVencMastercard = new UjrNumberField();
-	protected ScorecardBusinessDelegate scoreBusinessDelegate = ScorecardBusinessDelegate.getInstance();
+	protected ScorecardManager scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
 	private JButton btnExcluir;
 	private JButton btnNovo;
 	private JButton btnOk;
@@ -233,7 +233,7 @@ public class BancoFrame extends AbstractDialog implements FocusListener, MouseLi
 			new DefaultModelTabela(null,
 				new Object[]{ "Código","Nome", "Dia Venc. Visa", "Dia Venc. Mastercard" });
 		
-		List<Banco> bancos = this.scoreBusinessDelegate.listarBanco();
+		List<Banco> bancos = this.scorecardManager.listarBanco();
 		Collections.sort(bancos,BancoOrdenador.NOME);
 		for (Banco banco : bancos) {
 			Object row[] = new Object[]{banco.getId(), banco.getNome(), banco.getDiaVencimentoVisa(), banco.getDiaVencimentoMastercard()};
@@ -254,7 +254,7 @@ public class BancoFrame extends AbstractDialog implements FocusListener, MouseLi
 					this.loadedBanco.setNome(this.txtNome.getText());
 					this.loadedBanco.setDiaVencimentoVisa(this.diaVencVisa);
 					this.loadedBanco.setDiaVencimentoMastercard(this.diaVencMastercard);
-					this.scoreBusinessDelegate.saveBanco(this.loadedBanco);
+					this.scorecardManager.saveBanco(this.loadedBanco);
 					this.loadedBanco = null;
 				}
 			} else {
@@ -264,7 +264,7 @@ public class BancoFrame extends AbstractDialog implements FocusListener, MouseLi
 					banco.setNome(this.txtNome.getText());
 					banco.setDiaVencimentoMastercard(this.diaVencMastercard);
 					banco.setDiaVencimentoVisa(this.diaVencVisa);
-					this.scoreBusinessDelegate.saveBanco(banco);
+					this.scorecardManager.saveBanco(banco);
 				}
 			}
 			this.resetScreen();
@@ -280,10 +280,10 @@ public class BancoFrame extends AbstractDialog implements FocusListener, MouseLi
 					   JOptionPane.YES_NO_OPTION,
 					   JOptionPane.QUESTION_MESSAGE);
 			if ( resp == 0 ) {
-				if ( !this.scoreBusinessDelegate.isBancoRemovable(loadedBanco) ) {
+				if ( !this.scorecardManager.isBancoRemovable(loadedBanco) ) {
 					JOptionPane.showMessageDialog(this,"Este Banco possui Conta(s) Corrente(s) associadas.\n Exclusão não permitida!","Atenção",JOptionPane.WARNING_MESSAGE);
 				} else {
-					this.scoreBusinessDelegate.deleteBanco(this.loadedBanco);
+					this.scorecardManager.deleteBanco(this.loadedBanco);
 					this.loadedBanco = null;
 					this.resetScreen();
 				}
@@ -350,7 +350,7 @@ public class BancoFrame extends AbstractDialog implements FocusListener, MouseLi
 		String nameComponent = ((Component)e.getSource()).getName();
 		if ( "LIST".equals(nameComponent)) {
 			int id = ((Integer)this.tableList.getValueAt(this.tableList.getSelectedRow(), 0)).intValue();
-			this.loadedBanco = this.scoreBusinessDelegate.getBancoPorId(id);
+			this.loadedBanco = this.scorecardManager.getBancoPorId(id);
 			this.prepararAlteracaoExclusao();
 		}
 	}

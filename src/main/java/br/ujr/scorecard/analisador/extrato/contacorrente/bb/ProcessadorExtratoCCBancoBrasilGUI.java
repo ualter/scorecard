@@ -14,8 +14,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -50,11 +48,11 @@ import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.components.gui.tabela.DefaultOrdenadorTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
 import br.ujr.scorecard.analisador.extrato.contacorrente.bb.ProcessadorExtratoCCBancoBrasil.LinhaExtratoContaCorrenteBancoBrasil;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.ContaFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.bankpanel.HeaderListener;
 import br.ujr.scorecard.model.ResumoPeriodo;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
 import br.ujr.scorecard.model.cc.ContaCorrente;
@@ -78,7 +76,7 @@ public class ProcessadorExtratoCCBancoBrasilGUI extends JDialog implements Mouse
 	private static Logger logger = Logger.getLogger(ProcessadorExtratoCCBancoBrasilGUI.class);
 	
 	private JDateChooser txtDtRef = new JDateChooser("MM/yyyy","##/####",'_');
-	private ScorecardBusinessDelegate scorecardBusinessDelegate;
+	private ScorecardManager scorecardManager;
 	
 	private JLabel lblSaldoDiferenca;
 	private JLabel lblSaldoAnteriorDiferenca;
@@ -89,7 +87,7 @@ public class ProcessadorExtratoCCBancoBrasilGUI extends JDialog implements Mouse
 	public ProcessadorExtratoCCBancoBrasilGUI() {
 		this.setResizable(false);
 		this.setModal(true);
-		this.scorecardBusinessDelegate = ScorecardBusinessDelegate.getInstance();
+		this.scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
 		
 		java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         this.setBounds(((screenSize.width-largura)/2), ((screenSize.height-altura)/2) - 15, largura, altura);
@@ -280,7 +278,7 @@ public class ProcessadorExtratoCCBancoBrasilGUI extends JDialog implements Mouse
 	 * @return
 	 */
 	private ContaCorrente getContaCorrente() {
-		ContaCorrente cc = this.scorecardBusinessDelegate.getContaCorrentePorId(ScorecardPropertyKeys.IdCCBancoBrasil);
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCBancoBrasil);
 		return cc;
 	}
 	/**
@@ -288,14 +286,14 @@ public class ProcessadorExtratoCCBancoBrasilGUI extends JDialog implements Mouse
 	 * @return
 	 */
 	private ContaCorrente getContaCorrenteAlvoTransferencia() {
-		ContaCorrente cc = this.scorecardBusinessDelegate.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
 		return cc;
 	}
 	private Conta getContaContabilDeposito() {
-		return this.scorecardBusinessDelegate.getContaPorId(854);
+		return this.scorecardManager.getContaPorId(854);
 	}
 	private Conta getContaContabilSalario() {
-		return this.scorecardBusinessDelegate.getContaPorId(853);
+		return this.scorecardManager.getContaPorId(853);
 	}
 	private ResumoPeriodo getResumoPeriodo() {
 		/**
@@ -304,7 +302,7 @@ public class ProcessadorExtratoCCBancoBrasilGUI extends JDialog implements Mouse
 		 */
 		boolean considerarOrcamento = true;
 		long    referencia          = Util.extrairReferencia(this.txtDtRef.getDate());
-		ResumoPeriodo resumoPeriodo = this.scorecardBusinessDelegate.getResumoPeriodo(this.getContaCorrente(),referencia,referencia, considerarOrcamento);
+		ResumoPeriodo resumoPeriodo = this.scorecardManager.getResumoPeriodo(this.getContaCorrente(),referencia,referencia, considerarOrcamento);
 		return resumoPeriodo;
 	}
 	
@@ -478,7 +476,7 @@ public class ProcessadorExtratoCCBancoBrasilGUI extends JDialog implements Mouse
 		jContas.getEditor().getEditorComponent().addKeyListener(new KeyListenerComboContaContabil(this,jContas));
 		jContas.setName("CONTAS");
 		jContas.setFont(new Font("Courier New",Font.PLAIN,11));
-		for(Conta c : this.scorecardBusinessDelegate.listarContas(ContaOrdenador.Descricao)) {
+		for(Conta c : this.scorecardManager.listarContas(ContaOrdenador.Descricao)) {
 			c.toStringMode = 1;
 			jContas.addItem(c);
 		}
@@ -833,9 +831,9 @@ public class ProcessadorExtratoCCBancoBrasilGUI extends JDialog implements Mouse
 		private LoadingFrame loadingFrame;
 		private Conta conta;
 		private ContaCorrente cc;
-		private ScorecardBusinessDelegate businessDelegate;
+		private ScorecardManager businessDelegate;
 		private String tipo;
-		public Salvar(ProcessadorExtratoCCBancoBrasilGUI frame, LinhaExtratoContaCorrenteBancoBrasil linha, Conta conta, ContaCorrente cc,ScorecardBusinessDelegate businessDelegate,String tipo) {
+		public Salvar(ProcessadorExtratoCCBancoBrasilGUI frame, LinhaExtratoContaCorrenteBancoBrasil linha, Conta conta, ContaCorrente cc, ScorecardManager businessDelegate,String tipo) {
 			this.frame = frame;
 			this.linha = linha;
 			this.conta = conta;
@@ -882,7 +880,7 @@ public class ProcessadorExtratoCCBancoBrasilGUI extends JDialog implements Mouse
 				String                    hist = (String)this.modelTabNaoEncontrados.getValueAt(row, COLUMN_HISTORICO);
 				linha.setHistorico(hist);
 				try {
-					new Salvar(this, linha, conta, getContaCorrente(), this.scorecardBusinessDelegate,tipo).execute();
+					new Salvar(this, linha, conta, getContaCorrente(), this.scorecardManager,tipo).execute();
 					this.modelTabNaoEncontrados.removeRow(row);
 				} catch (Throwable t) {
 					logger.fatal(t);

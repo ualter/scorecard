@@ -18,8 +18,8 @@ import org.apache.commons.lang.StringUtils;
 import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.tabela.UjrTabelaParcelaCheque;
 import br.ujr.components.gui.tabela.UjrTabelaParcelaModelCheque;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.banco.Banco;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
@@ -87,7 +87,7 @@ public class ChequeFrame extends PassivoFrame {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ContaCorrente cc = ScorecardBusinessDelegate.getInstance().getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
+					ContaCorrente cc = ((ScorecardManager)Util.getBean("scorecardManager")).getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
 					
 					JFrame frame = new JFrame();
 					frame.setLayout(null);

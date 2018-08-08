@@ -1,12 +1,10 @@
 
 package br.ujr.scorecard.analisador.extrato.contacorrente.deutsche;
 
-import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,11 +53,11 @@ import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.components.gui.tabela.DefaultOrdenadorTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
 import br.ujr.scorecard.analisador.extrato.contacorrente.deutsche.AnalisadorExtratoCCDeutsche.LinhaExtratoContaCorrenteDeutsche;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.ContaFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.bankpanel.HeaderListener;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
 import br.ujr.scorecard.model.cc.ContaCorrente;
@@ -74,6 +72,10 @@ import br.ujr.scorecard.util.UtilGUI;
 //public class AnalisadorExtratoCCDeutscheGUI extends JDialog implements MouseListener, ActionListener, FocusListener {
 public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements MouseListener, ActionListener, FocusListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1005761561571805210L;
 	private int							width		= 1235;
 	private int							height		= 602;
 	private JPanel						panMain		= null;
@@ -84,7 +86,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 	private static Logger				logger		= Logger.getLogger(AnalisadorExtratoCCDeutscheGUI.class);
 
 	private JDateChooser				txtDtRef	= new JDateChooser("MM/yyyy", "##/####", '_');
-	private ScorecardBusinessDelegate	scorecardBusinessDelegate;
+	private ScorecardManager	scorecardManager;
 
 	public AnalisadorExtratoCCDeutscheGUI() {
 		this(null);
@@ -94,7 +96,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		super(owner);
 
 		this.setModal(true);
-		this.scorecardBusinessDelegate = ScorecardBusinessDelegate.getInstance();
+		this.scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
 
 		java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 		this.setBounds(((screenSize.width - width) / 2), ((screenSize.height - height) / 2) - 15, width, height);
@@ -251,7 +253,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 	 * @return
 	 */
 	private ContaCorrente getContaCorrente() {
-		ContaCorrente cc = this.scorecardBusinessDelegate.getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche);
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche);
 		return cc;
 	}
 
@@ -261,16 +263,16 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 	 * @return
 	 */
 	private ContaCorrente getContaCorrenteAlvoTransferencia() {
-		ContaCorrente cc = this.scorecardBusinessDelegate.getContaCorrentePorId(64);
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(64);
 		return cc;
 	}
 
 	private Conta getContaContabilDeposito() {
-		return this.scorecardBusinessDelegate.getContaPorId(854);
+		return this.scorecardManager.getContaPorId(854);
 	}
 
 	private Conta getContaContabilSalario() {
-		return this.scorecardBusinessDelegate.getContaPorId(853);
+		return this.scorecardManager.getContaPorId(853);
 	}
 
 	private void carregarTabNaoEncontrados(long ref) {
@@ -338,7 +340,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		jContas.getEditor().getEditorComponent().addKeyListener(new KeyListenerComboContaContabil(this, jContas));
 		jContas.setName("CONTAS");
 		jContas.setFont(new Font("Courier New", Font.PLAIN, 11));
-		for (Conta c : this.scorecardBusinessDelegate.listarContas(ContaOrdenador.Descricao)) {
+		for (Conta c : this.scorecardManager.listarContas(ContaOrdenador.Descricao)) {
 			c.toStringMode = 1;
 			jContas.addItem(c);
 		}
@@ -700,17 +702,17 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		private LoadingFrame						loadingFrame;
 		private Conta								conta;
 		private ContaCorrente						cc;
-		private ScorecardBusinessDelegate			businessDelegate;
+		private ScorecardManager			        scorecardManager;
 		private String								tipo;
 
-		public Salvar(AnalisadorExtratoCCDeutscheGUI frame, LinhaExtratoContaCorrenteDeutsche linha, Conta conta, ContaCorrente cc, ScorecardBusinessDelegate businessDelegate,
+		public Salvar(AnalisadorExtratoCCDeutscheGUI frame, LinhaExtratoContaCorrenteDeutsche linha, Conta conta, ContaCorrente cc, ScorecardManager scorecardManager,
 				String tipo) {
 			this.frame = frame;
 			this.linha = linha;
 			this.conta = conta;
 			this.cc = cc;
 			this.tipo = tipo;
-			this.businessDelegate = businessDelegate;
+			this.scorecardManager = scorecardManager;
 			UtilGUI.coverBlinder(frame);
 			this.loadingFrame = new LoadingFrame(true);
 			this.loadingFrame.setMessage("Salvando lançamento do extrato...");
@@ -721,13 +723,13 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 			if ("Transferência".equalsIgnoreCase(tipo)) {
 				Transferencia transferencia = AnalisadorExtratoCCDeutsche.converterLinhaTransferencia(linha, conta, cc, tipo);
 				transferencia.setAtivoTransferido(getContaCorrenteAlvoTransferencia(), getContaContabilDeposito(), Deposito.class, "Depósito Deutsche");
-				businessDelegate.saveTransferencia(transferencia);
+				scorecardManager.saveTransferencia(transferencia);
 			} else if (linha.isPassivo()) {
 				Passivo passivo = AnalisadorExtratoCCDeutsche.converterLinhaPassivo(linha, conta, cc, tipo);
-				businessDelegate.savePassivo(passivo);
+				scorecardManager.savePassivo(passivo);
 			} else if (linha.isAtivo()) {
 				Ativo ativo = AnalisadorExtratoCCDeutsche.converterLinhaAtivo(linha, conta, cc, tipo);
-				businessDelegate.saveAtivo(ativo);
+				scorecardManager.saveAtivo(ativo);
 			}
 			return null;
 		}
@@ -751,7 +753,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 				String hist = (String) this.modelTabNaoEncontrados.getValueAt(row, COLUMN_HISTORICO);
 				linha.setHistorico(hist);
 				try {
-					new Salvar(this, linha, conta, getContaCorrente(), this.scorecardBusinessDelegate, tipo).execute();
+					new Salvar(this, linha, conta, getContaCorrente(), this.scorecardManager, tipo).execute();
 					this.modelTabNaoEncontrados.removeRow(row);
 				} catch (Throwable t) {
 					logger.fatal(t);

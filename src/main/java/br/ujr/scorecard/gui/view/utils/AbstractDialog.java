@@ -3,7 +3,6 @@ package br.ujr.scorecard.gui.view.utils;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -12,8 +11,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.FocusListenerHelper;
+import br.ujr.scorecard.model.ScorecardManager;
+import br.ujr.scorecard.util.Util;
 
 public abstract class AbstractDialog extends JDialog implements ActionListener, WindowListener {
 	
@@ -24,12 +24,13 @@ public abstract class AbstractDialog extends JDialog implements ActionListener, 
 	protected JPanel                    panMain           = null;
 	protected boolean                   transparent       = false;
 	protected JFrame                    owner             = null;
-	protected ScorecardBusinessDelegate scorecardBusiness = ScorecardBusinessDelegate.getInstance();
+	protected ScorecardManager          scorecardBusiness = null;
 	
 	public AbstractDialog(JFrame owner, boolean transparent) {
 		super(owner, true);
 		this.owner = owner;
 		this.transparent = transparent;
+		this.scorecardBusiness = (ScorecardManager)Util.getBean("scorecardManager");
 		if ( this.isTransparent() ) {
 			this.panMain = new TransparentBackground(this.owner);
 		} else {

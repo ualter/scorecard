@@ -56,19 +56,19 @@ public class RemoverObjeto extends SwingWorker<String, String> {
 	protected String doInBackground() throws Exception {
 		this.loadingFrame.showLoadinFrame();
 		if ( passivo != null ) {
-			bankPanel.scorecardBusinessDelegate.deletePassivo(passivo);
+			bankPanel.scorecardManager.deletePassivo(passivo);
 		} else
 		if ( ativo != null ) {
 			publish(new String[]{"Excluindo"});
-			bankPanel.scorecardBusinessDelegate.deleteAtivo(ativo);
+			bankPanel.scorecardManager.deleteAtivo(ativo);
 		} else 
 		if ( orcamento != null ) {
 			publish(new String[]{"Excluindo"});
-			bankPanel.scorecardBusinessDelegate.deleteOrcamento(orcamento);	
+			bankPanel.scorecardManager.deleteOrcamento(orcamento);	
 		} else
 		if ( transferencia != null ) {
 			publish(new String[]{"Excluindo"});
-			bankPanel.scorecardBusinessDelegate.deleteTransferencia(transferencia);
+			bankPanel.scorecardManager.deleteTransferencia(transferencia);
 		}
 		return null;
 	}

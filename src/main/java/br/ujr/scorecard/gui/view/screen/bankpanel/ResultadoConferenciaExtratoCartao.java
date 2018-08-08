@@ -40,13 +40,13 @@ import org.apache.log4j.Logger;
 
 import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.EfetivadoTableCellRenderer;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.MonetarioTableCellRenderer;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.ParcelaTableCellRenderer;
 import br.ujr.scorecard.gui.view.screen.passivo.MastercardFrame;
 import br.ujr.scorecard.gui.view.screen.passivo.VisaCreditoFrame;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.extrato.LinhaExtratoCartao;
 import br.ujr.scorecard.model.passivo.Passivo;
@@ -77,7 +77,7 @@ public class ResultadoConferenciaExtratoCartao extends JDialog implements KeyLis
 	private static Logger logger = Logger.getLogger("br.ujr.scorecard");
 	
 	@SuppressWarnings("serial")
-	public ResultadoConferenciaExtratoCartao(Cartao.Operadora operadora, BankPanel bankPanel, ScorecardBusinessDelegate scorecard, ContaCorrente contaCorrente,
+	public ResultadoConferenciaExtratoCartao(Cartao.Operadora operadora, BankPanel bankPanel, ScorecardManager scorecard, ContaCorrente contaCorrente,
 			String valorTotal, List<LinhaExtratoCartao> linhasFaltando, List<Passivo> passivosRestando) {
 		
 		super(bankPanel.getOwner(),true);
@@ -480,7 +480,7 @@ public class ResultadoConferenciaExtratoCartao extends JDialog implements KeyLis
 		if ( e.getActionCommand().equals("POPUP_ADIAR_PASSIVO") ) {
 			String id = this.tableLancamentosRestando.getModel().getValueAt(selectedRowtableLancamentosRestando, 6).toString();
 			
-			Cartao cartao = (Cartao) this.bankPanel.scorecardBusinessDelegate.getPassivoPorId(Integer.parseInt(id));
+			Cartao cartao = (Cartao) this.bankPanel.scorecardManager.getPassivoPorId(Integer.parseInt(id));
 			for (Parcela parcela : cartao.getParcelas()) {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(parcela.getDataVencimento());
@@ -493,7 +493,7 @@ public class ResultadoConferenciaExtratoCartao extends JDialog implements KeyLis
 		if ( e.getActionCommand().equals("POPUP_ABRIR_PASSIVO") ) {
 			
 			String id = this.tableLancamentosRestando.getModel().getValueAt(selectedRowtableLancamentosRestando, 6).toString();
-			Cartao cartao = (Cartao) this.bankPanel.scorecardBusinessDelegate.getPassivoPorId(Integer.parseInt(id));
+			Cartao cartao = (Cartao) this.bankPanel.scorecardManager.getPassivoPorId(Integer.parseInt(id));
 			
 			switch(this.operadora) {
 			case VISA: {
@@ -523,7 +523,7 @@ public class ResultadoConferenciaExtratoCartao extends JDialog implements KeyLis
 			this.loadingFrame.showLoadinFrame();
 		}
 		protected String doInBackground() throws Exception {
-			this.frame.scorecardBusinessDelegate.savePassivo(cartao);	
+			this.frame.scorecardManager.savePassivo(cartao);	
 			return null;
 		}
 		protected void done() {

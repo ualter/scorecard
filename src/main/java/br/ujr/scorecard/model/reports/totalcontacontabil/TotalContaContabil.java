@@ -47,7 +47,7 @@ public class TotalContaContabil extends AbstractReport {
 		tipo          = ((Integer)criteria[4]).intValue();
 		tipoGrafico   = ((Integer)criteria[5]).intValue();
 		efetivados    = (Boolean)criteria[6];
-		Set<Passivo> passivos = this.scorecardBusinessDelegate
+		Set<Passivo> passivos = this.scorecardManager
 									.getPassivosPorNiveisContaContabil(contaCorrente, niveis, true,Util.extrairReferencia(refIni), Util.extrairReferencia(refFim));
 		
 		List<TotalContaContabilValue> values = null;

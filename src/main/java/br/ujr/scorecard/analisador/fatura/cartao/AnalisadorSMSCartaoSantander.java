@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
@@ -18,13 +18,13 @@ public abstract class AnalisadorSMSCartaoSantander {
 	protected Date mesAnoRefencia;
 	protected Cartao.Operadora operadora;
 	protected ContaCorrente santander;
-	protected ScorecardBusinessDelegate bd;
+	protected ScorecardManager bd;
 	
 	
 	public AnalisadorSMSCartaoSantander(Date mesAnoRefencia, Cartao.Operadora operadora) {
 		try {
 			
-			this.bd = ScorecardBusinessDelegate.getInstance();
+			this.bd = (ScorecardManager)Util.getBean("scorecardManager");
 			this.santander = bd.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
 			
 			this.mesAnoRefencia = mesAnoRefencia;

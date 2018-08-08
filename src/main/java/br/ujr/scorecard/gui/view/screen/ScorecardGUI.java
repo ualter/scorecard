@@ -37,11 +37,11 @@ import br.ujr.scorecard.analisador.extrato.contacorrente.bb.ProcessadorExtratoCC
 import br.ujr.scorecard.analisador.extrato.contacorrente.deutsche.AnalisadorExtratoCCDeutscheGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.santander.AnalisadorExtratoCCSantanderGUI;
 import br.ujr.scorecard.analisador.fatura.cartao.AnalisadorLancamentosCartaoGUI;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.bankpanel.BankPanel;
 import br.ujr.scorecard.gui.view.screen.passivo.PassivoConstanteFrame;
 import br.ujr.scorecard.gui.view.screen.reports.ResumoMensalFrame;
 import br.ujr.scorecard.gui.view.screen.reports.TotalContaContabilFrame;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.cc.ContaCorrenteOrdenador;
 import br.ujr.scorecard.util.ScorecardProperties;
@@ -230,7 +230,8 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     }
 
 	private void loadContasCorrentes() {
-		ScorecardBusinessDelegate manager = ScorecardBusinessDelegate.getInstance();
+		//this.manager = (ScorecardManager)Util.getBean("scorecardManager");
+		ScorecardManager manager = (ScorecardManager)Util.getBean("scorecardManager");
 		List<ContaCorrente> contasCorrentes = manager.listarContaCorrente();
     	Collections.sort(contasCorrentes,ContaCorrenteOrdenador.ORDEM);
     	for(ContaCorrente cc : contasCorrentes) {
@@ -254,7 +255,7 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     	 */
     	JPanel panResumoGeral = new JPanel();
     	panResumoGeral.setLayout(null);
-    	resumoPeriodoGeral = new ResumoPeriodoGeral(this,panResumoGeral,ScorecardBusinessDelegate.getInstance());
+    	resumoPeriodoGeral = new ResumoPeriodoGeral(this,panResumoGeral,((ScorecardManager)Util.getBean("scorecardManager")));
 		tabBancos.addTab("Resumo Geral",panResumoGeral);
 		tabBancos.addMouseListener(this);
     	
@@ -282,7 +283,6 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
 		}
     	SwingUtilities.invokeLater(new Runnable(){
 			public void run() {
-				ScorecardBusinessDelegate.initialize();
 				new ScorecardGUI();
 			}
     	});

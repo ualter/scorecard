@@ -50,11 +50,11 @@ import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.components.gui.tabela.DefaultOrdenadorTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
 import br.ujr.scorecard.analisador.extrato.contacorrente.santander.AnalisadorExtratoCCSantander.LinhaExtratoContaCorrenteSantander;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.ContaFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.bankpanel.HeaderListener;
 import br.ujr.scorecard.model.ResumoPeriodo;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
 import br.ujr.scorecard.model.cc.ContaCorrente;
@@ -78,7 +78,7 @@ public class AnalisadorExtratoCCSantanderGUI extends JDialog implements MouseLis
 	private static Logger logger = Logger.getLogger(AnalisadorExtratoCCSantanderGUI.class);
 	
 	private JDateChooser txtDtRef = new JDateChooser("MM/yyyy","##/####",'_');
-	private ScorecardBusinessDelegate scorecardBusinessDelegate;
+	private ScorecardManager scorecardManager;
 	
 	private JLabel lblSaldoDiferenca;
 	private JLabel lblSaldoAnteriorDiferenca;
@@ -88,7 +88,7 @@ public class AnalisadorExtratoCCSantanderGUI extends JDialog implements MouseLis
 	
 	public AnalisadorExtratoCCSantanderGUI() {
 		this.setModal(true);
-		this.scorecardBusinessDelegate = ScorecardBusinessDelegate.getInstance();
+		this.scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
 		
 		java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         this.setBounds(((screenSize.width-width)/2), ((screenSize.height-height)/2) - 15, width, height);
@@ -292,7 +292,7 @@ public class AnalisadorExtratoCCSantanderGUI extends JDialog implements MouseLis
 	 * @return
 	 */
 	private ContaCorrente getContaCorrente() {
-		ContaCorrente cc = this.scorecardBusinessDelegate.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
 		return cc;
 	}
 	/**
@@ -300,14 +300,14 @@ public class AnalisadorExtratoCCSantanderGUI extends JDialog implements MouseLis
 	 * @return
 	 */
 	private ContaCorrente getContaCorrenteAlvoTransferencia() {
-		ContaCorrente cc = this.scorecardBusinessDelegate.getContaCorrentePorId(64);
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(64);
 		return cc;
 	}
 	private Conta getContaContabilDeposito() {
-		return this.scorecardBusinessDelegate.getContaPorId(854);
+		return this.scorecardManager.getContaPorId(854);
 	}
 	private Conta getContaContabilSalario() {
-		return this.scorecardBusinessDelegate.getContaPorId(853);
+		return this.scorecardManager.getContaPorId(853);
 	}
 	private ResumoPeriodo getResumoPeriodo() {
 		/**
@@ -316,7 +316,7 @@ public class AnalisadorExtratoCCSantanderGUI extends JDialog implements MouseLis
 		 */
 		boolean considerarOrcamento = true;
 		long    referencia          = Util.extrairReferencia(this.txtDtRef.getDate());
-		ResumoPeriodo resumoPeriodo = this.scorecardBusinessDelegate.getResumoPeriodo(this.getContaCorrente(),referencia,referencia, considerarOrcamento);
+		ResumoPeriodo resumoPeriodo = this.scorecardManager.getResumoPeriodo(this.getContaCorrente(),referencia,referencia, considerarOrcamento);
 		return resumoPeriodo;
 	}
 	private void carregarResumo() {
@@ -477,7 +477,7 @@ public class AnalisadorExtratoCCSantanderGUI extends JDialog implements MouseLis
 		jContas.getEditor().getEditorComponent().addKeyListener(new KeyListenerComboContaContabil(this,jContas));
 		jContas.setName("CONTAS");
 		jContas.setFont(new Font("Courier New",Font.PLAIN,11));
-		for(Conta c : this.scorecardBusinessDelegate.listarContas(ContaOrdenador.Descricao)) {
+		for(Conta c : this.scorecardManager.listarContas(ContaOrdenador.Descricao)) {
 			c.toStringMode = 1;
 			jContas.addItem(c);
 		}
@@ -802,15 +802,15 @@ public class AnalisadorExtratoCCSantanderGUI extends JDialog implements MouseLis
 		private LoadingFrame loadingFrame;
 		private Conta conta;
 		private ContaCorrente cc;
-		private ScorecardBusinessDelegate businessDelegate;
+		private ScorecardManager scorecardManager;
 		private String tipo;
-		public Salvar(AnalisadorExtratoCCSantanderGUI frame, LinhaExtratoContaCorrenteSantander linha, Conta conta, ContaCorrente cc,ScorecardBusinessDelegate businessDelegate,String tipo) {
+		public Salvar(AnalisadorExtratoCCSantanderGUI frame, LinhaExtratoContaCorrenteSantander linha, Conta conta, ContaCorrente cc, ScorecardManager scorecardManager,String tipo) {
 			this.frame = frame;
 			this.linha = linha;
 			this.conta = conta;
 			this.cc = cc;
 			this.tipo = tipo;
-			this.businessDelegate = businessDelegate;
+			this.scorecardManager = scorecardManager;
 			UtilGUI.coverBlinder(frame);
 			this.loadingFrame = new LoadingFrame(true);
 			this.loadingFrame.setMessage("Salvando lançamento do extrato...");
@@ -821,15 +821,15 @@ public class AnalisadorExtratoCCSantanderGUI extends JDialog implements MouseLis
 				Transferencia transferencia = AnalisadorExtratoCCSantander.converterLinhaTransferencia(linha, conta, cc, tipo);
 				transferencia.setAtivoTransferido(getContaCorrenteAlvoTransferencia(), 
 						  						  getContaContabilDeposito(),Deposito.class,"Depósito Santander");
-				businessDelegate.saveTransferencia(transferencia);
+				scorecardManager.saveTransferencia(transferencia);
 			} else
 			if ( linha.isPassivo() ) {
 				Passivo passivo = AnalisadorExtratoCCSantander.converterLinhaPassivo(linha, conta, cc, tipo);
-				businessDelegate.savePassivo(passivo);
+				scorecardManager.savePassivo(passivo);
 			} else
 			if ( linha.isAtivo()) {
 				Ativo ativo = AnalisadorExtratoCCSantander.converterLinhaAtivo(linha, conta, cc, tipo);
-				businessDelegate.saveAtivo(ativo);
+				scorecardManager.saveAtivo(ativo);
 			}
 			carregarResumo();
 			carregarSaldos(bdSaldoExtrato, bdSaldoAnteriorExtrato);
@@ -851,7 +851,7 @@ public class AnalisadorExtratoCCSantanderGUI extends JDialog implements MouseLis
 				String                    hist = (String)this.modelTabNaoEncontrados.getValueAt(row, COLUMN_HISTORICO);
 				linha.setHistorico(hist);
 				try {
-					new Salvar(this, linha, conta, getContaCorrente(), this.scorecardBusinessDelegate,tipo).execute();
+					new Salvar(this, linha, conta, getContaCorrente(), this.scorecardManager,tipo).execute();
 					this.modelTabNaoEncontrados.removeRow(row);
 				} catch (Throwable t) {
 					logger.fatal(t);

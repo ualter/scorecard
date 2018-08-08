@@ -11,7 +11,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
 import br.ujr.scorecard.model.ativo.investimento.Investimento;
@@ -32,7 +32,7 @@ import br.ujr.scorecard.util.Util;
 public class AnalisadorExtratoCCSantander {
 
 	private List<LinhaExtratoContaCorrenteSantander> extratoContaCorrente = new ArrayList<LinhaExtratoContaCorrenteSantander>();
-	private ScorecardBusinessDelegate businessDelegate = ScorecardBusinessDelegate.getInstance();
+	private ScorecardManager scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
 	private ContaCorrente cc;
 	private Set<Passivo> passivos;
 	private List<Ativo> ativos;
@@ -81,9 +81,9 @@ public class AnalisadorExtratoCCSantander {
 	}
 	
 	public AnalisadorExtratoCCSantander(long referencia) {
-		this.cc = businessDelegate.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
-		this.passivos = businessDelegate.getPassivosPorReferencia(cc, referencia);
-		this.ativos = businessDelegate.getAtivosPorReferencia(cc, referencia);
+		this.cc = scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
+		this.passivos = scorecardManager.getPassivosPorReferencia(cc, referencia);
+		this.ativos = scorecardManager.getAtivosPorReferencia(cc, referencia);
 		this.referencia = referencia;
 		this.conteudo = Util.getClipBoarContent();
 	}

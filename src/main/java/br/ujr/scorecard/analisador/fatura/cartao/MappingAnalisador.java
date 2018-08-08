@@ -1,20 +1,20 @@
 package br.ujr.scorecard.analisador.fatura.cartao;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.LinkedHashMap;
 
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.conta.Conta;
+import br.ujr.scorecard.util.Util;
 
 public class MappingAnalisador {
 	
 	public void checkMappingDescricaoVsContaContabil(String descricao, LinhaLancamento linhaFatura) {
-		ScorecardBusinessDelegate bd = ScorecardBusinessDelegate.getInstance();
+		ScorecardManager bd = (ScorecardManager)Util.getBean("scorecardManager");
 		
 		BufferedReader buffReader = null;
 		try {

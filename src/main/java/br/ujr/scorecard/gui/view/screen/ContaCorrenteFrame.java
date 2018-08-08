@@ -31,9 +31,8 @@ import br.ujr.components.gui.combo.UjrComboBox;
 import br.ujr.components.gui.field.UjrNumberField;
 import br.ujr.components.gui.field.UjrTextField;
 import br.ujr.components.gui.tabela.DefaultModelTabela;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
-import br.ujr.scorecard.gui.view.screen.passivo.ChequeFrame;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.banco.Banco;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.cc.ContaCorrenteOrdenador;
@@ -53,7 +52,7 @@ public class ContaCorrenteFrame extends AbstractDialog implements FocusListener,
 	protected UjrTextField   txtNumero     = new UjrTextField();
 	protected UjrComboBox    txtBanco      = new UjrComboBox();
 	protected UjrNumberField txtOrdem      = new UjrNumberField();
-	protected ScorecardBusinessDelegate scoreBusinessDelegate = ScorecardBusinessDelegate.getInstance();
+	protected ScorecardManager scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
 	private JButton btnExcluir;
 	private JButton btnNovo;
 	private JButton btnOk;
@@ -71,7 +70,7 @@ public class ContaCorrenteFrame extends AbstractDialog implements FocusListener,
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				ContaCorrente cc = ScorecardBusinessDelegate.getInstance().getContaCorrentePorId(64);
+				ContaCorrente cc = ((ScorecardManager)Util.getBean("scorecardManager")).getContaCorrentePorId(64);
 				JFrame frame = new JFrame();
 				frame.setLayout(null);
 				frame.setBounds(10, 10, 200, 200);
@@ -161,7 +160,7 @@ public class ContaCorrenteFrame extends AbstractDialog implements FocusListener,
 		lblBanco.setBounds(10,Y,LBL_WIDTH,20);
 		txtBanco.setBounds(LBL_WIDTH,Y,200,20);
 		txtBanco.setEnabled(false);
-		List<Banco> bancos = this.scoreBusinessDelegate.listarBanco();
+		List<Banco> bancos = this.scorecardManager.listarBanco();
 		for (Banco banco : bancos) {
 			txtBanco.addItem(banco);
 		}
@@ -273,7 +272,7 @@ public class ContaCorrenteFrame extends AbstractDialog implements FocusListener,
 			new DefaultModelTabela(null,
 				new Object[]{ "Cód.","Descrição","Número", "Banco","Ordem" });
 		
-		List<ContaCorrente> contaCorrentes = this.scoreBusinessDelegate.listarContaCorrente();
+		List<ContaCorrente> contaCorrentes = this.scorecardManager.listarContaCorrente();
 		Collections.sort(contaCorrentes,ContaCorrenteOrdenador.ORDEM);
 		for (ContaCorrente contaCorrente : contaCorrentes) {
 			Object row[] = new Object[]{
@@ -298,7 +297,7 @@ public class ContaCorrenteFrame extends AbstractDialog implements FocusListener,
 				this.loadedContaCorrente.setNumero(this.txtNumero.getText());
 				this.loadedContaCorrente.setBanco((Banco)this.txtBanco.getSelectedItem());
 				this.loadedContaCorrente.setOrdem(new Integer(this.txtOrdem.getText()));
-				this.scoreBusinessDelegate.saveContaCorrente(this.loadedContaCorrente);
+				this.scorecardManager.saveContaCorrente(this.loadedContaCorrente);
 				this.loadedContaCorrente = null;
 				((ScorecardGUI)this.getParent()).refreshContas();
 			} else {
@@ -307,7 +306,7 @@ public class ContaCorrenteFrame extends AbstractDialog implements FocusListener,
 				contaCorrente.setNumero(this.txtNumero.getText());
 				contaCorrente.setBanco((Banco)this.txtBanco.getSelectedItem());
 				contaCorrente.setOrdem(new Integer(this.txtOrdem.getText()));
-				this.scoreBusinessDelegate.saveContaCorrente(contaCorrente);
+				this.scorecardManager.saveContaCorrente(contaCorrente);
 				((ScorecardGUI)this.getParent()).refreshContas();
 			}
 			this.resetScreen();
@@ -323,10 +322,10 @@ public class ContaCorrenteFrame extends AbstractDialog implements FocusListener,
 					   JOptionPane.YES_NO_OPTION,
 					   JOptionPane.QUESTION_MESSAGE);
 			if ( resp == 0 ) {
-				if ( !this.scoreBusinessDelegate.isContaCorrenteRemovable(loadedContaCorrente) ) {
+				if ( !this.scorecardManager.isContaCorrenteRemovable(loadedContaCorrente) ) {
 					JOptionPane.showMessageDialog(this,"Este Conta Corrente possui Movimento Financeiro associado.\n Exclusão não permitida!","Atenção",JOptionPane.WARNING_MESSAGE);
 				} else {
-					this.scoreBusinessDelegate.deleteContaCorrente(this.loadedContaCorrente);
+					this.scorecardManager.deleteContaCorrente(this.loadedContaCorrente);
 					this.loadedContaCorrente = null;
 					((ScorecardGUI)this.getParent()).refreshContas();
 					this.resetScreen();
@@ -358,7 +357,7 @@ public class ContaCorrenteFrame extends AbstractDialog implements FocusListener,
 		String nameComponent = ((Component)e.getSource()).getName();
 		if ( "LIST".equals(nameComponent)) {
 			int id = ((Integer)this.tableList.getValueAt(this.tableList.getSelectedRow(), 0)).intValue();
-			this.loadedContaCorrente = this.scoreBusinessDelegate.getContaCorrentePorId(id);
+			this.loadedContaCorrente = this.scorecardManager.getContaCorrentePorId(id);
 			this.prepararAlteracaoExclusao();
 		}
 	}

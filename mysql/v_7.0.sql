@@ -32,7 +32,7 @@ select @bancoIdSabadell, @contaCorrenteIdSabadell;
 
 
 # Disable Itau
-UPDATE `banco` SET `IS_ATIVO` = 'F' WHERE (`ID` = @bancoIdBB );
+UPDATE `banco` SET `IS_ATIVO` = 'F' WHERE (`ID` = @bancoIdItau );
 
 # Has Cheque Conta Corrente
 ALTER TABLE `conta_corrente` 

@@ -8,8 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Calendar;
 import java.util.List;
 
@@ -17,7 +15,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,9 +30,9 @@ import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
 import br.ujr.components.gui.field.UjrCurrencyField;
 import br.ujr.components.gui.field.UjrTextField;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.UtilTableCells;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
@@ -421,7 +418,7 @@ public class OrcamentoFrame extends AbstractDialog implements FocusListener {
 	}
 	
 	public static void main(String[] args) {
-		OrcamentoFrame o = new OrcamentoFrame(null,ScorecardBusinessDelegate.getInstance().getContaCorrentePorId(41));
+		OrcamentoFrame o = new OrcamentoFrame(null,((ScorecardManager)Util.getBean("scorecardManager")).getContaCorrentePorId(41));
 		o.setVisible(true);
 	}
 

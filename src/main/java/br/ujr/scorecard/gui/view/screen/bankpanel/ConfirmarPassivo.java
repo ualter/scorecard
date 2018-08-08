@@ -35,7 +35,7 @@ public class ConfirmarPassivo extends SwingWorker<String, String> {
 					Parcela parcela = cheque.getParcela(bankPanel.getChequeSelectedParcelaId());
 					parcela.setEfetivado(!parcela.isEfetivado());
 					publish(new String[]{"Salvando Cheque: " + Util.formatCurrency(parcela.getValor(),false) + " - " + cheque.getHistorico()});
-					bankPanel.scorecardBusinessDelegate.savePassivo(cheque);
+					bankPanel.scorecardManager.savePassivo(cheque);
 				}
 			} else
 			if (actionCommand.indexOf("VISA") != -1) {
@@ -44,12 +44,12 @@ public class ConfirmarPassivo extends SwingWorker<String, String> {
 					for(int i : rows) {
 						int cartaoId = ((Integer)bankPanel.tableModelVisaCredito.getValueAt(i, 5)).intValue();
 						publish(new String[]{"Carregando Cartão"});
-						Cartao cartao = (Cartao)bankPanel.scorecardBusinessDelegate.getPassivoPorId(cartaoId);
+						Cartao cartao = (Cartao)bankPanel.scorecardManager.getPassivoPorId(cartaoId);
 						Parcela parcela = cartao.getParcela(bankPanel.getVisaCreditoSelectedParcelaId(i));
 						parcela.setEfetivado(!parcela.isEfetivado());
 						String msg = parcela.isEfetivado() ? "Confirmando Débito: " : "Cancelando Débito: ";
 						publish(new String[]{msg + Util.formatCurrency(parcela.getValor(),false) + " - " + cartao.getHistorico()});
-						bankPanel.scorecardBusinessDelegate.savePassivo(cartao);
+						bankPanel.scorecardManager.savePassivo(cartao);
 					}
 				} else
 				if (actionCommand.indexOf("VISAELECTRON") != -1) {
@@ -59,7 +59,7 @@ public class ConfirmarPassivo extends SwingWorker<String, String> {
 					rowSelected = bankPanel.tableVisaElectron.getSelectedRow();
 					parcela.setEfetivado(!parcela.isEfetivado());
 					publish(new String[]{"Salvando Cartão: " + Util.formatCurrency(parcela.getValor(),false) + " - " + cartao.getHistorico()});
-					bankPanel.scorecardBusinessDelegate.savePassivo(cartao);
+					bankPanel.scorecardManager.savePassivo(cartao);
 				}	
 			} else
 			if (actionCommand.indexOf("MASTERCARD") != -1) {
@@ -67,12 +67,12 @@ public class ConfirmarPassivo extends SwingWorker<String, String> {
 				for (int i : rows) {
 					publish(new String[]{"Carregando Cartão"});
 					int cartaoId = ((Integer)bankPanel.tableModelMastercard.getValueAt(i, 5)).intValue();
-					Cartao cartao = (Cartao)bankPanel.scorecardBusinessDelegate.getPassivoPorId(cartaoId);
+					Cartao cartao = (Cartao)bankPanel.scorecardManager.getPassivoPorId(cartaoId);
 					Parcela parcela = cartao.getParcela(bankPanel.getMastercardSelectedParcelaId(i));
 					parcela.setEfetivado(!parcela.isEfetivado());
 					String msg = parcela.isEfetivado() ? "Confirmando Débito: " : "Cancelando Débito: ";
 					publish(new String[]{msg + Util.formatCurrency(parcela.getValor(),false) + " - " + cartao.getHistorico()});
-					bankPanel.scorecardBusinessDelegate.savePassivo(cartao);
+					bankPanel.scorecardManager.savePassivo(cartao);
 				}
 			} else
 			if (actionCommand.indexOf("DEBITO") != -1) {
@@ -83,7 +83,7 @@ public class ConfirmarPassivo extends SwingWorker<String, String> {
 					rowSelected = bankPanel.tableDebito.getSelectedRow();
 					parcela.setEfetivado(!parcela.isEfetivado());
 					publish(new String[]{"Salvando Débito: " + Util.formatCurrency(parcela.getValor(),false) + " - " + debito.getHistorico()});
-					bankPanel.scorecardBusinessDelegate.savePassivo(debito);
+					bankPanel.scorecardManager.savePassivo(debito);
 				}
 			} else
 			if (actionCommand.indexOf("SAQUE") != -1) {
@@ -94,7 +94,7 @@ public class ConfirmarPassivo extends SwingWorker<String, String> {
 					rowSelected = bankPanel.tableSaque.getSelectedRow();
 					parcela.setEfetivado(!parcela.isEfetivado());
 					publish(new String[]{"Salvando Saque: " + Util.formatCurrency(parcela.getValor(),false) + " - " + saque.getHistorico()});
-					bankPanel.scorecardBusinessDelegate.savePassivo(saque);
+					bankPanel.scorecardManager.savePassivo(saque);
 				}
 			}
 			return null;

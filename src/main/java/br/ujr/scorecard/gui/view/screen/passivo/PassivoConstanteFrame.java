@@ -34,12 +34,10 @@ import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
 import br.ujr.components.gui.field.UjrCurrencyField;
 import br.ujr.components.gui.field.UjrTextField;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.ContaFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.UtilTableCells;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
-import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
@@ -49,8 +47,6 @@ import br.ujr.scorecard.model.passivo.cartao.Cartao.Operadora;
 import br.ujr.scorecard.model.passivo.cheque.Cheque;
 import br.ujr.scorecard.model.passivo.debitocc.DebitoCC;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
-import br.ujr.scorecard.util.MessageManager;
-import br.ujr.scorecard.util.MessagesEnum;
 import br.ujr.scorecard.util.Util;
 
 /**

@@ -31,10 +31,10 @@ import javax.swing.table.TableColumn;
 
 import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.EfetivadoTableCellRenderer;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.MonetarioTableCellRenderer;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.ParcelaTableCellRenderer;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.orcamento.Orcamento;
@@ -58,7 +58,7 @@ public class VerPassivosOrcamentos extends JFrame implements KeyListener, MouseL
 	private BigDecimal totalRealizado;
 	
 	@SuppressWarnings("serial")
-	public VerPassivosOrcamentos(ScorecardBusinessDelegate scorecard, ContaCorrente contaCorrente, Orcamento orcamento, Date refIni, Date refFim, 
+	public VerPassivosOrcamentos(ScorecardManager scorecard, ContaCorrente contaCorrente, Orcamento orcamento, Date refIni, Date refFim, 
 			BigDecimal totalOrcado) {
 		
 		this.totalOrcado    = totalOrcado;

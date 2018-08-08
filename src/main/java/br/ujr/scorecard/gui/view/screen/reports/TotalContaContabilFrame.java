@@ -24,7 +24,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -35,12 +34,12 @@ import org.apache.log4j.Logger;
 import br.ujr.components.gui.combo.UjrComboBox;
 import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.treecheck.CheckNode;
 import br.ujr.scorecard.gui.view.screen.treecheck.CheckRenderer;
 import br.ujr.scorecard.gui.view.screen.treecheck.NodeSelectionListener;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
@@ -58,7 +57,7 @@ public class TotalContaContabilFrame extends AbstractDialog  {
 	protected JDateChooser     txtDtIni         = new JDateChooser("MM/yyyy","##/####",'_');
 	protected JDateChooser     txtDtFim         = new JDateChooser("MM/yyyy","##/####",'_');
 	protected UjrComboBox      txtContaCorrente = new UjrComboBox(); 
-	protected ScorecardBusinessDelegate scoreBusinessDelegate = ScorecardBusinessDelegate.getInstance();
+	protected ScorecardManager manager = (ScorecardManager)Util.getBean("scorecardManager");
 	private JButton btnProcessarSaldo;
 	private JButton btnSair;
 	private JTree tree;
@@ -167,7 +166,7 @@ public class TotalContaContabilFrame extends AbstractDialog  {
 		lblConta.setBounds(X,Y,LBL_WIDTH,20);
 		this.txtContaCorrente.setBounds(X + LBL_WIDTH, Y, 280, 20);
 		this.txtContaCorrente.setEditable(false);
-		List<ContaCorrente> ccs = scoreBusinessDelegate.listarContaCorrente();
+		List<ContaCorrente> ccs = manager.listarContaCorrente();
 		ContaCorrente ct = new ContaCorrente();
 		ct.setNumero("");
 		ct.setDescricao("Geral");
@@ -438,7 +437,7 @@ public class TotalContaContabilFrame extends AbstractDialog  {
         root.setIconName("root");
         model.setRoot(root);
         
-        List<Conta> contas = this.scoreBusinessDelegate.getContasPorNivel("%.0");
+        List<Conta> contas = this.manager.getContasPorNivel("%.0");
         Collections.sort(contas,ContaOrdenador.Nivel);
         
         for (Conta conta : contas) {

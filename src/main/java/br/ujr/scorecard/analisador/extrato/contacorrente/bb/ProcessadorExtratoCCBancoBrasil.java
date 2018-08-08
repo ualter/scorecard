@@ -14,7 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jfree.util.Log;
 
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
 import br.ujr.scorecard.model.ativo.investimento.Investimento;
@@ -37,7 +37,7 @@ public class ProcessadorExtratoCCBancoBrasil {
 
 	private String pathExtrato = "";
 	private List<LinhaExtratoContaCorrenteBancoBrasil> extratoContaCorrente = new ArrayList<LinhaExtratoContaCorrenteBancoBrasil>();
-	private ScorecardBusinessDelegate businessDelegate = ScorecardBusinessDelegate.getInstance();
+	private ScorecardManager scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
 	private ContaCorrente cc;
 	private Set<Passivo> passivos;
 	private List<Ativo> ativos;
@@ -89,9 +89,9 @@ public class ProcessadorExtratoCCBancoBrasil {
 	public ProcessadorExtratoCCBancoBrasil(long referencia) {
 		String file      = ScorecardProperties.getProperty(ScorecardPropertyKeys.ArquivoExtratoCC_BB);
 		this.pathExtrato = file.replaceAll("\\$MESANO", referencia + "");;
-		this.cc = businessDelegate.getContaCorrentePorId(ScorecardPropertyKeys.IdCCBancoBrasil);
-		this.passivos = businessDelegate.getPassivosPorReferencia(cc, referencia);
-		this.ativos = businessDelegate.getAtivosPorReferencia(cc, referencia);
+		this.cc = scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCBancoBrasil);
+		this.passivos = scorecardManager.getPassivosPorReferencia(cc, referencia);
+		this.ativos = scorecardManager.getAtivosPorReferencia(cc, referencia);
 		this.referencia = referencia;
 	}
 	

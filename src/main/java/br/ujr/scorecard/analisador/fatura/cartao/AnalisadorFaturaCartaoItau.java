@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
+import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
@@ -25,7 +25,7 @@ public class AnalisadorFaturaCartaoItau {
 	private Date mesAnoRefencia;
 	private Cartao.Operadora operadora;
 	private ContaCorrente itau;
-	private ScorecardBusinessDelegate bd;
+	private ScorecardManager bd;
 	
 	public static void main(String[] args) {
 		Date hoje = Calendar.getInstance().getTime();
@@ -36,7 +36,7 @@ public class AnalisadorFaturaCartaoItau {
 	public AnalisadorFaturaCartaoItau(Date mesAnoRefencia, Cartao.Operadora operadora) {
 		try {
 			
-			this.bd = ScorecardBusinessDelegate.getInstance();
+			this.bd = (ScorecardManager)Util.getBean("scorecardManager");
 			this.itau = bd.getContaCorrentePorId(ScorecardPropertyKeys.IdCCItau);
 			
 			this.mesAnoRefencia = mesAnoRefencia;

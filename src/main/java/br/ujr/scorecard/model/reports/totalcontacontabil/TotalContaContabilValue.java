@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
-import br.ujr.scorecard.gui.view.ScorecardBusinessDelegate;
-import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
 import br.ujr.scorecard.model.passivo.cheque.Cheque;
