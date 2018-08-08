@@ -2,11 +2,9 @@ package br.ujr.scorecard.model.banco;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 public class BancoDAOHibernate extends HibernateDaoSupport implements BancoDAO {
 
@@ -52,7 +50,7 @@ public class BancoDAOHibernate extends HibernateDaoSupport implements BancoDAO {
 	public List<Banco> findByNome(String nome) {
 		try {
 			StringBuffer strQuery = new StringBuffer(" from Banco as Banco where upper(Banco.nome) like ? ");
-			List<Banco> list = this.getHibernateTemplate().find(strQuery.toString(),nome.toUpperCase());
+			List<Banco> list = (List<Banco>)this.getHibernateTemplate().find(strQuery.toString(),nome.toUpperCase());
 			return list;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);
@@ -72,7 +70,7 @@ public class BancoDAOHibernate extends HibernateDaoSupport implements BancoDAO {
 	public List<Banco> list() {
 		try {
 			StringBuffer strQuery = new StringBuffer(" from Banco as Banco");
-			List<Banco> list = this.getHibernateTemplate().find(strQuery.toString());
+			List<Banco> list = (List<Banco>)this.getHibernateTemplate().find(strQuery.toString());
 			return list;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);

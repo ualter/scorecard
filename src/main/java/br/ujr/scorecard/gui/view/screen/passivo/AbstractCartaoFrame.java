@@ -11,13 +11,14 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import br.ujr.components.gui.tabela.UjrTabelaParcela;
 import br.ujr.components.gui.tabela.UjrTabelaParcelaModel;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.UtilTableCells;
 import br.ujr.scorecard.model.banco.Banco;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
@@ -38,9 +39,10 @@ public abstract class AbstractCartaoFrame extends PassivoFrame {
 	
 	protected Cartao loadedCartao = null;
 	protected Banco banco = null;
+	protected CartaoContratado cartaoContratado;
 
-	public AbstractCartaoFrame(JFrame owner, ContaCorrente contaCorrente, Date periodoDataIni) {
-		this(owner,contaCorrente,periodoDataIni,null);
+	public AbstractCartaoFrame(JFrame owner, ContaCorrente contaCorrente, CartaoContratado cartaoContratado, Date periodoDataIni) {
+		this(owner, contaCorrente, cartaoContratado, periodoDataIni, null);
 		this.banco = contaCorrente.getBanco();
 	}
 	
@@ -52,7 +54,7 @@ public abstract class AbstractCartaoFrame extends PassivoFrame {
 				new Object[]{this.contaCorrente,this.contaCorrente.getBanco()});
 	}
 	
-	public AbstractCartaoFrame(JFrame owner, ContaCorrente contaCorrente, Date periodoDataIni, Cartao cartao) {
+	public AbstractCartaoFrame(JFrame owner, ContaCorrente contaCorrente, CartaoContratado cartaoContratado, Date periodoDataIni, Cartao cartao) {
 		super(owner, contaCorrente, periodoDataIni);
 		this.title             = this.getTitle();
 		this.loadedCartao      = cartao;

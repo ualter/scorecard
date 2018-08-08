@@ -7,7 +7,7 @@ import java.awt.Font;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class FaturaCartaoTextFieldCellRenderer extends DefaultTableCellRenderer {
 		private static final long serialVersionUID = 2418901921193844216L;

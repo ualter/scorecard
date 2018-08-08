@@ -2,7 +2,7 @@ package br.ujr.components.gui.tabela;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import br.ujr.scorecard.model.conta.ContaContabilNivelOrdenador;
 import br.ujr.scorecard.util.Util;

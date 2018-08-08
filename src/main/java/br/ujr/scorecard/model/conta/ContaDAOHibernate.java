@@ -2,13 +2,11 @@ package br.ujr.scorecard.model.conta;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 public class ContaDAOHibernate extends HibernateDaoSupport implements ContaDAO {
 
@@ -53,8 +51,8 @@ public class ContaDAOHibernate extends HibernateDaoSupport implements ContaDAO {
 	@SuppressWarnings("unchecked")
 	public List<Conta> findByDescricao(String descricao) {
 		try {
-			StringBuffer strQuery = new StringBuffer(" from Conta as conta where upper(conta.descricao) like ? ");
-			List<Conta> list = this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
+			StringBuffer strQuery = new StringBuffer(" from Conta as conta where upper(conta.descricao) like ?0 ");
+			List<Conta> list = (List<Conta>)this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
 			return list;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);
@@ -71,7 +69,7 @@ public class ContaDAOHibernate extends HibernateDaoSupport implements ContaDAO {
 			 */
 			DetachedCriteria criteria = DetachedCriteria.forClass(Conta.class);
 			criteria.add(Expression.like("nivel",nivel));
-			List<Conta> list = this.getHibernateTemplate().findByCriteria(criteria);
+			List<Conta> list = (List<Conta>)this.getHibernateTemplate().findByCriteria(criteria);
 			return list;
 			/**
 			 * Using HQL - Hibernate Query Language 
@@ -97,7 +95,7 @@ public class ContaDAOHibernate extends HibernateDaoSupport implements ContaDAO {
 	public List<Conta> list() {
 		try {
 			StringBuffer strQuery = new StringBuffer(" from Conta as conta");
-			List<Conta> list = this.getHibernateTemplate().find(strQuery.toString());
+			List<Conta> list = (List<Conta>)this.getHibernateTemplate().find(strQuery.toString());
 			return list;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);

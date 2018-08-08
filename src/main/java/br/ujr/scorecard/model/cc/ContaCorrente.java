@@ -1,6 +1,6 @@
 package br.ujr.scorecard.model.cc;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import br.ujr.scorecard.model.banco.Banco;
 import br.ujr.scorecard.model.persistence.BusinessObject;

@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.passivo.Passivo;
@@ -24,9 +24,9 @@ public class CartaoDAOHibernate extends HibernateDaoSupport implements CartaoDAO
 			Set<Cartao> result = new HashSet<Cartao>();
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append(" select P.passivo, P from Parcela as P ");
-			strQuery.append(" where P.referencia >= ? and P.referencia <= ? ");
-			strQuery.append(" and P.passivo.contaCorrente.id = ? ");
-			strQuery.append(" and P.passivo.operadora = ? ");
+			strQuery.append(" where P.referencia >= ?0 and P.referencia <= ?1 ");
+			strQuery.append(" and P.passivo.contaCorrente.id = ?2 ");
+			strQuery.append(" and P.passivo.operadora = ?3 ");
 			
 			List list = this.getHibernateTemplate().find(strQuery.toString(),
 					new Object[]{referenciaInicial,referenciaFinal,contaCorrente.getId(),enumOperadora.ordinal()});

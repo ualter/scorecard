@@ -1,5 +1,6 @@
 package br.ujr.scorecard.model.passivo.cartao;
 
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.passivo.Passivo;
 
 
@@ -15,6 +16,7 @@ public class Cartao extends Passivo
 	}
 	
 	private int operadora;
+	private CartaoContratado cartaoContratado;
 	
 	public Cartao()
 	{
@@ -41,6 +43,14 @@ public class Cartao extends Passivo
 	{
 		Operadora enumOperadora = Operadora.values()[this.operadora];
 		return enumOperadora.name();
+	}
+
+	public CartaoContratado getCartaoContratado() {
+		return cartaoContratado;
+	}
+
+	public void setCartaoContratado(CartaoContratado cartaoContratado) {
+		this.cartaoContratado = cartaoContratado;
 	}
 	
 	

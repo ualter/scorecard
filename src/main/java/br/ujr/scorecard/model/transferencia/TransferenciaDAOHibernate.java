@@ -2,11 +2,9 @@ package br.ujr.scorecard.model.transferencia;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import br.ujr.scorecard.model.cc.ContaCorrente;
 
@@ -18,7 +16,7 @@ public class TransferenciaDAOHibernate extends HibernateDaoSupport implements Tr
 	public List<Transferencia> findByDescricao(String descricao) {
 		try {
 			StringBuffer strQuery = new StringBuffer(" from Transferencia as Transferencia where upper(Transferencia.descricao) like ? ");
-			List<Transferencia> list = this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
+			List<Transferencia> list = (List<Transferencia>)this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
 			return list;
 		} catch (DataAccessException e) {
 			logger.error(e.getMessage(),e);
@@ -65,9 +63,9 @@ public class TransferenciaDAOHibernate extends HibernateDaoSupport implements Tr
 	@SuppressWarnings("unchecked")
 	public List<Transferencia> findByReferencia(ContaCorrente contaCorrente, long referenciaInicial, long referenciaFinal) {
 		try {
-			StringBuffer strQuery = new StringBuffer(" from Transferencia as Transferencia where Transferencia.referencia >= ? and Transferencia.referencia <= ? ");
+			StringBuffer strQuery = new StringBuffer(" from Transferencia as Transferencia where Transferencia.referencia >= ?0 and Transferencia.referencia <= ?1 ");
 			if ( contaCorrente != null ) {
-				strQuery.append(" and Transferencia.contaCorrente.id = ? ");
+				strQuery.append(" and Transferencia.contaCorrente.id = ?2 ");
 			}
 			
 			Object[] params = null;
@@ -77,7 +75,7 @@ public class TransferenciaDAOHibernate extends HibernateDaoSupport implements Tr
 				params = new Object[]{referenciaInicial,referenciaFinal};
 			}
 			
-			List<Transferencia> list = this.getHibernateTemplate().find(strQuery.toString(),params);
+			List<Transferencia> list = (List<Transferencia>)this.getHibernateTemplate().find(strQuery.toString(),params);
 			return list;
 		} catch (DataAccessException e) {
 			logger.error(e.getMessage(),e);

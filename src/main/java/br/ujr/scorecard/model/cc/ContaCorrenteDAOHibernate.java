@@ -2,15 +2,9 @@ package br.ujr.scorecard.model.cc;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Expression;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-
-import br.ujr.scorecard.model.banco.Banco;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 public class ContaCorrenteDAOHibernate extends HibernateDaoSupport implements ContaCorrenteDAO {
 
@@ -56,7 +50,7 @@ public class ContaCorrenteDAOHibernate extends HibernateDaoSupport implements Co
 	public List<ContaCorrente> findByDescricao(String descricao) {
 		try {
 			StringBuffer strQuery = new StringBuffer(" from ContaCorrente as cc where upper(cc.descricao) like ? ");
-			List<ContaCorrente> list = this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
+			List<ContaCorrente> list = (List<ContaCorrente>)this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
 			return list;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);
@@ -76,7 +70,7 @@ public class ContaCorrenteDAOHibernate extends HibernateDaoSupport implements Co
 	public List<ContaCorrente> list() {
 		try {
 			StringBuffer strQuery = new StringBuffer(" from ContaCorrente as cc");
-			List<ContaCorrente> list = this.getHibernateTemplate().find(strQuery.toString());
+			List<ContaCorrente> list = (List<ContaCorrente>)this.getHibernateTemplate().find(strQuery.toString());
 			return list;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);

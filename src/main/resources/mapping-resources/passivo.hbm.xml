@@ -63,6 +63,16 @@
 	    <joined-subclass name="br.ujr.scorecard.model.passivo.cartao.Cartao" table="CARTAO">
 	    	<key column="PASSIVO_ID"/>
 	    	<property name="operadora"/>
+	    	<!--  
+		    Cartao associa-se a 1 CartaoContratado
+		    -->
+		    <many-to-one name="cartaoContratado"
+		    		column="CARTAO_CONTRATADO_ID"
+		    		unique="true"
+		    		not-null="true"
+		    		lazy="false"
+		    		fetch="join">
+		    </many-to-one>
 	    </joined-subclass>
 	    
 	</class>

@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 public class ObservacaoDAOHibernate extends HibernateDaoSupport implements ObservacaoDAO {
 
@@ -15,7 +15,7 @@ public class ObservacaoDAOHibernate extends HibernateDaoSupport implements Obser
 	public List<Observacao> findByDescricao(String descricao) {
 		try {
 			StringBuffer strQuery = new StringBuffer(" from Observacao as obs where upper(obs.descricao) like ? ");
-			List<Observacao> list = this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
+			List<Observacao> list = (List<Observacao>)this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
 			return list;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);

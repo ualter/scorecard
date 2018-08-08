@@ -2,15 +2,10 @@ package br.ujr.scorecard.model.cartao.contratado;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Expression;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-import br.ujr.scorecard.model.banco.Banco;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 
 public class CartaoContratadoDAOHibernate extends HibernateDaoSupport implements CartaoContratadoDAO {
@@ -56,8 +51,8 @@ public class CartaoContratadoDAOHibernate extends HibernateDaoSupport implements
 	@SuppressWarnings("unchecked")
 	public List<CartaoContratado> findByDescricao(String descricao) {
 		try {
-			StringBuffer strQuery = new StringBuffer(" from CartaoContratado as cc where upper(cc.descricao) like ? ");
-			List<CartaoContratado> list = this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
+			StringBuffer strQuery = new StringBuffer(" from CartaoContratado as cc where upper(cc.descricao) like ?0 ");
+			List<CartaoContratado> list = (List<CartaoContratado>)this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
 			return list;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);
@@ -77,7 +72,7 @@ public class CartaoContratadoDAOHibernate extends HibernateDaoSupport implements
 	public List<CartaoContratado> list() {
 		try {
 			StringBuffer strQuery = new StringBuffer(" from ContaCorrente as cc");
-			List<CartaoContratado> list = this.getHibernateTemplate().find(strQuery.toString());
+			List<CartaoContratado> list = (List<CartaoContratado>)this.getHibernateTemplate().find(strQuery.toString());
 			return list;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);
@@ -88,8 +83,8 @@ public class CartaoContratadoDAOHibernate extends HibernateDaoSupport implements
 	@Override
 	public List<CartaoContratado> findByContaCorrente(ContaCorrente contaCorrente) {
 		try {
-			StringBuffer strQuery = new StringBuffer(" from CartaoContratado as cc where cc.contaCorrente.id = ?");
-			List<CartaoContratado> list = this.getHibernateTemplate().find(strQuery.toString(),contaCorrente.getId());
+			StringBuffer strQuery = new StringBuffer(" from CartaoContratado as cc where cc.contaCorrente.id = ?0");
+			List<CartaoContratado> list = (List<CartaoContratado>)this.getHibernateTemplate().find(strQuery.toString(),contaCorrente.getId());
 			return list;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);

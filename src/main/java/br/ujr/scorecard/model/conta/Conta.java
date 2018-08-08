@@ -4,7 +4,7 @@ package br.ujr.scorecard.model.conta;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import br.ujr.scorecard.model.persistence.BusinessObject;
 

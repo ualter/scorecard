@@ -1,3 +1,13 @@
+# Table Cartao Operadora
+CREATE TABLE `cartao_tipo` (
+  `ID` INT NOT NULL,
+  `NOME` VARCHAR(80) NULL,
+  PRIMARY KEY (`ID`));
+  
+INSERT INTO `cartao_tipo` (`ID`, `NOME`) VALUES ('0', 'VISA Credito');
+INSERT INTO `cartao_tipo` (`ID`, `NOME`) VALUES ('1', 'VISA Electron');
+INSERT INTO `cartao_tipo` (`ID`, `NOME`) VALUES ('2', 'Mastercard Credito');
+
 # Insert Banc Sabadell
 INSERT INTO `banco` (`NOME`, `DIAVENCIMENTOVISA`, `DIAVENCIMENTOMASTERCARD`, `IS_ATIVO`) VALUES ('Banc Sabadell', '29', '29', 'T');
 

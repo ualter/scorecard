@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import br.ujr.components.gui.tabela.UjrTabelaParcela;
 import br.ujr.components.gui.tabela.UjrTabelaParcelaModel;

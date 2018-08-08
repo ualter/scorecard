@@ -1,6 +1,7 @@
 package br.ujr.scorecard.model.cartao.contratado;
 
 import br.ujr.scorecard.model.cc.ContaCorrente;
+import br.ujr.scorecard.model.passivo.cartao.Cartao;
 import br.ujr.scorecard.model.persistence.BusinessObject;
 
 public class CartaoContratado extends BusinessObject implements Comparable<CartaoContratado> {
@@ -80,6 +81,10 @@ public class CartaoContratado extends BusinessObject implements Comparable<Carta
 	@Override
 	public String toString() {
 		return "CartaoContratado [operadora=" + operadora + ", nome=" + nome + ", contaCorrente=" + contaCorrente + "]";
+	}
+	
+	public Cartao.Operadora getCartaoOperadora() {
+		return Cartao.Operadora.values()[this.getOperadora()];
 	}
 
 

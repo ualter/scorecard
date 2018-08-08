@@ -10,7 +10,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.passivo.Passivo;
@@ -25,7 +25,7 @@ public class OrcamentoDAOHibernate extends HibernateDaoSupport implements Orcame
 	public Set<Orcamento> findByDescricao(String descricao) {
 		try {
 			StringBuffer strQuery = new StringBuffer(" from Orcamento as orca where upper(orca.descricao) like ? ");
-			List<Orcamento> list = this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
+			List<Orcamento> list = (List<Orcamento>)this.getHibernateTemplate().find(strQuery.toString(),descricao.toUpperCase());
 			return new HashSet(list);
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);

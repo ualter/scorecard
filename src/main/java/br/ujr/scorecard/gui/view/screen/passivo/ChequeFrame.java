@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.tabela.UjrTabelaParcelaCheque;

@@ -5,7 +5,7 @@ import java.awt.Component;
 
 import javax.swing.JTable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class MonetarioTableCellRenderer extends AbstractTableCellRenderer {
 

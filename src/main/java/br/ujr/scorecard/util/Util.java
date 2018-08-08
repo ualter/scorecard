@@ -25,7 +25,7 @@ import java.util.Locale;
 
 import javax.swing.JComponent;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jfree.util.Log;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

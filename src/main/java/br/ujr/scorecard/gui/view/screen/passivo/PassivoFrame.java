@@ -34,7 +34,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import br.ujr.components.gui.combo.UjrComboBox;
@@ -53,7 +53,6 @@ import br.ujr.scorecard.model.banco.Banco;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
-import br.ujr.scorecard.model.passivo.cartao.Cartao;
 import br.ujr.scorecard.util.Util;
 
 /**

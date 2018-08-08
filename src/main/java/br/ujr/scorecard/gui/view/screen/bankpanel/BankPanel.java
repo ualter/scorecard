@@ -228,7 +228,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
     	}
     	
     	// Load Cartoes
-    	
+    	// Check Cart
     	
     	this.loadVisaCredito();
     	this.loadVisaElectron();

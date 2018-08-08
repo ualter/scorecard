@@ -7,10 +7,9 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import br.ujr.scorecard.model.cc.ContaCorrente;
-import br.ujr.scorecard.model.passivo.parcela.Parcela;
 
 public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoDAO {
 
@@ -20,7 +19,7 @@ public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoD
 	public Set<Passivo> findByHistorico(String historico) {
 		try {
 			StringBuffer strQuery = new StringBuffer(" from Passivo as passivo where upper(passivo.historico) like ? ");
-			List<Passivo> list = this.getHibernateTemplate().find(strQuery.toString(),historico.toUpperCase());
+			List<Passivo> list = (List<Passivo>)this.getHibernateTemplate().find(strQuery.toString(),historico.toUpperCase());
 			return new HashSet(list);
 		} catch (DataAccessException e) {
 			logger.error(e.getMessage(),e);
@@ -84,6 +83,7 @@ public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoD
 
 	public Passivo save(Passivo passivo) {
 		try {
+			this.getHibernateTemplate().setCheckWriteOperations(false);
 			boolean isNew = passivo.getId() > 0 ? false : true;
 			if ( isNew ) 
 			{
@@ -107,9 +107,9 @@ public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoD
 			Set<Passivo> result = new HashSet<Passivo>();
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append(" select P.passivo, P from Parcela as P ");
-			strQuery.append(" where P.referencia >= ? and P.referencia <= ? ");
+			strQuery.append(" where P.referencia >= ?0 and P.referencia <= ?1 ");
 			if ( contaCorrente != null )
-				strQuery.append(" and P.passivo.contaCorrente.id = ?");
+				strQuery.append(" and P.passivo.contaCorrente.id = ?2");
 			
 			Object[] params = null;
 			if ( contaCorrente != null ) {
@@ -142,8 +142,8 @@ public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoD
 			Set<Passivo> result = new HashSet<Passivo>();
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append(" select P.passivo, P from Parcela as P ");
-			strQuery.append(" where P.referencia >= ? and P.referencia <= ? ");
-			strQuery.append(" and P.passivo.contaCorrente.id = ? ");
+			strQuery.append(" where P.referencia >= ?0 and P.referencia <= ?1 ");
+			strQuery.append(" and P.passivo.contaCorrente.id = ?2 ");
 			
 			List list = this.getHibernateTemplate().find(strQuery.toString(),
 					new Object[]{referenciaInicial,referenciaFinal,contaCorrente.getId()});

@@ -1,21 +1,6 @@
 package br.ujr.scorecard.importing;
 
-import java.io.FileInputStream;
-import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
-
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
 import br.ujr.scorecard.model.ScorecardManager;
-import br.ujr.scorecard.model.conta.Conta;
-import br.ujr.scorecard.util.Util;
 
 /**
  * Reinicia todo o plano de contas, apagando o atual e carregado o que foi desenhado 
@@ -26,7 +11,7 @@ public class ImportadorPlanoContas {
 	
 	ScorecardManager manager;
 	
-	public ImportadorPlanoContas() {
+	/*public ImportadorPlanoContas() {
 		this.manager = (ScorecardManager)Util.getBean("scorecardManager");
 	}
 	
@@ -134,5 +119,6 @@ public class ImportadorPlanoContas {
 		importadorPlanoContas.importar();
 		System.out.println("\nOk!\n");
 	}
+	*/
 
 }
