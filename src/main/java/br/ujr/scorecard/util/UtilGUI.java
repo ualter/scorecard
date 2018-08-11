@@ -70,7 +70,6 @@ public class UtilGUI
     	frame.setGlassPane(blinder);
 		frame.getGlassPane().setVisible(true);
     }
-    @SuppressWarnings("serial")
 	private static Rectangle getBlinderDimensions(Window window) {
     	int X = window.getX();
     	int Y = window.getY() + 29;

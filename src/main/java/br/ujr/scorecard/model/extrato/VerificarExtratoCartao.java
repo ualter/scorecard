@@ -3,6 +3,7 @@ package br.ujr.scorecard.model.extrato;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -58,8 +59,9 @@ public class VerificarExtratoCartao {
 		this.linhas = new ArrayList<LinhaExtratoCartao>();
 		boolean goAhead = true;
 		if ( this.isExtratoValido() ) {
+			BufferedReader reader = null;	
 			try {
-				BufferedReader reader = new BufferedReader(new FileReader(this.extrato));
+				reader = new BufferedReader(new FileReader(this.extrato));
 				String line = null;
 				int    idx  = 0;
 				while ( (line = reader.readLine()) != null ) {
@@ -105,6 +107,14 @@ public class VerificarExtratoCartao {
 				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
+			} finally {
+				if ( reader != null ) {
+					try {
+						reader.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}

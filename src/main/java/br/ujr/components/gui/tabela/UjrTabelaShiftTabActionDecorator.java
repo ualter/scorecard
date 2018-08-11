@@ -4,13 +4,15 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JFrame;
 
 public class UjrTabelaShiftTabActionDecorator extends AbstractAction {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7529111176219763195L;
 	private Action           action;
 	private UjrTabelaParcela table;
-	private JFrame           frame;
 	
 	public UjrTabelaShiftTabActionDecorator(UjrTabelaParcela table, Action action) {
 		this.action = action;

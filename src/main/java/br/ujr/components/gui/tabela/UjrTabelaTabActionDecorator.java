@@ -4,13 +4,15 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JFrame;
 
 public class UjrTabelaTabActionDecorator extends AbstractAction {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 183378858188422093L;
 	private Action           action;
 	private UjrTabelaParcela table;
-	private JFrame           frame;
 	
 	public UjrTabelaTabActionDecorator(UjrTabelaParcela table, Action action) {
 		this.action = action;

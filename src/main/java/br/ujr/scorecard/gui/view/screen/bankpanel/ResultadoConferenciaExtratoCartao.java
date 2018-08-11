@@ -30,7 +30,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -40,12 +39,9 @@ import org.apache.log4j.Logger;
 
 import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
-import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.EfetivadoTableCellRenderer;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.MonetarioTableCellRenderer;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.ParcelaTableCellRenderer;
-import br.ujr.scorecard.gui.view.screen.passivo.MastercardFrame;
-import br.ujr.scorecard.gui.view.screen.passivo.VisaCreditoFrame;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.extrato.LinhaExtratoCartao;
@@ -456,26 +452,17 @@ public class ResultadoConferenciaExtratoCartao extends JDialog implements KeyLis
 				throw new RuntimeException(e1);
 			}
 			
-			switch(this.operadora) {
-				case VISA: {
-					VisaCreditoFrame visaCreditoFrame = new VisaCreditoFrame(this.bankPanel.getOwner(), this.bankPanel.getContaCorrente(), dataMovimento);
-					visaCreditoFrame.getTxtDataMovimento().setDate(dataMovimento);
-					visaCreditoFrame.getTxtHistorico().setText(historico);
-					Object[] rowParcela = new Object[]{visaCreditoFrame.getFirstDateVencimento(this.bankPanel.getContaCorrente().getBanco(), Cartao.Operadora.VISA),valor,new Boolean(false),0};
-					visaCreditoFrame.getModelParcelas().addRow(rowParcela);
-					visaCreditoFrame.setVisible(true);
-					break;
-				}
-				case MASTERCARD: {
-					MastercardFrame masterCardCreditoFrame = new MastercardFrame(this.bankPanel.getOwner(), this.bankPanel.getContaCorrente(), dataMovimento);
-					masterCardCreditoFrame.getTxtDataMovimento().setDate(dataMovimento);
-					masterCardCreditoFrame.getTxtHistorico().setText(historico);
-					Object[] rowParcela = new Object[]{masterCardCreditoFrame.getFirstDateVencimento(this.bankPanel.getContaCorrente().getBanco(), Cartao.Operadora.MASTERCARD),valor,new Boolean(false),0};
-					masterCardCreditoFrame.getModelParcelas().addRow(rowParcela);
-					masterCardCreditoFrame.setVisible(true);
-					break;
-				}
-			}
+//			switch(this.operadora) {
+//				case VISA: {
+//					VisaCreditoFrame visaCreditoFrame = new VisaCreditoFrame(this.bankPanel.getOwner(), this.bankPanel.getContaCorrente(), dataMovimento);
+//					visaCreditoFrame.getTxtDataMovimento().setDate(dataMovimento);
+//					visaCreditoFrame.getTxtHistorico().setText(historico);
+//					Object[] rowParcela = new Object[]{visaCreditoFrame.getFirstDateVencimento(this.bankPanel.getContaCorrente().getBanco(), Cartao.Operadora.VISA),valor,new Boolean(false),0};
+//					visaCreditoFrame.getModelParcelas().addRow(rowParcela);
+//					visaCreditoFrame.setVisible(true);
+//					break;
+//				}
+//			}
 		} else
 		if ( e.getActionCommand().equals("POPUP_ADIAR_PASSIVO") ) {
 			String id = this.tableLancamentosRestando.getModel().getValueAt(selectedRowtableLancamentosRestando, 6).toString();
@@ -495,41 +482,14 @@ public class ResultadoConferenciaExtratoCartao extends JDialog implements KeyLis
 			String id = this.tableLancamentosRestando.getModel().getValueAt(selectedRowtableLancamentosRestando, 6).toString();
 			Cartao cartao = (Cartao) this.bankPanel.scorecardManager.getPassivoPorId(Integer.parseInt(id));
 			
-			switch(this.operadora) {
-			case VISA: {
-				VisaCreditoFrame visaCreditoFrame = new VisaCreditoFrame(this.bankPanel.getOwner(), this.bankPanel.getContaCorrente(), null, cartao);
-				visaCreditoFrame.setVisible(true);
-				break;
-			}
-			case MASTERCARD: {
-				MastercardFrame masterCardCreditoFrame = new MastercardFrame(this.bankPanel.getOwner(), this.bankPanel.getContaCorrente(), null, cartao);
-				masterCardCreditoFrame.setVisible(true);
-				break;
-			}
+//			switch(this.operadora) {
+//			case VISA: {
+//				VisaCreditoFrame visaCreditoFrame = new VisaCreditoFrame(this.bankPanel.getOwner(), this.bankPanel.getContaCorrente(), null, cartao);
+//				visaCreditoFrame.setVisible(true);
+//				break;
+//			}
 		}
 			
 		}
-	}
-	
-	private class AdiarDataVencimentoCartao extends SwingWorker<String, String> {
-		private BankPanel frame;
-		private Cartao cartao;
-		private LoadingFrame loadingFrame;
-		public AdiarDataVencimentoCartao(BankPanel frame, Cartao cartao) {
-			this.frame = frame;
-			this.cartao = cartao;
-			this.loadingFrame = new LoadingFrame(true);
-			this.loadingFrame.setMessage("Adiando vencimento " + Util.formatCurrency(cartao.getValorTotal(), false) + " - " + cartao.getHistorico());
-			this.loadingFrame.showLoadinFrame();
-		}
-		protected String doInBackground() throws Exception {
-			this.frame.scorecardManager.savePassivo(cartao);	
-			return null;
-		}
-		protected void done() {
-			this.loadingFrame.dispose();
-			this.frame.updateViewVisaCredito();
-		}
-	}
 
 }

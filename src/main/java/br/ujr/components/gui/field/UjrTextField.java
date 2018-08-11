@@ -2,10 +2,13 @@ package br.ujr.components.gui.field;
 
 import java.awt.Graphics;
 
-import javax.swing.BorderFactory;
-
 public class UjrTextField extends AbstractUjrField {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public UjrTextField() {
 	}
 	
