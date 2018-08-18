@@ -94,3 +94,23 @@ call cartaoContratado_vs_cartaoPassivo();
 # Check it
 SELECT c.*, p.historico, cc.DESCRICAO, cc.NUMERO FROM cartao c INNER JOIN passivo p on p.id = c.passivo_id
 inner join conta_corrente cc on p.conta_corrente_id = cc.id;
+
+# Logo CartaoContratado
+ALTER TABLE `cartao_contratado` 
+ADD COLUMN `LOGO` VARCHAR(80) NULL AFTER `CONTA_CORRENTE_ID`;
+
+UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`ID` = '2');
+UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`ID` = '5');
+UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`ID` = '8');
+UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`ID` = '11');
+UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`ID` = '14');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`ID` = '1');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`ID` = '4');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`ID` = '7');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`ID` = '10');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`ID` = '13');
+UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`ID` = '3');
+UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`ID` = '6');
+UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`ID` = '9');
+UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`ID` = '12');
+UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`ID` = '15');

@@ -995,5 +995,15 @@ public class ScorecardManagerImpl implements ScorecardManager
 	public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal) {
 		return this.getOrcamentosPorReferencia(contaCorrente, Util.extrairReferencia(referenciaInicial), Util.extrairReferencia(referenciaFinal));
 	}
+
+	@Override
+	public List<CartaoContratado> getCartoesContaCorrente(ContaCorrente contaCorrente) {
+		return this.getCartaoContratadoDAO().findByContaCorrente(contaCorrente);
+	}
+
+	@Override
+	public CartaoContratado getCartaoContratado(Integer keyCartaoContratado) {
+		return this.getCartaoContratadoDAO().findById(keyCartaoContratado);
+	}
 	
 }

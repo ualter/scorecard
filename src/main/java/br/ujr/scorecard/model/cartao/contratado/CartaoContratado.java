@@ -10,7 +10,16 @@ public class CartaoContratado extends BusinessObject implements Comparable<Carta
 	private Integer operadora;
 	private String nome;
 	private ContaCorrente contaCorrente;
+	private String logo;
 	
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logoFile) {
+		this.logo = logoFile;
+	}
+
 	public Integer getOperadora() {
 		return operadora;
 	}

@@ -55,6 +55,8 @@ public interface ScorecardManager
     public void savePassivo(Passivo passivo);
 
     public void deletePassivo(Passivo passivo);
+    
+    public List<CartaoContratado>  getCartoesContaCorrente(ContaCorrente contaCorrente);
 
     public Set<Passivo> getPassivoPorHistorico(String historico);
     
@@ -212,5 +214,7 @@ public interface ScorecardManager
     public Set<Passivo> getEspecificoPassivoPorReferencia(ContaCorrente contaCorrente, Class clazz, java.util.Date referenciaInicial, java.util.Date referenciaFinal);
     
     public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal);
+
+	public CartaoContratado getCartaoContratado(Integer keyCartaoContratado);
 
 }
