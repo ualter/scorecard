@@ -2105,7 +2105,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	}
 
 	private void loadCartaoTableModel(ContaCorrente contaCorrente, CartaoContratado cartaoContratado) {
-		System.out.println(this.getContaCorrente());
 		DefaultModelTabela defaultModelTabela = new DefaultModelTabela(null,
 				new Object[] { "Data", "Valor", "Descrição", "Parc.", "C/C", "ID", "ID_PARCELA", "SELECTED" });
 		Set<Cartao> setCartoes = this.scorecardManager.getCartaoPorOperadora(contaCorrente,
