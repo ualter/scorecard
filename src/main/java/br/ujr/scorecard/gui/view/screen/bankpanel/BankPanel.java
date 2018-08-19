@@ -152,7 +152,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	protected JTable tableCheque;
 
 	protected Map<CartaoContratado, DefaultModelTabela> tableModelCartoes;
-	protected Map<CartaoContratado, JTable> tableCartoes;
+	protected Map<CartaoContratado, JTable> tableCartoes = new HashMap<CartaoContratado,JTable>();
 
 	protected DefaultModelTabela tableModelDebito;
 	protected JTable tableDebito;
@@ -491,9 +491,9 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 					return false;
 				}
 			};
-			
-			this.setUpTable(tableCartao,"TABLE_" + cartaoContratado.getCartaoOperadora().name().toUpperCase());
-			this.layOutTable(tableCartao);
+			this.setUpTable(tableCartao,"TABLE_CARTAO_" + cartaoContratado.getId());
+			this.layOutTableCartaoCredito(tableCartao);
+			this.tableCartoes.put(cartaoContratado, tableCartao);
 			
 			JScrollPane jScrollPane = new JScrollPane(tableCartao);
 			JLabel lblCartao = new JLabel(cartaoContratado.getNome(),SwingConstants.CENTER);
@@ -1406,7 +1406,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		} else if (actionCommand.indexOf("CARTAO") != -1) {
 			//AQUI
 			String[] infos              = actionCommand.split("_");
-			String   action             = infos[1];
+			//String   action             = infos[1];
 			String   idCartaoContratado = infos[2];
 			CartaoContratado cartaoContratado = this.scorecardManager.getCartaoContratado(Integer.parseInt(idCartaoContratado));
 			if (cartaoContratado == null) {
@@ -1422,28 +1422,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 					new RemoverObjeto(this, actionCommand, cartao, cartaoContratado).execute();
 				}
 			}
-//		} else if (actionCommand.indexOf("VISA") != -1) {
-//			Cartao cartao = actionCommand.indexOf("CREDITO") != -1 ? getSelectedVisaCredito() : getSelectedVisaElectron();
-//			if (cartao != null) {
-//				String msg = "Excluir Cartão:\n" + cartao.getHistorico() + " - R$ "
-//						+ Util.formatCurrency(cartao.getValorTotal()) + " ?";
-//				int resp = JOptionPane.showConfirmDialog(this, msg, "Exclusão", JOptionPane.YES_NO_OPTION,
-//						JOptionPane.QUESTION_MESSAGE);
-//				if (resp == 0) {
-//					new RemoverObjeto(this, actionCommand, cartao).execute();
-//				}
-//			}
-//		} else if (actionCommand.indexOf("MASTERCARD") != -1) {
-//			Cartao cartao = getSelectedMastercard();
-//			if (cartao != null) {
-//				String msg = "Excluir Cartão:\n" + cartao.getHistorico() + " - R$ "
-//						+ Util.formatCurrency(cartao.getValorTotal()) + " ?";
-//				int resp = JOptionPane.showConfirmDialog(this, msg, "Exclusão", JOptionPane.YES_NO_OPTION,
-//						JOptionPane.QUESTION_MESSAGE);
-//				if (resp == 0) {
-//					new RemoverObjeto(this, actionCommand, cartao).execute();
-//				}
-//			}
 		} else if (actionCommand.indexOf("DEBITO") != -1) {
 			DebitoCC debitos = getSelectedDebito();
 			if (debitos != null) {
@@ -1636,33 +1614,12 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	public Cartao getSelectedCartao(CartaoContratado cartaoContratado) {
 		if ( this.tableCartoes.get(cartaoContratado).getSelectedRow() > -1 ) {
 			JTable table = this.tableCartoes.get(cartaoContratado);
-			int cartaoId = ((Integer)table.getValueAt(table.getSelectedRow(), 5)).intValue();
+			int cartaoId = ((Integer)tableModelCartoes.get(cartaoContratado).getValueAt(table.getSelectedRow(), 5)).intValue();
 			Cartao cartao = (Cartao)this.scorecardManager.getPassivoPorId(cartaoId);
 			return cartao;
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecione o registro do " + cartaoContratado.getOperadora(),"Cartões",JOptionPane.WARNING_MESSAGE);
 		}
-		return null;
-	}
-	public Cartao getSelectedVisaCredito() {
-//		if ( this.tableVisaCredito.getSelectedRow() > -1 ) {
-//			int cartaoId = ((Integer)this.tableModelVisaCredito.getValueAt(this.tableVisaCredito.getSelectedRow(), 5)).intValue();
-//			Cartao cartao = (Cartao)this.scorecardManager.getPassivoPorId(cartaoId);
-//			return cartao;
-//		} else {
-//			JOptionPane.showMessageDialog(this, "Selecione o registro do Visa Crédito","Cartões",JOptionPane.WARNING_MESSAGE);
-//		}
-		return null;
-	}
-
-	public Cartao getSelectedMastercard() {
-//		if ( this.tableMastercard.getSelectedRow() > -1 ) {
-//			int cartaoId = ((Integer)this.tableModelMastercard.getValueAt(this.tableMastercard.getSelectedRow(), 5)).intValue();
-//			Cartao cartao = (Cartao)this.scorecardManager.getPassivoPorId(cartaoId);
-//			return cartao;
-//		} else {
-//			JOptionPane.showMessageDialog(this, "Selecione o registro do MasterCard","Cartões",JOptionPane.WARNING_MESSAGE);
-//		}
 		return null;
 	}
 
@@ -1756,17 +1713,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		return null;
 	}
 
-	public Cartao getSelectedVisaElectron() {
-//		if ( this.tableVisaElectron.getSelectedRow() > -1 ) {
-//			int cartaoId = ((Integer)this.tableModelVisaElectron.getValueAt(this.tableVisaElectron.getSelectedRow(), 5)).intValue();
-//			Cartao cartao = (Cartao)this.scorecardManager.getPassivoPorId(cartaoId);
-//			return cartao;
-//		} else {
-//			JOptionPane.showMessageDialog(this, "Selecione o registro do Visa Electron","Cartões",JOptionPane.WARNING_MESSAGE);
-//		}
-		return null;
-	}
-
 	public int getChequeSelectedParcelaId() {
 		int parcelaId = ((Integer) this.tableModelCheque.getValueAt(this.tableCheque.getSelectedRow(), 7)).intValue();
 		return parcelaId;
@@ -1777,15 +1723,12 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		return parcelaId;
 	}
 
-//	public int getVisaCreditoSelectedParcelaId() {
-//		int parcelaId = ((Integer)this.tableModelVisaCredito.getValueAt(this.tableVisaCredito.getSelectedRow(), 6)).intValue();
-//		return parcelaId;
-//	}
-//	public int getVisaCreditoSelectedParcelaId(int row) {
-//		int parcelaId = ((Integer)this.tableModelVisaCredito.getValueAt(row, 6)).intValue();
-//		return parcelaId;
-//	}
-
+	public int getCartaoSelectedParcelaId(CartaoContratado cartaoContratado) {
+		int selectedRow = this.tableCartoes.get(cartaoContratado).getSelectedRow();
+		int parcelaId   = ((Integer)this.tableModelCartoes.get(cartaoContratado).getValueAt(selectedRow, 6)).intValue();
+		return parcelaId;
+	}
+	
 	public int getSaqueSelectedParcelaId() {
 		int parcelaId = ((Integer) this.tableModelSaque.getValueAt(this.tableSaque.getSelectedRow(), 6)).intValue();
 		return parcelaId;
@@ -1875,17 +1818,8 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			bankPanel.updateViewSalario();
 			loadingFrame.setStatus("Carregando Transferências", 7);
 			bankPanel.updateViewTransferencia();
-			
-//			loadingFrame.setStatus("Carregando Visa Crédito", 9);
-//			bankPanel.updateViewVisaCredito();
-//			loadingFrame.setStatus("Carregando Visa Electron", 10);
-//			bankPanel.updateViewVisaElectron();
-//			loadingFrame.setStatus("Carregando Mastercard", 5);
-//			bankPanel.updateViewMastercard();
-			
 			loadingFrame.setStatus("Carregando Cartoes", 8);
 			bankPanel.updateViewCartoes();
-			
 			loadingFrame.setStatus("Carregando Saques", 9);
 			bankPanel.updateViewSaque();
 			loadingFrame.setStatus("Carregando Resumo do Período", 10);
@@ -1924,33 +1858,17 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 				}
 			}
 		} else
-//		if ( "TABLE_VISACREDITO".equalsIgnoreCase(nameComponent)) {
-//			if ( evt.getClickCount() == 2 ) {
-//				Cartao cartao = this.getSelectedVisaCredito();
-//				if ( cartao != null ) {
-//					VisaCreditoFrame cartaoFrame = new VisaCreditoFrame(this.owner, this.getContaCorrente(), this.periodoDataInicial, cartao);
-//					cartaoFrame.setVisible(true);
-//				}
-//			}
-//		} else
-//		if ( "TABLE_VISAELECTRON".equalsIgnoreCase(nameComponent)) {
-//			if ( evt.getClickCount() == 2 ) {
-//				Cartao cartao = this.getSelectedVisaElectron();
-//				if ( cartao != null ) {
-//					VisaElectronFrame cartaoFrame = new VisaElectronFrame(this.owner, this.getContaCorrente(), this.periodoDataInicial, cartao);
-//					cartaoFrame.setVisible(true);
-//				}
-//			}
-//		} else
-//		if ( "TABLE_MASTERCARD".equalsIgnoreCase(nameComponent)) {
-//			if ( evt.getClickCount() == 2 ) {
-//				Cartao cartao = this.getSelectedMastercard();
-//				if ( cartao != null ) {
-//					MastercardFrame cartaoFrame = new MastercardFrame(this.owner, this.getContaCorrente(), this.periodoDataInicial, cartao);
-//					cartaoFrame.setVisible(true);
-//				}
-//			}
-//		} else
+		if ( nameComponent.indexOf("TABLE_CARTAO") > -1 ) {
+			if ( evt.getClickCount() == 2 ) {
+				String           idCartaoContratado = nameComponent.split("_")[2];
+				CartaoContratado cartaoContratado   = this.scorecardManager.getCartaoContratado(Integer.parseInt(idCartaoContratado));
+				Cartao           cartao             = this.getSelectedCartao(cartaoContratado);
+				if ( cartao != null ) {
+					CartaoFrame cartaoFrame = new CartaoFrame(this.owner, this.getContaCorrente(), cartaoContratado, this.periodoDataInicial, cartao);
+					cartaoFrame.setVisible(true);
+				}
+			}
+		} else
 		if ("TABLE_DEBITO".equalsIgnoreCase(nameComponent)) {
 			if (evt.getClickCount() == 2) {
 				DebitoCC debito = this.getSelectedDebito();
@@ -2031,20 +1949,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		} else if (passivo instanceof Cartao) {
 			Cartao cartao = (Cartao) passivo;
 			this.updateViewCartao(cartao.getCartaoContratado());
-//			switch (cartao.getEnumOperadora()) {
-//				case VISA: {
-//					this.updateViewVisaCredito();
-//					break;
-//				}
-//				case VISA_ELECTRON: {
-//					this.updateViewVisaElectron();
-//					break;
-//				}
-//				case MASTERCARD: {
-//					this.updateViewMastercard();
-//					break;
-//				}
-//			}
 		} else if (passivo instanceof DebitoCC) {
 			this.updateViewDebito();
 		} else if (passivo instanceof Saque) {
@@ -2209,10 +2113,16 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 				this.scorecardManager.ordenarParcelas(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
 				Object row[];
 				for (Parcela parcela : parcelasCartao) {
-					row = new Object[] { Util.formatDate(parcela.getPassivo().getDataMovimento()),
-							Util.formatCurrency(parcela.getValor()), parcela.getPassivo().getHistorico(),
-							parcela.getLabelNumeroTotalParcelas(), parcela.isEfetivado(), parcela.getPassivo().getId(),
-							parcela.getId(), false };
+					row = new Object[] { 
+							Util.formatDate(parcela.getPassivo().getDataMovimento()),
+							Util.formatCurrency(parcela.getValor()), 
+							parcela.getPassivo().getHistorico(),
+							parcela.getLabelNumeroTotalParcelas(),
+							parcela.isEfetivado(),
+							parcela.getPassivo().getId(),
+							parcela.getId(),
+							false 
+					};
 					defaultModelTabela.addRow(row);
 				}
 	
@@ -2250,33 +2160,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		}
 		return this.cartoesContratados;
 	}
-
-//	private void loadVisaCredito() {
-//		this.tableModelVisaCredito    = new DefaultModelTabela(null,new Object[]{"Data","Valor","Descrição","Parc.","C/C","ID","ID_PARCELA","SELECTED" });
-//		Set<Cartao>  setCartoes       = this.scorecardManager.getCartaoPorOperadora(this.getContaCorrente(),Cartao.Operadora.VISA, this.periodoDataInicial, this.periodoDataFinal);
-//		List<Cartao> cartoes          = new ArrayList<Cartao>(setCartoes);
-//		List<Parcela> parcelasCartao  = new ArrayList<Parcela>();
-//		Collections.sort(parcelasCartao,ParcelaOrdenador.DATA_LANCAMENTO);
-//		for (Passivo passivo : cartoes) {
-//			Cartao cartao = (Cartao)passivo;
-//			parcelasCartao.addAll(cartao.getParcelas());
-//		}
-//		this.scorecardManager.ordenarParcelas(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
-//		Object row[];
-//		for(Parcela parcela : parcelasCartao) {
-//			row = new Object[]{
-//				Util.formatDate(parcela.getPassivo().getDataMovimento()),
-//				Util.formatCurrency(parcela.getValor()),
-//				parcela.getPassivo().getHistorico(),
-//				parcela.getLabelNumeroTotalParcelas(),
-//				parcela.isEfetivado(),
-//				parcela.getPassivo().getId(),
-//				parcela.getId(),
-//				false
-//			};
-//			this.tableModelVisaCredito.addRow(row);
-//		}
-//	}
 
 	private void loadDebito() {
 		this.tableModelDebito = new DefaultModelTabela(null,
