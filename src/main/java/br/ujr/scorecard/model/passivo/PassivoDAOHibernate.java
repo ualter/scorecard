@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
@@ -81,9 +83,9 @@ public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoD
 		}
 	}
 
+	@Transactional
 	public Passivo save(Passivo passivo) {
 		try {
-			this.getHibernateTemplate().setCheckWriteOperations(false);
 			boolean isNew = passivo.getId() > 0 ? false : true;
 			if ( isNew ) 
 			{
@@ -93,9 +95,8 @@ public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoD
 			{
 				this.getHibernateTemplate().update(passivo);
 			}
-			this.getHibernateTemplate().flush();
 			return passivo;
-		} catch (DataAccessException e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 			throw e;
 		}

@@ -1949,6 +1949,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		} else if (passivo instanceof Cartao) {
 			Cartao cartao = (Cartao) passivo;
 			this.updateViewCartao(cartao.getCartaoContratado());
+			//this.updateViewCartoes(); <-- FUNCIONA
 		} else if (passivo instanceof DebitoCC) {
 			this.updateViewDebito();
 		} else if (passivo instanceof Saque) {
@@ -1981,7 +1982,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	}
 	
 	public void updateViewCartao(CartaoContratado cartaoContratado) {
-		this.loadCartoes(cartaoContratado);
+		this.loadCartoes(cartaoContratado.getContaCorrente(), cartaoContratado);
 		this.tableCartoes.get(cartaoContratado).setModel(this.tableModelCartoes.get(cartaoContratado));
 		this.layOutTableCartaoCredito(this.tableCartoes.get(cartaoContratado));
 	}
@@ -2087,71 +2088,51 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	 * Dados dos cartoes que a conta corrente do Banco possui associado
 	 */
 	private void loadCartoes() {
-		this.loadCartoes(null);
+		this.loadCartoes(this.getContaCorrente(), null);
 	}
-	private void loadCartoes(CartaoContratado cartaoContratadoCarregar) {
-		if ( cartaoContratadoCarregar == null ) {
-			this.tableModelCartoes = new HashMap<CartaoContratado, DefaultModelTabela>();
-		}
-
+	private void loadCartoes(ContaCorrente contaCorrente, CartaoContratado cartaoContratadoCarregar) {
 		if ( cartaoContratadoCarregar == null ) {
 			// Carregar Todos
+			this.tableModelCartoes = new HashMap<CartaoContratado, DefaultModelTabela>();
 			List<CartaoContratado> cartoesContratados = getCartoesContratados();
 			for (CartaoContratado cartaoContratado : cartoesContratados) {
-	
-				DefaultModelTabela defaultModelTabela = new DefaultModelTabela(null,
-						new Object[] { "Data", "Valor", "Descrição", "Parc.", "C/C", "ID", "ID_PARCELA", "SELECTED" });
-				Set<Cartao> setCartoes = this.scorecardManager.getCartaoPorOperadora(this.getContaCorrente(),
-						cartaoContratado.getCartaoOperadora(), this.periodoDataInicial, this.periodoDataFinal);
-				List<Cartao> cartoes = new ArrayList<Cartao>(setCartoes);
-				List<Parcela> parcelasCartao = new ArrayList<Parcela>();
-				Collections.sort(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
-				for (Passivo passivo : cartoes) {
-					Cartao cartao = (Cartao) passivo;
-					parcelasCartao.addAll(cartao.getParcelas());
-				}
-				this.scorecardManager.ordenarParcelas(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
-				Object row[];
-				for (Parcela parcela : parcelasCartao) {
-					row = new Object[] { 
-							Util.formatDate(parcela.getPassivo().getDataMovimento()),
-							Util.formatCurrency(parcela.getValor()), 
-							parcela.getPassivo().getHistorico(),
-							parcela.getLabelNumeroTotalParcelas(),
-							parcela.isEfetivado(),
-							parcela.getPassivo().getId(),
-							parcela.getId(),
-							false 
-					};
-					defaultModelTabela.addRow(row);
-				}
-	
-				this.tableModelCartoes.put(cartaoContratado, defaultModelTabela);
+				loadCartaoTableModel(contaCorrente, cartaoContratado);
 			}
 		} else {
-			// Carregar Cartao Especifico
-			DefaultModelTabela defaultModelTabela = new DefaultModelTabela(null,
-					new Object[] { "Data", "Valor", "Descrição", "Parc.", "C/C", "ID", "ID_PARCELA", "SELECTED" });
-			Set<Cartao> setCartoes = this.scorecardManager.getCartaoPorOperadora(this.getContaCorrente(),
-					cartaoContratadoCarregar.getCartaoOperadora(), this.periodoDataInicial, this.periodoDataFinal);
-			List<Cartao> cartoes = new ArrayList<Cartao>(setCartoes);
-			List<Parcela> parcelasCartao = new ArrayList<Parcela>();
-			Collections.sort(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
-			for (Passivo passivo : cartoes) {
-				Cartao cartao = (Cartao) passivo;
-				parcelasCartao.addAll(cartao.getParcelas());
-			}
-			this.scorecardManager.ordenarParcelas(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
-			Object row[];
-			for (Parcela parcela : parcelasCartao) {
-				row = new Object[] { Util.formatDate(parcela.getPassivo().getDataMovimento()),
-						Util.formatCurrency(parcela.getValor()), parcela.getPassivo().getHistorico(),
-						parcela.getLabelNumeroTotalParcelas(), parcela.isEfetivado(), parcela.getPassivo().getId(),
-						parcela.getId(), false };
-				defaultModelTabela.addRow(row);
-			}
-			this.tableModelCartoes.put(cartaoContratadoCarregar, defaultModelTabela);
+			this.tableModelCartoes.remove(cartaoContratadoCarregar);
+			loadCartaoTableModel(contaCorrente, cartaoContratadoCarregar);
 		}
+	}
+
+	private void loadCartaoTableModel(ContaCorrente contaCorrente, CartaoContratado cartaoContratado) {
+		System.out.println(this.getContaCorrente());
+		DefaultModelTabela defaultModelTabela = new DefaultModelTabela(null,
+				new Object[] { "Data", "Valor", "Descrição", "Parc.", "C/C", "ID", "ID_PARCELA", "SELECTED" });
+		Set<Cartao> setCartoes = this.scorecardManager.getCartaoPorOperadora(contaCorrente,
+				cartaoContratado.getCartaoOperadora(), this.periodoDataInicial, this.periodoDataFinal);
+		List<Cartao> cartoes = new ArrayList<Cartao>(setCartoes);
+		List<Parcela> parcelasCartao = new ArrayList<Parcela>();
+		Collections.sort(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
+		for (Passivo passivo : cartoes) {
+			Cartao cartao = (Cartao) passivo;
+			parcelasCartao.addAll(cartao.getParcelas());
+		}
+		this.scorecardManager.ordenarParcelas(parcelasCartao, ParcelaOrdenador.DATA_LANCAMENTO);
+		Object row[];
+		for (Parcela parcela : parcelasCartao) {
+			row = new Object[] { 
+					Util.formatDate(parcela.getPassivo().getDataMovimento()),
+					Util.formatCurrency(parcela.getValor()), 
+					parcela.getPassivo().getHistorico(),
+					parcela.getLabelNumeroTotalParcelas(),
+					parcela.isEfetivado(),
+					parcela.getPassivo().getId(),
+					parcela.getId(),
+					false 
+			};
+			defaultModelTabela.addRow(row);
+		}
+		this.tableModelCartoes.put(cartaoContratado, defaultModelTabela);
 	}
 
 	private List<CartaoContratado> getCartoesContratados() {

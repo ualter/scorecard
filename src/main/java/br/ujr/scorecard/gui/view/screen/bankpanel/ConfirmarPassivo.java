@@ -108,6 +108,9 @@ public class ConfirmarPassivo extends SwingWorker<String, String> {
 				bankPanel.updateViewPeriodo();
 				bankPanel.tableCheque.setRowSelectionInterval(rowSelected, rowSelected);
 			} else
+			if (actionCommand.indexOf("CARTAO") != -1) {
+				System.out.println(actionCommand);
+			}
 //			if (actionCommand.indexOf("VISA") != -1) {
 //				if (actionCommand.indexOf("VISACREDITO") != -1) {
 //					bankPanel.updateViewVisaCredito();
