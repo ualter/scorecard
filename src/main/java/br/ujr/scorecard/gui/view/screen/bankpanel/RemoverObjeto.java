@@ -6,6 +6,7 @@ import javax.swing.SwingWorker;
 
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.model.ativo.Ativo;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.orcamento.Orcamento;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.transferencia.Transferencia;
@@ -13,13 +14,14 @@ import br.ujr.scorecard.util.UtilGUI;
 
 public class RemoverObjeto extends SwingWorker<String, String> {
 	
-	private BankPanel     bankPanel;
-	private String        actionCommand;
-	private LoadingFrame  loadingFrame;
-	private Passivo       passivo;
-	private Ativo         ativo;
-	private Orcamento     orcamento;
-	private Transferencia transferencia;
+	private BankPanel        bankPanel;
+	private String           actionCommand;
+	private LoadingFrame     loadingFrame;
+	private Passivo          passivo;
+	private Ativo            ativo;
+	private Orcamento        orcamento;
+	private Transferencia    transferencia;
+	private CartaoContratado cartaoContratado;
 	
 	public RemoverObjeto(BankPanel bankPanel, String actionCommand, Ativo ativo) {
 		this.bankPanel     = bankPanel;
@@ -36,6 +38,15 @@ public class RemoverObjeto extends SwingWorker<String, String> {
 		this.loadingFrame  = new LoadingFrame(1);
 		this.loadingFrame.setMessage("Excluindo: " + passivo.getHistorico());
 		this.passivo       = passivo;
+	}
+	public RemoverObjeto(BankPanel bankPanel, String actionCommand, Passivo passivo, CartaoContratado cartaoContratado) {
+		this.bankPanel        = bankPanel;
+		UtilGUI.coverBlinder(bankPanel.getOwner());
+		this.actionCommand    = actionCommand;
+		this.loadingFrame     = new LoadingFrame(1);
+		this.loadingFrame.setMessage("Excluindo: " + passivo.getHistorico());
+		this.passivo          = passivo;
+		this.cartaoContratado = cartaoContratado;
 	}
 	public RemoverObjeto(BankPanel bankPanel, String actionCommand, Orcamento orcamento) {
 		this.bankPanel     = bankPanel;
@@ -80,13 +91,8 @@ public class RemoverObjeto extends SwingWorker<String, String> {
 			bankPanel.updateViewCheque();
 			bankPanel.updateViewPeriodo();
 		} else
-		if (actionCommand.indexOf("VISA") != -1) {
-			bankPanel.updateViewVisaCredito();
-			bankPanel.updateViewVisaElectron();
-			bankPanel.updateViewPeriodo();
-		} else
-		if (actionCommand.indexOf("MASTERCARD") != -1) {
-			bankPanel.updateViewMastercard();
+		if (actionCommand.indexOf("CARTAO") != -1) {
+			bankPanel.updateViewCartao(this.cartaoContratado);
 			bankPanel.updateViewPeriodo();
 		} else
 		if (actionCommand.indexOf("DEBITO") != -1) {

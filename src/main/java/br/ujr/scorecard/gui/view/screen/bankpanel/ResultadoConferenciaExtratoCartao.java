@@ -474,7 +474,8 @@ public class ResultadoConferenciaExtratoCartao extends JDialog implements KeyLis
 				cal.add(Calendar.MONTH, 1);
 				parcela.setDataVencimento(new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime()));
 			}
-			new AdiarDataVencimentoCartao(this.bankPanel,cartao).execute();
+			//TODO: CartaoContratado as parameter
+			new AdiarDataVencimentoCartao(this.bankPanel,cartao,null).execute();
 			this.tableModelLancamentosRestando.removeRow(selectedRowtableLancamentosRestando);
 		} else
 		if ( e.getActionCommand().equals("POPUP_ABRIR_PASSIVO") ) {

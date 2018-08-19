@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-import br.ujr.scorecard.model.banco.Banco;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 
@@ -44,6 +43,7 @@ public class AtivoDAOHibernate extends HibernateDaoSupport implements AtivoDAO {
 		}
 	}
 
+	//@Transactional
 	public Ativo save(Ativo ativo) {
 		try {
 			boolean isNew = ativo.getId() > 0 ? false : true;

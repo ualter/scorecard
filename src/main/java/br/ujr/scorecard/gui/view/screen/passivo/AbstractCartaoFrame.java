@@ -56,10 +56,12 @@ public abstract class AbstractCartaoFrame extends PassivoFrame {
 	
 	public AbstractCartaoFrame(JFrame owner, ContaCorrente contaCorrente, CartaoContratado cartaoContratado, Date periodoDataIni, Cartao cartao) {
 		super(owner, contaCorrente, periodoDataIni);
-		this.title             = this.getTitle();
+		this.cartaoContratado  = cartaoContratado;
 		this.loadedCartao      = cartao;
 		this.isUpdate          = this.loadedCartao != null ? true : false;
 		this.banco             = contaCorrente.getBanco();
+		this.title             = this.getTitle();
+		
 		
 		if  ( this.isUpdate ) {
 			this.txtDataMovimento.setDate(this.loadedCartao.getDataMovimento());
@@ -110,6 +112,7 @@ public abstract class AbstractCartaoFrame extends PassivoFrame {
 			cartao.setOperadora(this.getOperadora());
 			cartao.setHistorico(this.txtHistorico.getText());
 			cartao.getParcelas().removeAll(cartao.getParcelas());
+			cartao.setCartaoContratado(this.cartaoContratado);
 			
 			for (int i = 0; i < this.tabParcelas.getModel().getRowCount(); i++) {
 				/* In case need the Parcela's ID, here you are!
