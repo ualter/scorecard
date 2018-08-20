@@ -420,8 +420,11 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		// UIManager.put("TabbedPane.tabInsets", new Insets(1, 5, 1, 5) );
 
 		for (CartaoContratado cartaoContratado : cartoesContratados) {
-			tabs.addTab(cartaoContratado.getNome(), this.panCartoes.get(cartaoContratado));
+			ImageIcon img = new ImageIcon(Util.loadImage(this, cartaoContratado.getLogo()));
+			//tabs.addTab(cartaoContratado.getNome(), img, this.panCartoes.get(cartaoContratado));
+			tabs.addTab("", img, this.panCartoes.get(cartaoContratado));
 		}
+		
 		tabs.addTab("Saques", panSaque);
 		tabs.addTab("Débitos C/C", panDebito);
 		tabs.addTab("Transferências", panTransferencia);
