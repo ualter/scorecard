@@ -47,6 +47,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.util.SystemOutLogger;
 
 import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.components.gui.tabela.OrcamentoOrdenadorTabela;
@@ -100,7 +101,7 @@ import br.ujr.scorecard.util.UtilGUI;
 /**
  * @author Ualter
  */
-public class BankPanel extends JPanel implements ActionListener, MouseListener, ScorecardManagerListener {
+public class BankPanel extends JPanel implements ActionListener, MouseListener, KeyListener, ScorecardManagerListener {
 
 	/**
 	 * 
@@ -251,15 +252,13 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			JButton btnVerificarExtrato = this.btnVerificarExtratoCartao.get(cartaoContratado);
 			
 			Util.setToolTip(this, btnInserir, "Inserir lançamento");
-			Util.setToolTip(this, btnExcluir, "Excluir lançamento");
+			Util.setToolTip(this, btnExcluir, "Excluir lançamento<br/> Shortcut --> DEL");
 			Util.setToolTip(this, btnConfirmar, "Confirmar/Cancelar");
 			Util.setToolTip(this, btnVerificarExtrato, "Conferir com Extrato da Fatura do Cartão");
 			
 			this.setPanelButtonBounds(btnInserir);
 			this.setPanelButtonBounds(btnExcluir);
 			this.setPanelButtonBounds(btnConfirmar);
-			
-			
 			
 			btnInserir.setActionCommand("CARTAO_INSERIR_" + cartaoContratado.getId());
 			btnExcluir.setActionCommand("CARTAO_EXCLUIR_" + cartaoContratado.getId());
@@ -420,11 +419,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 		// UIManager.put("TabbedPane.tabInsets", new Insets(1, 5, 1, 5) );
 
-		List<CartaoContratado> listCartoes = this.scorecardManager.listarCartoesContaCorrente(this.getContaCorrente());
-		for (CartaoContratado cartaoContratado : listCartoes) {
-			System.out.println(cartaoContratado.getNome());
-		}
-
 		for (CartaoContratado cartaoContratado : cartoesContratados) {
 			tabs.addTab(cartaoContratado.getNome(), this.panCartoes.get(cartaoContratado));
 		}
@@ -493,6 +487,8 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			};
 			this.setUpTable(tableCartao,"TABLE_CARTAO_" + cartaoContratado.getId());
 			this.layOutTableCartaoCredito(tableCartao);
+			tableCartao.addKeyListener(this);
+			tableCartao.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 			this.tableCartoes.put(cartaoContratado, tableCartao);
 			
 			JScrollPane jScrollPane = new JScrollPane(tableCartao);
@@ -1948,8 +1944,9 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			updateViewCheque();
 		} else if (passivo instanceof Cartao) {
 			Cartao cartao = (Cartao) passivo;
-			this.updateViewCartao(cartao.getCartaoContratado());
-			//this.updateViewCartoes(); <-- FUNCIONA
+			if (cartao.getContaCorrente().equals(this.getContaCorrente())) { 
+				this.updateViewCartao(cartao.getCartaoContratado());
+			}
 		} else if (passivo instanceof DebitoCC) {
 			this.updateViewDebito();
 		} else if (passivo instanceof Saque) {
@@ -1982,9 +1979,11 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	}
 	
 	public void updateViewCartao(CartaoContratado cartaoContratado) {
-		this.loadCartoes(cartaoContratado.getContaCorrente(), cartaoContratado);
-		this.tableCartoes.get(cartaoContratado).setModel(this.tableModelCartoes.get(cartaoContratado));
-		this.layOutTableCartaoCredito(this.tableCartoes.get(cartaoContratado));
+		if ( this.getContaCorrente().equals(cartaoContratado.getContaCorrente()) ) {
+			this.loadCartoes(cartaoContratado.getContaCorrente(), cartaoContratado);
+			this.tableCartoes.get(cartaoContratado).setModel(this.tableModelCartoes.get(cartaoContratado));
+			this.layOutTableCartaoCredito(this.tableCartoes.get(cartaoContratado));
+		}
 	}
 	
 	public void updateViewDebito() {
@@ -2311,4 +2310,47 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		return (ScorecardGUI) this.owner;
 	}
 
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		
+		if ( e.getSource() instanceof JTable ) {
+			JTable t             = (JTable)e.getSource();
+			String nameComponent = t.getName();
+			if ( e.getKeyCode() == 32 ) {
+				int rows[] = t.getSelectedRows();
+				for (int i : rows) {
+					Boolean selectedTemp = (Boolean)t.getModel().getValueAt(i,7);
+					t.getModel().setValueAt(new Boolean(!selectedTemp),i,7);
+				}
+				t.updateUI();
+			} else
+			if ( e.getKeyCode() == 127 ) {
+				String           idCartaoContratado = nameComponent.split("_")[2];
+				CartaoContratado cartaoContratado   = this.scorecardManager.getCartaoContratado(Integer.parseInt(idCartaoContratado));
+				Cartao           cartao             = this.getSelectedCartao(cartaoContratado);
+				if (cartao != null) {
+					String msg = "Excluir Cartão:\n" + cartao.getHistorico() + " - R$ "
+							+ Util.formatCurrency(cartao.getValorTotal()) + " ?";
+					int resp = JOptionPane.showConfirmDialog(this, msg, "Exclusão", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE);
+					if (resp == 0) {
+						String actionCommand = "CARTAO_EXCLUIR_" + cartaoContratado.getId();
+						new RemoverObjeto(this, actionCommand, cartao, cartaoContratado).execute();
+					}
+				}
+				t.updateUI();
+			}
+		}
+		
+	}
+	
 }
+

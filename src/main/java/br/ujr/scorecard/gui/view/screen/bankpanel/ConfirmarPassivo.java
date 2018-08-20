@@ -2,9 +2,12 @@ package br.ujr.scorecard.gui.view.screen.bankpanel;
 
 import java.util.List;
 
+import javax.swing.JTable;
 import javax.swing.SwingWorker;
 
+import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
 import br.ujr.scorecard.model.passivo.cheque.Cheque;
 import br.ujr.scorecard.model.passivo.debitocc.DebitoCC;
@@ -38,43 +41,25 @@ public class ConfirmarPassivo extends SwingWorker<String, String> {
 					bankPanel.scorecardManager.savePassivo(cheque);
 				}
 			} else
-//			if (actionCommand.indexOf("VISA") != -1) {
-//				if (actionCommand.indexOf("VISACREDITO") != -1) {
-//					int rows[] = bankPanel.tableVisaCredito.getSelectedRows();
-//					for(int i : rows) {
-//						int cartaoId = ((Integer)bankPanel.tableModelVisaCredito.getValueAt(i, 5)).intValue();
-//						publish(new String[]{"Carregando Cartão"});
-//						Cartao cartao = (Cartao)bankPanel.scorecardManager.getPassivoPorId(cartaoId);
-//						Parcela parcela = cartao.getParcela(bankPanel.getVisaCreditoSelectedParcelaId(i));
-//						parcela.setEfetivado(!parcela.isEfetivado());
-//						String msg = parcela.isEfetivado() ? "Confirmando Débito: " : "Cancelando Débito: ";
-//						publish(new String[]{msg + Util.formatCurrency(parcela.getValor(),false) + " - " + cartao.getHistorico()});
-//						bankPanel.scorecardManager.savePassivo(cartao);
-//					}
-//				} else
-//				if (actionCommand.indexOf("VISAELECTRON") != -1) {
-//					publish(new String[]{"Carregando Cartão"});
-//					Cartao cartao = bankPanel.getSelectedVisaElectron();
-//					Parcela parcela = cartao.getParcela(bankPanel.getVisaElectronSelectedParcelaId());
-//					rowSelected = bankPanel.tableVisaElectron.getSelectedRow();
-//					parcela.setEfetivado(!parcela.isEfetivado());
-//					publish(new String[]{"Salvando Cartão: " + Util.formatCurrency(parcela.getValor(),false) + " - " + cartao.getHistorico()});
-//					bankPanel.scorecardManager.savePassivo(cartao);
-//				}	
-//			} else
-//			if (actionCommand.indexOf("MASTERCARD") != -1) {
-//				int rows[] = bankPanel.tableMastercard.getSelectedRows();
-//				for (int i : rows) {
-//					publish(new String[]{"Carregando Cartão"});
-//					int cartaoId = ((Integer)bankPanel.tableModelMastercard.getValueAt(i, 5)).intValue();
-//					Cartao cartao = (Cartao)bankPanel.scorecardManager.getPassivoPorId(cartaoId);
-//					Parcela parcela = cartao.getParcela(bankPanel.getMastercardSelectedParcelaId(i));
-//					parcela.setEfetivado(!parcela.isEfetivado());
-//					String msg = parcela.isEfetivado() ? "Confirmando Débito: " : "Cancelando Débito: ";
-//					publish(new String[]{msg + Util.formatCurrency(parcela.getValor(),false) + " - " + cartao.getHistorico()});
-//					bankPanel.scorecardManager.savePassivo(cartao);
-//				}
-//			} else
+			if (actionCommand.indexOf("CARTAO") != -1) {
+				Integer keyCartaoContratado       = Integer.parseInt(actionCommand.split("_")[2]);
+				CartaoContratado cartaoContratado = bankPanel.scorecardManager.getCartaoContratado(keyCartaoContratado);
+				
+				JTable             tableCartao      = bankPanel.tableCartoes.get(cartaoContratado);
+				DefaultModelTabela tableModelCartao = bankPanel.tableModelCartoes.get(cartaoContratado);
+				int rows[] = tableCartao.getSelectedRows();
+				for(int i : rows) {
+					publish(new String[]{"Carregando Cartão"});
+					int cartaoId    = ((Integer)tableModelCartao.getValueAt(i, 5)).intValue();
+					Cartao cartao   = (Cartao)bankPanel.scorecardManager.getPassivoPorId(cartaoId);
+					int parcelaId   = ((Integer)tableModelCartao.getValueAt(i, 6)).intValue();
+					Parcela parcela = cartao.getParcela(parcelaId);
+					parcela.setEfetivado(!parcela.isEfetivado());
+					String  msg     = parcela.isEfetivado() ? "Confirmando Débito: " : "Cancelando Débito: ";
+					publish(new String[]{msg + Util.formatCurrency(parcela.getValor(),false) + " - " + cartao.getHistorico()});
+					bankPanel.scorecardManager.savePassivo(cartao);
+				}
+			} else
 			if (actionCommand.indexOf("DEBITO") != -1) {
 				publish(new String[]{"Carregando Débito"});
 				DebitoCC debito = bankPanel.getSelectedDebito();
@@ -109,25 +94,12 @@ public class ConfirmarPassivo extends SwingWorker<String, String> {
 				bankPanel.tableCheque.setRowSelectionInterval(rowSelected, rowSelected);
 			} else
 			if (actionCommand.indexOf("CARTAO") != -1) {
-				System.out.println(actionCommand);
-			}
-//			if (actionCommand.indexOf("VISA") != -1) {
-//				if (actionCommand.indexOf("VISACREDITO") != -1) {
-//					bankPanel.updateViewVisaCredito();
-//					bankPanel.updateViewPeriodo();
-//					bankPanel.tableVisaCredito.setRowSelectionInterval(rowSelected, rowSelected);
-//				} else
-//				if (actionCommand.indexOf("VISAELECTRON") != -1) {
-//					bankPanel.updateViewVisaElectron();
-//					bankPanel.updateViewPeriodo();
-//					bankPanel.tableVisaElectron.setRowSelectionInterval(rowSelected, rowSelected);	
-//				}	
-//			} else
-//			if (actionCommand.indexOf("MASTERCARD") != -1) {
-//				bankPanel.updateViewMastercard();
-//				bankPanel.updateViewPeriodo();
-//				bankPanel.tableMastercard.setRowSelectionInterval(rowSelected, rowSelected);
-//			} else
+				Integer keyCartaoContratado       = Integer.parseInt(actionCommand.split("_")[2]);
+				CartaoContratado cartaoContratado = bankPanel.scorecardManager.getCartaoContratado(keyCartaoContratado);
+				bankPanel.updateViewCartao(cartaoContratado);
+				bankPanel.updateViewPeriodo();
+				bankPanel.tableCartoes.get(cartaoContratado).setRowSelectionInterval(rowSelected, rowSelected);
+			} else
 			if (actionCommand.indexOf("DEBITO") != -1) {
 				bankPanel.updateViewDebito();
 				bankPanel.updateViewPeriodo();

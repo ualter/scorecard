@@ -73,6 +73,7 @@ public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoD
 		}
 	}
 
+	@Transactional
 	public void remove(Passivo passivo) {
 		try {
 			this.getHibernateTemplate().delete(passivo);

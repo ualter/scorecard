@@ -172,7 +172,6 @@ public class ScorecardManagerImpl implements ScorecardManager
 	
 	public void savePassivo(Passivo passivo)
 	{
-		System.out.println("fdjsklfdsjç");
 		this.getPassivoDAO().save(passivo);
 		
 		for(ScorecardManagerListener l : listeners) {

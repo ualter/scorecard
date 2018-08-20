@@ -146,18 +146,28 @@ public abstract class Passivo extends BusinessObject
 		return this.id * 31;
 	}
 	
-	public String toString()
-    {
-        String clazz = this.getClass().getName();
-        StringBuffer parcelas = new StringBuffer("\n*** PARCELAS ****\n");
-        for (Iterator iParcelas = this.getParcelas().iterator(); iParcelas.hasNext();) {
-			Parcela p = (Parcela) iParcelas.next();
-			parcelas.append(p.getReferencia() + "|" + p.getDataVencimento() + "|" + p.getValor() + "|" + p.getNumero() + "\n");
-		}
-        parcelas.append("\n");
-        return "[" + this.getId() + "] Tipo: " + clazz + ", Histórico:" + this.getHistorico() + parcelas.toString();
-    }
 	
+	
+	
+//	public String toString()
+//    {
+//        String clazz = this.getClass().getName();
+//        StringBuffer parcelas = new StringBuffer("\n*** PARCELAS ****\n");
+//        for (Iterator iParcelas = this.getParcelas().iterator(); iParcelas.hasNext();) {
+//			Parcela p = (Parcela) iParcelas.next();
+//			parcelas.append(p.getReferencia() + "|" + p.getDataVencimento() + "|" + p.getValor() + "|" + p.getNumero() + "\n");
+//		}
+//        parcelas.append("\n");
+//        return "[" + this.getId() + "] Tipo: " + clazz + ", Histórico:" + this.getHistorico() + parcelas.toString();
+//    }
+	
+	@Override
+	public String toString() {
+		return "Passivo [contaCorrente=" + contaCorrente + ", dataMovimento=" + dataMovimento + ", historico="
+				+ historico + ", conta=" + conta + ", totalParcelas=" + totalParcelas + ", parcelas=" + parcelas
+				+ ", id=" + id + "]";
+	}
+
 	public BigDecimal getValorTotal() {
 		BigDecimal total = new BigDecimal(0);
 		for (Parcela parcela : this.parcelas) {
