@@ -13,6 +13,7 @@ public interface ScorecardPropertyKeys {
 	public static String ScorecardVersion        = "scorecard.version";
 	public static String ArquivoExtratoCC_BB     = "arquivo.extrato.contacorrete.bancodobrasil";
 	public static String ArquivoExtratoSantander = "arquivo.extrato.contacorrete.santander";
+	public static String TabResumoGeral          = "tab.resumo.geral";
 	
 	public static int IdCCBancoBrasil = 64;
 	public static int IdCCSantander = 66;

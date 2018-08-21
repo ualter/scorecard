@@ -57,7 +57,7 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     private   int         altura            = 763;
     private   JTabbedPane tabBancos         = new JTabbedPane();
     private   JPanel      panMain           = null;
-    private   boolean     updateResumoGeral = false;
+    private   Integer     tabResumoNumber   = null;
     
     private static Logger logger = Logger.getLogger(ScorecardGUI.class);
 	private ResumoPeriodoGeral resumoPeriodoGeral;
@@ -88,6 +88,11 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
         this.setName("ScorecardGUI");
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
+        try {
+        	this.tabResumoNumber = Integer.parseInt(ScorecardProperties.getProperty(ScorecardPropertyKeys.TabResumoGeral));
+        } catch (Exception e) {
+        	this.tabResumoNumber = null;
+        }
         this.addWindowFocusListener(this);
         
         /**
@@ -238,6 +243,7 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     			 */
     			manager.consistirSaldosAnteriores(cc);
     			BankPanel bankPanel = new BankPanel(this,cc);
+    			bankPanel.setName(cc.getBanco().getNome());
     			tabBancos.addTab(cc.getDescricao(), bankPanel); 
     		}
     	}
@@ -248,6 +254,7 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     	JPanel panResumoGeral = new JPanel();
     	panResumoGeral.setLayout(null);
     	resumoPeriodoGeral = new ResumoPeriodoGeral(this,panResumoGeral,((ScorecardManager)Util.getBean("scorecardManager")));
+    	panResumoGeral.setName("RESUMO_GERAL");
 		tabBancos.addTab("Resumo Geral",panResumoGeral);
 		tabBancos.addMouseListener(this);
     	
@@ -393,19 +400,10 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
 	public void mouseReleased(MouseEvent e) {
 		if ( e.getComponent() instanceof JTabbedPane ) {
 			JTabbedPane tabBancos = (JTabbedPane)e.getComponent();
-			// Resumo Geral
-			if ( tabBancos.getSelectedIndex() == 2 && this.updateResumoGeral ) {
+			if ( this.tabResumoNumber != null && (this.tabResumoNumber-1) == tabBancos.getSelectedIndex() ) {
 				this.resumoPeriodoGeral.update(false);
-				this.updateResumoGeral = false;
 			}
 		}
 	}
 
-	public boolean isUpdateResumoGeral() {
-		return updateResumoGeral;
-	}
-
-	public void setUpdateResumoGeral(boolean updateResumoGeral) {
-		this.updateResumoGeral = updateResumoGeral;
-	}
 }

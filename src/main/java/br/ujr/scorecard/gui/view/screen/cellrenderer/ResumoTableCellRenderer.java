@@ -36,7 +36,8 @@ public class ResumoTableCellRenderer extends DefaultTableCellRenderer {
 		int linhaHeader         = 0;
 		int linhaCheque         = 1;
 		int linhasCartoes       = hasCheques ? qtdeCartoes     : qtdeCartoes;
-		int linhaDebito         = hasCheques ? qtdeCartoes + 2 : qtdeCartoes + 1;
+		int linhaSaques         = hasCheques ? qtdeCartoes + 2 : qtdeCartoes + 1;
+		int linhaDebito         = linhaSaques + 1;
 		int linhaDespesas       = linhaDebito + 1;
 		int linhaDepositos      = linhaDespesas + 1;
 		int linhaInvestimentos  = linhaDepositos + 1;
@@ -62,7 +63,7 @@ public class ResumoTableCellRenderer extends DefaultTableCellRenderer {
 			this.setBackground(new Color(240,240,240));
 			this.setForeground(Color.RED);
 		} else
-		if ( row == linhaDebito ) {
+		if ( row == linhaSaques || row == linhaDebito ) {
 			this.setForeground(Color.RED);
 		} else
 		if ( row == linhaDespesas ) {

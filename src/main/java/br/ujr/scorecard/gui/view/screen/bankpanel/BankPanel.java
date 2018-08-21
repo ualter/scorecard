@@ -569,6 +569,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			qtdeCartoes++;
 		}
 		
+		tableModelResumo.addRow(new String[]{ margin + "Saques", Util.formatCurrency(resumoPeriodo.getSaques()) + margin });
 		tableModelResumo.addRow(new String[]{ margin + "Débitos", Util.formatCurrency(resumoPeriodo.getDebitosCC()) + margin });
 		tableModelResumo.addRow(new String[]{ margin + "Despesas", Util.formatCurrency(resumoPeriodo.getDespesas()) + margin });
 		tableModelResumo.addRow(new String[]{ margin + "Depósitos", Util.formatCurrency(resumoPeriodo.getDepositos()) + margin });
@@ -1952,7 +1953,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	}
 
 	public void actionPassivo(Passivo passivo) {
-		this.getScorecardGUI().setUpdateResumoGeral(true);
 		if (passivo instanceof Cheque) {
 			updateViewCheque();
 		} else if (passivo instanceof Cartao) {
@@ -2268,23 +2268,40 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private void updateResumoPeriodo() {
 		ResumoPeriodo resumoPeriodo = getResumoPeriodo();
 
+		int row = 0;
 		String margin = "\u0020\u0020\u0020";
 
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoAnterior()) + margin, 0, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getCheques()) + margin, 1, 1);
-		//TODO: Resumo Mensal Cartoes
-//		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getVisa()) + margin, 2, 1);
-//		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getElectron()) + margin, 3, 1);
-//		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getMastercard()) + margin, 4, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaques()) + margin, 5, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDebitosCC()) + margin, 6, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDespesas()) + margin, 7, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDepositos()) + margin, 8, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getInvestimentos()) + margin, 9, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getTransferencias()) + margin, 10, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSalario()) + margin, 11, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoPrevisto()) + margin, 12, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoReal()) + margin, 13, 1);
+		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoAnterior()) + margin, row, 1);
+		
+		if ( this.getContaCorrente().isCheque() ) {
+			row++;
+			this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getCheques())   + margin, row, 1);
+		}
+		
+		List<ResumoPeriodoTotalCartao> listTotalCartoes = resumoPeriodo.getCartoes();
+		for (ResumoPeriodoTotalCartao resumoPeriodoTotalCartao : listTotalCartoes) {
+			row++;
+			this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodoTotalCartao.getTotal()) + margin, row, 1);
+		}
+		
+		row++;
+		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaques())         + margin, row, 1);
+		row++;
+		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDebitosCC())      + margin, row, 1);
+		row++;
+		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDespesas())       + margin, row, 1);
+		row++;
+		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDepositos())      + margin, row, 1);
+		row++;
+		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getInvestimentos())  + margin, row, 1);
+		row++;
+		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getTransferencias()) + margin, row, 1);
+		row++;
+		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSalario())        + margin, row, 1);
+		row++;
+		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoPrevisto())  + margin, row, 1);
+		row++;
+		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoReal())      + margin, row, 1);
 	}
 
 	protected ContaCorrente getContaCorrente() {
@@ -2292,7 +2309,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	}
 
 	public void actionAtivo(Ativo ativo) {
-		this.getScorecardGUI().setUpdateResumoGeral(true);
 		if (ativo instanceof Deposito) {
 			this.updateViewDeposito();
 		} else if (ativo instanceof Salario) {
@@ -2304,7 +2320,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	}
 
 	public void actionTransferencia(Transferencia transferencia) {
-		this.getScorecardGUI().setUpdateResumoGeral(true);
 		this.updateViewTransferencia();
 		this.actionAtivo(transferencia.getAtivoTransferido());
 	}

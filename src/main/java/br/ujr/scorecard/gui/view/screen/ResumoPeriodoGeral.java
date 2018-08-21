@@ -80,6 +80,7 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 			qtdeCartoes++;
 		}
 		
+		tableModelResumo.addRow(new String[]{ margin + "Saques", Util.formatCurrency(resumoPeriodo.getSaques()) + margin });
 		tableModelResumo.addRow(new String[]{ margin + "Débitos", Util.formatCurrency(resumoPeriodo.getDebitosCC()) + margin });
 		tableModelResumo.addRow(new String[]{ margin + "Despesas", Util.formatCurrency(resumoPeriodo.getDespesas()) + margin });
 		tableModelResumo.addRow(new String[]{ margin + "Depósitos", Util.formatCurrency(resumoPeriodo.getDepositos()) + margin });
@@ -106,7 +107,7 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 			}
 		});
 		
-		tableResumo.setPreferredScrollableViewportSize(new Dimension(350, 310));
+		tableResumo.setPreferredScrollableViewportSize(new Dimension(350, 330));
 		TableColumn descricaoColumn                = tableResumo.getColumnModel().getColumn(0);
 		TableColumn valorColumn                    = tableResumo.getColumnModel().getColumn(1);
 		DefaultTableCellRenderer descricaoRenderer = new ResumoGeralTableCellRenderer(qtdeCartoes,true);
@@ -122,7 +123,7 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 		descricaoColumn.setPreferredWidth(140);
 		
 		int X = 350;
-		int Y = 110;
+		int Y = 90;
 		JScrollPane jScrollPane = new JScrollPane(tableResumo);
 		String lblPeriodoResumoText = this.updateLabelResumo();
 		lblPeriodoResumo = new JLabel(lblPeriodoResumoText,SwingConstants.CENTER);
@@ -136,7 +137,7 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 		lblPeriodoResumo.addMouseListener(this);
 		
 		Y += 34;
-		jScrollPane.setBounds(X, Y, 350, 315);
+		jScrollPane.setBounds(X, Y, 350, 330);
 		panelParent.add(lblPeriodoResumo);
 		panelParent.add(jScrollPane);
 	}
