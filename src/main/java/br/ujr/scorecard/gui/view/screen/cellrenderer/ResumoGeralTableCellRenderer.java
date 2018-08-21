@@ -8,14 +8,14 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 
-public class ResumoTableCellRenderer extends DefaultTableCellRenderer {
+public class ResumoGeralTableCellRenderer extends DefaultTableCellRenderer {
 	
 	
 	private int qtdeCartoes;
 	private boolean hasCheques;
 	
 	
-	public ResumoTableCellRenderer(int qtdeCartoes, boolean hasCheques) {
+	public ResumoGeralTableCellRenderer(int qtdeCartoes, boolean hasCheques) {
 		super();
 		this.qtdeCartoes = qtdeCartoes;
 		this.hasCheques  = hasCheques;
@@ -35,7 +35,7 @@ public class ResumoTableCellRenderer extends DefaultTableCellRenderer {
 		
 		int linhaHeader         = 0;
 		int linhaCheque         = 1;
-		int linhasCartoes       = hasCheques ? qtdeCartoes     : qtdeCartoes;
+		int linhasCartoes       = qtdeCartoes;
 		int linhaDebito         = hasCheques ? qtdeCartoes + 2 : qtdeCartoes + 1;
 		int linhaDespesas       = linhaDebito + 1;
 		int linhaDepositos      = linhaDespesas + 1;
@@ -55,11 +55,11 @@ public class ResumoTableCellRenderer extends DefaultTableCellRenderer {
 		} else
 		// Cartoes
 		if ( hasCheques && (row > linhaCheque && row <= (linhaCheque + linhasCartoes)) ) {
-			this.setBackground(new Color(248,248,248));
+			this.setBackground(new Color(240,240,240));
 			this.setForeground(Color.RED);
 		} else
 		if ( !hasCheques && ( row > 0  && row <= linhasCartoes ) ) {
-			this.setBackground(new Color(240,240,240));
+			this.setBackground(new Color(248,248,248));
 			this.setForeground(Color.RED);
 		} else
 		if ( row == linhaDebito ) {

@@ -139,14 +139,6 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
         itemReplicarOrcamentos.setMnemonic(KeyEvent.VK_M);
         menuProcessamentos.add(itemReplicarOrcamentos);
         
-        /*
-        JMenuItem itemAnalisadorExtratoCCBancoBrasil = new JMenuItem("Processar extrato C/C BANCO DO BRASIL");
-        itemAnalisadorExtratoCCBancoBrasil.addActionListener(this);
-        itemAnalisadorExtratoCCBancoBrasil.setActionCommand("ANALISAR_EXTRATO_CC_BB");
-        itemAnalisadorExtratoCCBancoBrasil.setMnemonic(KeyEvent.VK_B);
-        menuProcessamentos.add(itemAnalisadorExtratoCCBancoBrasil);
-        */
-        
         JMenuItem itemAnalisadorExtratoCCSantander = new JMenuItem("Processar extrato C/C SANTANDER");
         itemAnalisadorExtratoCCSantander.addActionListener(this);
         itemAnalisadorExtratoCCSantander.setActionCommand("ANALISAR_EXTRATO_CC_SANTANDER");

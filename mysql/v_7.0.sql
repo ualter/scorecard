@@ -34,12 +34,15 @@ from conta_corrente cc inner join banco ban on ban.id = cc.banco_id where ban.NO
 select cc.ID as 'CC_ID', ban.ID as 'Banco_ID' INTO @contaCorrenteIdSabadell, @bancoIdSabadell 
 from conta_corrente cc inner join banco ban on ban.id = cc.banco_id where ban.NOME = 'Banc Sabadell';
 
+select cc.ID as 'CC_ID', ban.ID as 'Banco_ID' INTO @contaCorrenteIdCitiBank, @bancoIdCitiBank 
+from conta_corrente cc inner join banco ban on ban.id = cc.banco_id where ban.NOME = 'Citibank';
+
 select @bancoIdBB, @contaCorrenteIdBB;
 select @bancoIdItau, @contaCorrenteIdItau;
 select @bancoIdSantander, @contaCorrenteIdSantander;
 select @bancoIdDeutsche, @contaCorrenteIdDeutsche;
 select @bancoIdSabadell, @contaCorrenteIdSabadell;
-
+select @bancoIdCitiBank, @contaCorrenteIdCitiBank;
 
 # Disable Itau
 UPDATE `banco` SET `IS_ATIVO` = 'F' WHERE (`ID` = @bancoIdItau );
@@ -50,7 +53,6 @@ ADD COLUMN `HAS_CHEQUE` VARCHAR(1) NULL DEFAULT 'T' AFTER `ORDEM`;
 
 # Update Cuenta Corriente Banc Sabadell
 UPDATE `conta_corrente` SET `HAS_CHEQUE` = 'F' WHERE (`ID` = @bancoIdSabadell);
-
 
 # Create Table cartao_contratado
 DROP TABLE IF EXISTS `cartao_contratado`;
@@ -77,6 +79,9 @@ INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES 
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'VISA BS',          @contaCorrenteIdSabadell);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('1', 'VISA Electron BS', @contaCorrenteIdSabadell);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard BS',    @contaCorrenteIdSabadell);
+INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'VISA Citibank',          @contaCorrenteIdCitiBank);
+INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('1', 'VISA Electron Citibank', @contaCorrenteIdCitiBank);
+INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard Citibank',    @contaCorrenteIdCitiBank);
 
 # Check It
 SELECT cc.*, ccr.DESCRICAO, ban.NOME
@@ -95,22 +100,17 @@ call cartaoContratado_vs_cartaoPassivo();
 SELECT c.*, p.historico, cc.DESCRICAO, cc.NUMERO FROM cartao c INNER JOIN passivo p on p.id = c.passivo_id
 inner join conta_corrente cc on p.conta_corrente_id = cc.id;
 
+# Check it All the Cartoes has the CartaoContratadoId set (must not exist NULLs)
+SELECT c.*,p.conta_corrente_id FROM cartao c 
+INNER JOIN PASSIVO P ON c.passivo_id = p.id
+where c.cartao_contratado_id IS NULL;
+-- UPDATE cartao set CARTAO_CONTRATADO_ID = NULL; (IN CASE has to launch again the Stored Procedure)
+
+
 # Logo CartaoContratado
 ALTER TABLE `cartao_contratado` 
 ADD COLUMN `LOGO` VARCHAR(80) NULL AFTER `CONTA_CORRENTE_ID`;
 
-UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`ID` = '2');
-UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`ID` = '5');
-UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`ID` = '8');
-UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`ID` = '11');
-UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`ID` = '14');
-UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`ID` = '1');
-UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`ID` = '4');
-UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`ID` = '7');
-UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`ID` = '10');
-UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`ID` = '13');
-UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`ID` = '3');
-UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`ID` = '6');
-UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`ID` = '9');
-UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`ID` = '12');
-UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`ID` = '15');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`NOME` LIKE '%VISA%');
+UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`NOME` LIKE '%VISA Electron%');
+UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`NOME` LIKE '%Mastercard%');

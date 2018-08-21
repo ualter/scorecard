@@ -12,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import br.ujr.scorecard.model.cc.ContaCorrente;
+import br.ujr.scorecard.model.passivo.cartao.Cartao;
 
 public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoDAO {
 

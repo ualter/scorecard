@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
+import br.ujr.scorecard.model.cc.ContaCorrente;
+
 
 /**
  * Encapsula o movimento de um período, resumo.
@@ -11,13 +14,13 @@ import java.util.List;
  */
 public class ResumoPeriodo
 {
-	private long  referenciaInicial;
-	private long  referenciaFinal;
+	private long       referenciaInicial;
+	private long       referenciaFinal;
 	private BigDecimal saldoAnterior;
 	private BigDecimal cheques;
-	private BigDecimal visa;
-	private BigDecimal electron;
-	private BigDecimal mastercard;
+	
+	private List<ResumoPeriodoTotalCartao> cartoes = new ArrayList<ResumoPeriodoTotalCartao>();
+	
 	private BigDecimal saques;
 	private BigDecimal debitosCC;
 	private BigDecimal investimentos;
@@ -29,6 +32,14 @@ public class ResumoPeriodo
 	private BigDecimal saldoReal;
 	private BigDecimal saldoPrevistoAteDia20;
 	
+	
+	public void addTotalCartao(ResumoPeriodoTotalCartao resumoPeriodoTotalCartao) {
+		this.cartoes.add(resumoPeriodoTotalCartao);
+	}
+	
+	public List<ResumoPeriodoTotalCartao> getCartoes() {
+		return cartoes;
+	}
 	public BigDecimal getSaldoPrevisto() {
 		return saldoPrevisto;
 	}
@@ -64,11 +75,6 @@ public class ResumoPeriodo
 		return depositos;
 	}
 
-	public BigDecimal getElectron()
-	{
-		return electron;
-	}
-
 	public BigDecimal getSalario()
 	{
 		return salario;
@@ -77,11 +83,6 @@ public class ResumoPeriodo
 	public BigDecimal getInvestimentos()
 	{
 		return investimentos;
-	}
-
-	public BigDecimal getMastercard()
-	{
-		return mastercard;
 	}
 
 	public String getObservacao()
@@ -108,11 +109,6 @@ public class ResumoPeriodo
 		return saques;
 	}
 
-	public BigDecimal getVisa()
-	{
-		return visa;
-	}
-
 	public void setCheques(BigDecimal f)
 	{
 		cheques = f;
@@ -128,11 +124,6 @@ public class ResumoPeriodo
 		depositos = f;
 	}
 
-	public void setElectron(BigDecimal f)
-	{
-		electron = f;
-	}
-
 	public void setSalario(BigDecimal f)
 	{
 		salario = f;
@@ -141,11 +132,6 @@ public class ResumoPeriodo
 	public void setInvestimentos(BigDecimal f)
 	{
 		investimentos = f;
-	}
-
-	public void setMastercard(BigDecimal f)
-	{
-		mastercard = f;
 	}
 
 	public void setObservacao(String string)
@@ -171,22 +157,18 @@ public class ResumoPeriodo
 	{
 		saques = f;
 	}
-
-	public void setVisa(BigDecimal f)
-	{
-		visa = f;
-	}
 	
 	public BigDecimal getDespesas() {
 		BigDecimal total = new BigDecimal(0);
 		total = total.add(this.getCheques());
-		total = total.add(this.getVisa());
-		total = total.add(this.getElectron());
-		total = total.add(this.getMastercard());
+		for (ResumoPeriodoTotalCartao resumoPeriodoTotalCartao : this.cartoes) {
+			total = total.add(resumoPeriodoTotalCartao.getTotal());
+		}
 		total = total.add(this.getSaques());
 		total = total.add(this.getDebitosCC());
 		return total;
 	}
+	
 	public BigDecimal getTransferencias() {
 		return transferencias;
 	}

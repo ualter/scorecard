@@ -7,20 +7,30 @@ BEGIN
   DECLARE v_finished INTEGER DEFAULT 0;
   DECLARE v_passivo_id INTEGER;
   DECLARE v_operadora INTEGER;
-  DECLARE v_conta_corrente_id INTEGER;
+  DECLARE v_conta_corrente_id INT(10);
   DECLARE v_descricao varchar(150);
   DECLARE v_historico varchar(150);
   DECLARE v_cartao_contratado_id INTEGER;
+  DECLARE v_LOG varchar(100);
+  
+  
+  -- CREATE TABLE `log` (
+  -- 	  `id` int(11) NOT NULL AUTO_INCREMENT,
+  -- 	  `log` varchar(200) DEFAULT NULL,
+  -- 	  PRIMARY KEY (`id`)
+  -- 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
   
   DECLARE cartaoPassivo_Cursor CURSOR FOR
    SELECT cartao.passivo_id, cartao.operadora, passivo.CONTA_CORRENTE_ID, cc.DESCRICAO, passivo.HISTORICO
-   FROM scorecard_dev.cartao cartao
+   FROM cartao cartao
    INNER JOIN passivo passivo on cartao.PASSIVO_ID = passivo.id
-   INNER JOIN conta_corrente cc on passivo.CONTA_CORRENTE_ID = cc.id; 
+   INNER JOIN conta_corrente cc on passivo.CONTA_CORRENTE_ID = cc.id;
+   -- WHERE passivo.CONTA_CORRENTE_ID = 69; 
    
   DECLARE CONTINUE HANDLER 
     FOR NOT FOUND SET v_finished = 1;  
-  
+    
   DROP TABLE IF EXISTS cartaoContratadoVsCartaoPassivo;
   CREATE TEMPORARY TABLE cartaoContratadoVsCartaoPassivo
     (passivoId INTEGER, operadora INTEGER, conta_corrente_id INTEGER, descricao varchar(150), historico varchar(150));  
@@ -32,6 +42,9 @@ BEGIN
      IF v_finished = 1 THEN 
 	    LEAVE read_loop;
      END IF;  
+     
+     -- SELECT v_conta_corrente_id INTO v_LOG;
+     -- INSERT INTO LOG (LOG) VALUES (v_LOG);
      
      SELECT id INTO v_cartao_contratado_id 
             from cartao_contratado cc where cc.CONTA_CORRENTE_ID = v_conta_corrente_id AND cc.OPERADORA = v_operadora;
@@ -48,7 +61,7 @@ BEGIN
   select * from cartaoContratadoVsCartaoPassivo;
  
   CLOSE cartaoPassivo_Cursor;
-  DROP TABLE cartaoContratadoVsCartaoPassivo;
+  -- DROP TABLE cartaoContratadoVsCartaoPassivo;
   
 END //
 DELIMITER ;

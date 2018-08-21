@@ -56,9 +56,10 @@ public class ResumoMensal extends AbstractReport {
 			int tam = 11;
 			value.setSaldoAnterior(Util.formatCurrency(resumo.getSaldoAnterior(),tam,false,0));
 			value.setCheques(Util.formatCurrency(resumo.getCheques(),tam,false,0));
-			value.setVisa(Util.formatCurrency(resumo.getVisa(),tam,false,0));
-			value.setElectron(Util.formatCurrency(resumo.getElectron(),tam,false,0));
-			value.setMastercard(Util.formatCurrency(resumo.getMastercard(),tam,false,0));
+			//TODO: Resumo Mensal Cartoes
+//			value.setVisa(Util.formatCurrency(resumo.getVisa(),tam,false,0));
+//			value.setElectron(Util.formatCurrency(resumo.getElectron(),tam,false,0));
+//			value.setMastercard(Util.formatCurrency(resumo.getMastercard(),tam,false,0));
 			value.setSaques(Util.formatCurrency(resumo.getSaques(),tam,false,0));
 			value.setDebitos(Util.formatCurrency(resumo.getDebitosCC(),tam,false,0));
 			value.setInvestimentos(Util.formatCurrency(resumo.getInvestimentos(),tam,false,0));
@@ -68,9 +69,10 @@ public class ResumoMensal extends AbstractReport {
 			
 			BigDecimal totalDespesas = new BigDecimal(0);
 			totalDespesas = totalDespesas.add(resumo.getCheques());
-			totalDespesas = totalDespesas.add(resumo.getVisa());
-			totalDespesas = totalDespesas.add(resumo.getElectron());
-			totalDespesas = totalDespesas.add(resumo.getMastercard());
+			//TODO: Resumo Mensal Cartoes
+//			totalDespesas = totalDespesas.add(resumo.getVisa());
+//			totalDespesas = totalDespesas.add(resumo.getElectron());
+//			totalDespesas = totalDespesas.add(resumo.getMastercard());
 			totalDespesas = totalDespesas.add(resumo.getSaques());
 			totalDespesas = totalDespesas.add(resumo.getDebitosCC());
 			value.setTotalDespesa(Util.formatCurrency(totalDespesas,tam,false,0));

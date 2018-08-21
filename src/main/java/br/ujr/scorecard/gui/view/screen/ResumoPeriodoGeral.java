@@ -10,7 +10,9 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -24,8 +26,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import br.ujr.components.gui.tabela.DefaultModelTabela;
-import br.ujr.scorecard.gui.view.screen.cellrenderer.ResumoTableCellRenderer;
+import br.ujr.scorecard.gui.view.screen.cellrenderer.ResumoGeralTableCellRenderer;
 import br.ujr.scorecard.model.ResumoPeriodo;
+import br.ujr.scorecard.model.ResumoPeriodoTotalCartao;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.util.Util;
 import br.ujr.scorecard.util.UtilGUI;
@@ -59,25 +62,33 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 		ResumoPeriodo resumoPeriodo = getResumoPeriodo();
 		String        estipendio    = Util.formatCurrency(resumoPeriodo.getSalario());
 		String        margin        = "\u0020\u0020\u0020";
+		
+		int qtdeCartoes = 0;
+		
 		tableModelResumo = new DefaultModelTabela(
-							new Object[][]{
-									{margin + "Saldo Anterior",Util.formatCurrency(resumoPeriodo.getSaldoAnterior()) + margin},
-									{margin + "Cheques",Util.formatCurrency(resumoPeriodo.getCheques()) + margin},
-									{margin + "Visa",Util.formatCurrency(resumoPeriodo.getVisa()) + margin},
-									{margin + "Visa Electron",Util.formatCurrency(resumoPeriodo.getElectron()) + margin},
-									{margin + "Mastercard",Util.formatCurrency(resumoPeriodo.getMastercard()) + margin},
-									{margin + "Saques",Util.formatCurrency(resumoPeriodo.getSaques()) + margin},
-									{margin + "Débitos",Util.formatCurrency(resumoPeriodo.getDebitosCC()) + margin},
-									{margin + "Despesas",Util.formatCurrency(resumoPeriodo.getDespesas()) + margin},
-									{margin + "Depósitos",Util.formatCurrency(resumoPeriodo.getDepositos()) + margin},
-									{margin + "Ivestimentos",Util.formatCurrency(resumoPeriodo.getInvestimentos()) + margin},
-									{margin + "Transferências",Util.formatCurrency(resumoPeriodo.getTransferencias()) + margin},
-									{margin + "Estipêndios",estipendio + margin},
-									{margin + "Saldo Previsto",Util.formatCurrency(resumoPeriodo.getSaldoPrevisto()) + margin},
-									{margin + "Saldo Prev. dia 20",Util.formatCurrency(resumoPeriodo.getSaldoPrevistoAteDia20()) + margin},
-									{margin + "Saldo Real",Util.formatCurrency(resumoPeriodo.getSaldoReal()) + margin},
-									},
-					        new Object[]{"Descrição","Valor"});
+				new Object[][] {
+						{ margin + "Saldo Anterior", Util.formatCurrency(resumoPeriodo.getSaldoAnterior()) + margin }},
+				new Object[] { "Descrição", "Valor" });
+		
+		tableModelResumo.addRow(new String[]{ margin + "Cheques", Util.formatCurrency(resumoPeriodo.getCheques()) + margin });
+		
+		List<ResumoPeriodoTotalCartao> listTotalCartoes = resumoPeriodo.getCartoes();
+		Collections.sort(listTotalCartoes);
+		for (ResumoPeriodoTotalCartao resumoPeriodoTotalCartao : listTotalCartoes) {
+			tableModelResumo.addRow(new String[]{ margin + resumoPeriodoTotalCartao.getCartaoContratado().getNome(), 
+														   Util.formatCurrency(resumoPeriodoTotalCartao.getTotal()) + margin });
+			qtdeCartoes++;
+		}
+		
+		tableModelResumo.addRow(new String[]{ margin + "Débitos", Util.formatCurrency(resumoPeriodo.getDebitosCC()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Despesas", Util.formatCurrency(resumoPeriodo.getDespesas()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Depósitos", Util.formatCurrency(resumoPeriodo.getDepositos()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Ivestimentos", Util.formatCurrency(resumoPeriodo.getInvestimentos()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Transferências", Util.formatCurrency(resumoPeriodo.getTransferencias()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Estipêndios", Util.formatCurrency(resumoPeriodo.getSalario()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Saldo Previsto", Util.formatCurrency(resumoPeriodo.getSaldoPrevisto()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Saldo Real", Util.formatCurrency(resumoPeriodo.getSaldoReal()) + margin });
+		
 		JTable tableResumo = new JTable(tableModelResumo){
 			private static final long serialVersionUID = -7192115991350831533L;
 
@@ -95,11 +106,11 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 			}
 		});
 		
-		tableResumo.setPreferredScrollableViewportSize(new Dimension(380, 180));
+		tableResumo.setPreferredScrollableViewportSize(new Dimension(350, 310));
 		TableColumn descricaoColumn                = tableResumo.getColumnModel().getColumn(0);
 		TableColumn valorColumn                    = tableResumo.getColumnModel().getColumn(1);
-		DefaultTableCellRenderer descricaoRenderer = new ResumoTableCellRenderer();
-		DefaultTableCellRenderer valorRenderer     = new ResumoTableCellRenderer();
+		DefaultTableCellRenderer descricaoRenderer = new ResumoGeralTableCellRenderer(qtdeCartoes,true);
+		DefaultTableCellRenderer valorRenderer     = new ResumoGeralTableCellRenderer(qtdeCartoes, true);
 		
 		descricaoRenderer.setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
 		valorRenderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
@@ -107,11 +118,11 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 		valorColumn.setCellRenderer(valorRenderer);
 		descricaoColumn.setCellRenderer(descricaoRenderer);
 		
-		valorColumn.setPreferredWidth(35);
-		descricaoColumn.setPreferredWidth(75);
+		valorColumn.setPreferredWidth(50);
+		descricaoColumn.setPreferredWidth(140);
 		
-		int X = 385;
-		int Y = 119;
+		int X = 350;
+		int Y = 110;
 		JScrollPane jScrollPane = new JScrollPane(tableResumo);
 		String lblPeriodoResumoText = this.updateLabelResumo();
 		lblPeriodoResumo = new JLabel(lblPeriodoResumoText,SwingConstants.CENTER);
@@ -121,11 +132,11 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 		lblPeriodoResumo.setForeground(Color.WHITE);
 		lblPeriodoResumo.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		lblPeriodoResumo.setName("PERIODO");
-		lblPeriodoResumo.setBounds(X, Y, 249, 30);
+		lblPeriodoResumo.setBounds(X, Y, 349, 30);
 		lblPeriodoResumo.addMouseListener(this);
 		
 		Y += 34;
-		jScrollPane.setBounds(X, Y, 250, 304);
+		jScrollPane.setBounds(X, Y, 350, 315);
 		panelParent.add(lblPeriodoResumo);
 		panelParent.add(jScrollPane);
 	}
@@ -169,12 +180,23 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 	}
 	
 	private void setUpDataInicialFinal() {
-		int mesAtual = Calendar.getInstance().get(Calendar.MONTH) + 1;
-    	int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
-    	int diaFinal = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
-    	
-    	this.dataInicial = Util.parseDate(1, mesAtual, anoAtual);
-    	this.dataFinal   = Util.parseDate(diaFinal, mesAtual, anoAtual);
+		//TODO: Para testes, voltar ao normal depois
+		
+		// TESTES
+		int mesAtual = 5;                  
+		int anoAtual = 2018;                       
+		int diaFinal = 30;  
+		                                                                                
+		this.dataInicial = Util.parseDate(1, mesAtual, anoAtual);                       
+		this.dataFinal   = Util.parseDate(diaFinal, mesAtual, anoAtual);                
+		
+		// NORMAL
+		//int mesAtual = Calendar.getInstance().get(Calendar.MONTH) + 1;
+    	//int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
+    	//int diaFinal = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
+    	//
+    	//this.dataInicial = Util.parseDate(1, mesAtual, anoAtual);
+    	//this.dataFinal   = Util.parseDate(diaFinal, mesAtual, anoAtual);
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -229,12 +251,15 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoAnterior()) + margin,0, 1);
 			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Cheque",3);
 			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getCheques()) + margin,1, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Visa Crédito",4);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getVisa()) + margin,2, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Visa Electron",5);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getElectron()) + margin,3, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Mastercard",6);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getMastercard()) + margin,4, 1);
+
+			//TODO: RESUMO PERIODO Cartoes
+//			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Visa Crédito",4);
+//			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getVisa()) + margin,2, 1);
+//			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Visa Electron",5);
+//			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getElectron()) + margin,3, 1);
+//			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Mastercard",6);
+//			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getMastercard()) + margin,4, 1);
+			
 			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Saques",7);
 			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaques()) + margin,5, 1);
 			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Débitos",8);

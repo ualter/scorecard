@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -338,12 +339,11 @@ public class ScorecardManagerImpl implements ScorecardManager
 	     */
 		BigDecimal valorEfetivado    = new BigDecimal(0);
 	    BigDecimal cheque            = new BigDecimal(0);
-	    BigDecimal visa              = new BigDecimal(0);
-	    BigDecimal electron          = new BigDecimal(0);
-	    BigDecimal mastercard        = new BigDecimal(0);
 	    BigDecimal saque             = new BigDecimal(0);
 	    BigDecimal debitoCC          = new BigDecimal(0);
 	    BigDecimal passivosAteDia20  = new BigDecimal(0);
+	    Map<String,ResumoPeriodoTotalCartao> cartoes = new HashMap<String,ResumoPeriodoTotalCartao>();
+	    
 	    Set<Passivo> passivos        = this.getPassivosPorReferencia(contaCorrente, referenciaInicial, referenciaFinal);
 	    
 	    for(Passivo passivo : passivos) {
@@ -387,17 +387,15 @@ public class ScorecardManagerImpl implements ScorecardManager
 	            if ( passivo instanceof Cartao )
 	            {
 	                 Cartao cartao = (Cartao)passivo;
-	                 switch (cartao.getEnumOperadora())
-	                 {
-	                    case VISA:
-	                         visa = visa.add(valor);
-	                         break;
-	                    case VISA_ELECTRON:
-	                         electron = electron.add(valor);
-	                         break;
-	                    case MASTERCARD:
-	                         mastercard = mastercard.add(valor);
-	                         break;
+	                 ResumoPeriodoTotalCartao resumoPeriodoTotalCartao = new ResumoPeriodoTotalCartao(contaCorrente != null ? contaCorrente : cartao.getContaCorrente()
+	                		 , cartao.getCartaoContratado());
+	                 if ( cartoes.containsKey(resumoPeriodoTotalCartao.getKeyTotalCartao()) ) {
+	                	 BigDecimal totalParcial = cartoes.get(resumoPeriodoTotalCartao.getKeyTotalCartao()).getTotal();
+	                	 totalParcial            = totalParcial.add(valor);
+	                	 cartoes.get(resumoPeriodoTotalCartao.getKeyTotalCartao()).setTotal(totalParcial);
+	                 } else {
+	                	 resumoPeriodoTotalCartao.setTotal(valor);
+	                	 cartoes.put(resumoPeriodoTotalCartao.getKeyTotalCartao(), resumoPeriodoTotalCartao);
 	                 }
 	            }
 	        }
@@ -466,9 +464,9 @@ public class ScorecardManagerImpl implements ScorecardManager
 	    ResumoPeriodo resumo = new ResumoPeriodo(referenciaInicial,referenciaFinal);
 	    resumo.setSaldoAnterior(saldoAnterior);
 	    resumo.setCheques(cheque);
-	    resumo.setVisa(visa);
-	    resumo.setElectron(electron);
-	    resumo.setMastercard(mastercard);
+	    	    
+	    cartoes.values().forEach(resumoPeriodoTotalCartao -> resumo.addTotalCartao(resumoPeriodoTotalCartao));
+	    
 	    resumo.setSaques(saque);
 	    resumo.setDebitosCC(debitoCC);
 	    resumo.setInvestimentos(investimento);
@@ -481,9 +479,9 @@ public class ScorecardManagerImpl implements ScorecardManager
 	     */
 	    BigDecimal negativo = new BigDecimal(0);
 	    negativo = negativo.add(resumo.getCheques());
-	    negativo = negativo.add(resumo.getElectron());
-	    negativo = negativo.add(resumo.getMastercard());
-	    negativo = negativo.add(resumo.getVisa());
+	    for ( ResumoPeriodoTotalCartao resumoPeriodoTotalCartao : cartoes.values() ) {
+	    	negativo = negativo.add(resumoPeriodoTotalCartao.getTotal());
+		}
 	    negativo = negativo.add(resumo.getDebitosCC());
 	    negativo = negativo.add(resumo.getSaques());
 	    negativo = negativo.add(resumo.getTransferencias());

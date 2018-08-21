@@ -47,7 +47,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.util.SystemOutLogger;
 
 import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.components.gui.tabela.OrcamentoOrdenadorTabela;
@@ -74,6 +73,7 @@ import br.ujr.scorecard.gui.view.screen.passivo.ChequeFrame;
 import br.ujr.scorecard.gui.view.screen.passivo.DebitoFrame;
 import br.ujr.scorecard.gui.view.screen.passivo.SaqueFrame;
 import br.ujr.scorecard.model.ResumoPeriodo;
+import br.ujr.scorecard.model.ResumoPeriodoTotalCartao;
 import br.ujr.scorecard.model.SaldoProcessadoEvent;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ScorecardManagerListener;
@@ -550,23 +550,33 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private void buildPanelResumo(JPanel panelParent) {
 		ResumoPeriodo resumoPeriodo = getResumoPeriodo();
 		String margin = "\u0020\u0020\u0020";
+		
+		int qtdeCartoes = 0;
+		
 		tableModelResumo = new DefaultModelTabela(
 				new Object[][] {
-						{ margin + "Saldo Anterior", Util.formatCurrency(resumoPeriodo.getSaldoAnterior()) + margin },
-						{ margin + "Cheques", Util.formatCurrency(resumoPeriodo.getCheques()) + margin },
-						{ margin + "Visa", Util.formatCurrency(resumoPeriodo.getVisa()) + margin },
-						{ margin + "Visa Electron", Util.formatCurrency(resumoPeriodo.getElectron()) + margin },
-						{ margin + "Mastercard", Util.formatCurrency(resumoPeriodo.getMastercard()) + margin },
-						{ margin + "Saques", Util.formatCurrency(resumoPeriodo.getSaques()) + margin },
-						{ margin + "Débitos", Util.formatCurrency(resumoPeriodo.getDebitosCC()) + margin },
-						{ margin + "Despesas", Util.formatCurrency(resumoPeriodo.getDespesas()) + margin },
-						{ margin + "Depósitos", Util.formatCurrency(resumoPeriodo.getDepositos()) + margin },
-						{ margin + "Ivestimentos", Util.formatCurrency(resumoPeriodo.getInvestimentos()) + margin },
-						{ margin + "Transferências", Util.formatCurrency(resumoPeriodo.getTransferencias()) + margin },
-						{ margin + "Estipêndios", Util.formatCurrency(resumoPeriodo.getSalario()) + margin },
-						{ margin + "Saldo Previsto", Util.formatCurrency(resumoPeriodo.getSaldoPrevisto()) + margin },
-						{ margin + "Saldo Real", Util.formatCurrency(resumoPeriodo.getSaldoReal()) + margin }, },
+						{ margin + "Saldo Anterior", Util.formatCurrency(resumoPeriodo.getSaldoAnterior()) + margin }},
 				new Object[] { "Descrição", "Valor" });
+		
+		if ( this.getContaCorrente().isCheque() ) {
+			tableModelResumo.addRow(new String[]{ margin + "Cheques", Util.formatCurrency(resumoPeriodo.getCheques()) + margin });
+		}
+		
+		List<ResumoPeriodoTotalCartao> listTotalCartoes = resumoPeriodo.getCartoes();
+		for (ResumoPeriodoTotalCartao resumoPeriodoTotalCartao : listTotalCartoes) {
+			tableModelResumo.addRow(new String[]{ margin + resumoPeriodoTotalCartao.getCartaoContratado().getNome(), 
+														   Util.formatCurrency(resumoPeriodoTotalCartao.getTotal()) + margin });
+			qtdeCartoes++;
+		}
+		
+		tableModelResumo.addRow(new String[]{ margin + "Débitos", Util.formatCurrency(resumoPeriodo.getDebitosCC()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Despesas", Util.formatCurrency(resumoPeriodo.getDespesas()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Depósitos", Util.formatCurrency(resumoPeriodo.getDepositos()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Ivestimentos", Util.formatCurrency(resumoPeriodo.getInvestimentos()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Transferências", Util.formatCurrency(resumoPeriodo.getTransferencias()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Estipêndios", Util.formatCurrency(resumoPeriodo.getSalario()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Saldo Previsto", Util.formatCurrency(resumoPeriodo.getSaldoPrevisto()) + margin });
+		tableModelResumo.addRow(new String[]{ margin + "Saldo Real", Util.formatCurrency(resumoPeriodo.getSaldoReal()) + margin });
 
 		JTable tableResumo = new JTable(tableModelResumo) {
 			private static final long serialVersionUID = -7192115991350831533L;
@@ -589,8 +599,8 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		tableResumo.setPreferredScrollableViewportSize(new Dimension(380, 180));
 		TableColumn descricaoColumn = tableResumo.getColumnModel().getColumn(0);
 		TableColumn valorColumn = tableResumo.getColumnModel().getColumn(1);
-		DefaultTableCellRenderer descricaoRenderer = new ResumoTableCellRenderer();
-		DefaultTableCellRenderer valorRenderer = new ResumoTableCellRenderer();
+		DefaultTableCellRenderer descricaoRenderer = new ResumoTableCellRenderer(qtdeCartoes, this.getContaCorrente().isCheque());
+		DefaultTableCellRenderer valorRenderer = new ResumoTableCellRenderer(qtdeCartoes, this.getContaCorrente().isCheque());
 
 		descricaoRenderer.setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
 		valorRenderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
@@ -2262,9 +2272,10 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoAnterior()) + margin, 0, 1);
 		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getCheques()) + margin, 1, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getVisa()) + margin, 2, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getElectron()) + margin, 3, 1);
-		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getMastercard()) + margin, 4, 1);
+		//TODO: Resumo Mensal Cartoes
+//		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getVisa()) + margin, 2, 1);
+//		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getElectron()) + margin, 3, 1);
+//		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getMastercard()) + margin, 4, 1);
 		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaques()) + margin, 5, 1);
 		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDebitosCC()) + margin, 6, 1);
 		this.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDespesas()) + margin, 7, 1);
