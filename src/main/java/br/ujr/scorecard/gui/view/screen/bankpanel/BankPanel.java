@@ -671,18 +671,18 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private void setUpDataInicialFinal() {
 		// Get movimentos for testing
 		// TODO: Apagar estas linha depois dos testes
-		int mesAtual = 5;
-		int anoAtual = 2018;
-		int diaFinal = 30;
-		this.periodoDataInicial = Util.parseDate(1, mesAtual, anoAtual);
-		this.periodoDataFinal = Util.parseDate(diaFinal, mesAtual, anoAtual);
-
-		// ORIGINAL
-//		int mesAtual = Calendar.getInstance().get(Calendar.MONTH) + 1;
-//		int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
-//		int diaFinal = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
+//		int mesAtual = 5;
+//		int anoAtual = 2018;
+//		int diaFinal = 30;
 //		this.periodoDataInicial = Util.parseDate(1, mesAtual, anoAtual);
 //		this.periodoDataFinal = Util.parseDate(diaFinal, mesAtual, anoAtual);
+
+		// ORIGINAL
+		int mesAtual = Calendar.getInstance().get(Calendar.MONTH) + 1;
+		int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
+		int diaFinal = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
+		this.periodoDataInicial = Util.parseDate(1, mesAtual, anoAtual);
+		this.periodoDataFinal = Util.parseDate(diaFinal, mesAtual, anoAtual);
 	}
 
 	private void setUpTable(JTable table, String name) {

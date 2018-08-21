@@ -2,6 +2,7 @@ package br.ujr.scorecard.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
@@ -38,6 +39,7 @@ public class ResumoPeriodo
 	}
 	
 	public List<ResumoPeriodoTotalCartao> getCartoes() {
+		Collections.sort(this.cartoes);
 		return cartoes;
 	}
 	public BigDecimal getSaldoPrevisto() {

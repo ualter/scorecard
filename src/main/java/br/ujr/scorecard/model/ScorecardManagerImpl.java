@@ -346,6 +346,8 @@ public class ScorecardManagerImpl implements ScorecardManager
 	    
 	    Set<Passivo> passivos        = this.getPassivosPorReferencia(contaCorrente, referenciaInicial, referenciaFinal);
 	    
+	    Set<CartaoContratado> cartaoContratadosListados = new HashSet<CartaoContratado>();
+	    
 	    for(Passivo passivo : passivos) {
 	    	
 	        List<Parcela> parcelas = passivo.getParcelas(referenciaInicial, referenciaFinal);
@@ -388,17 +390,31 @@ public class ScorecardManagerImpl implements ScorecardManager
 	            {
 	                 Cartao cartao = (Cartao)passivo;
 	                 ResumoPeriodoTotalCartao resumoPeriodoTotalCartao = new ResumoPeriodoTotalCartao(contaCorrente != null ? contaCorrente : cartao.getContaCorrente()
-	                		 , cartao.getCartaoContratado());
+	                		 ,cartao.getCartaoContratado());
 	                 if ( cartoes.containsKey(resumoPeriodoTotalCartao.getKeyTotalCartao()) ) {
 	                	 BigDecimal totalParcial = cartoes.get(resumoPeriodoTotalCartao.getKeyTotalCartao()).getTotal();
 	                	 totalParcial            = totalParcial.add(valor);
 	                	 cartoes.get(resumoPeriodoTotalCartao.getKeyTotalCartao()).setTotal(totalParcial);
 	                 } else {
+	                	 cartaoContratadosListados.add(cartao.getCartaoContratado());
 	                	 resumoPeriodoTotalCartao.setTotal(valor);
 	                	 cartoes.put(resumoPeriodoTotalCartao.getKeyTotalCartao(), resumoPeriodoTotalCartao);
 	                 }
 	            }
 	        }
+	    }
+	    
+	    // Insert the Cards that didn't have entries at the Resumo
+	    if ( contaCorrente != null ) {
+		    this.cartaoContratadoDAO.findByContaCorrente(contaCorrente).forEach(cc -> {
+		    	if ( cc.getContaCorrente().getBanco().isAtivo() )
+		    		addCartaoContratadoSemLcto(contaCorrente, cartoes, cartaoContratadosListados, cc);
+		    });
+	    } else {
+	    	this.cartaoContratadoDAO.list().forEach(cc -> {
+	    		if ( cc.getContaCorrente().getBanco().isAtivo() )
+	    			addCartaoContratadoSemLcto(null, cartoes, cartaoContratadosListados, cc);
+	    	});
 	    }
 	    
 	    /**
@@ -539,6 +555,23 @@ public class ScorecardManagerImpl implements ScorecardManager
 	    }
 	    
 	    return resumo;
+	}
+
+	/**
+	 * Add CartaoContratado na lista de Cartoes do Resumo Geral quando este nao tem lançamentos
+	 * @param contaCorrente
+	 * @param cartoes
+	 * @param cartaoContratadosListados
+	 * @param cc
+	 */
+	private void addCartaoContratadoSemLcto(ContaCorrente contaCorrente, Map<String, ResumoPeriodoTotalCartao> cartoes,
+			Set<CartaoContratado> cartaoContratadosListados, CartaoContratado cc) {
+		if ( !cartaoContratadosListados.contains(cc) ) {
+			 ResumoPeriodoTotalCartao resumoPeriodoTotalCartao = new ResumoPeriodoTotalCartao(contaCorrente != null ? contaCorrente : cc.getContaCorrente(), cc);
+			 resumoPeriodoTotalCartao.setTotal(new BigDecimal(0));
+			 cartoes.put(resumoPeriodoTotalCartao.getKeyTotalCartao(), resumoPeriodoTotalCartao);
+			 cartaoContratadosListados.add(cc);
+		}
 	}
 	
 	public void saveObservacao(Observacao obs)

@@ -85,9 +85,35 @@ public class ResumoPeriodoTotalCartao  implements Comparable<ResumoPeriodoTotalC
 
 	@Override
 	public int compareTo(ResumoPeriodoTotalCartao o) {
-		if ( this.getContaCorrente().getId() == o.getContaCorrente().getId() ) return 0;
-		if ( this.getContaCorrente().getId() >  o.getContaCorrente().getId() ) return 1;
-		return -1;
+		if ( this.getContaCorrente() != null && o.getContaCorrente() == null ) return  1;
+		if ( this.getContaCorrente() == null && o.getContaCorrente() != null ) return -1;
+		if ( this.getContaCorrente() == null && o.getContaCorrente() == null ) {
+			return
+					this.getCartaoContratado().getContaCorrente().getBanco().compareTo(
+							o.getCartaoContratado().getContaCorrente().getBanco());
+		}
+		
+		if ( this.getContaCorrente().getId() == o.getContaCorrente().getId() ) {
+			 return compareCartaoContratado(o);
+		} else {
+			if ( this.getContaCorrente().getId() >  o.getContaCorrente().getId() ) return  1;
+			if ( this.getContaCorrente().getId() <  o.getContaCorrente().getId() ) return -1;
+			return 0;
+		}
 	}
+
+	private int compareCartaoContratado(ResumoPeriodoTotalCartao o) {
+		if ( this.getCartaoContratado().getId() > o.getCartaoContratado().getId() ) return  1;
+		if ( this.getCartaoContratado().getId() < o.getCartaoContratado().getId() ) return -1;
+		return 0;
+	}
+
+	@Override
+	public String toString() {
+		return "ResumoPeriodoTotalCartao [keyTotalCartao=" + keyTotalCartao + ", total=" + total + ", cartaoContratado="
+				+ cartaoContratado + ", contaCorrente=" + contaCorrente + "]";
+	}
+	
+	
 
 }

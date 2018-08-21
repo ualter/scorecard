@@ -60,7 +60,6 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 
 	private void createUI() {
 		ResumoPeriodo resumoPeriodo = getResumoPeriodo();
-		String        estipendio    = Util.formatCurrency(resumoPeriodo.getSalario());
 		String        margin        = "\u0020\u0020\u0020";
 		
 		int qtdeCartoes = 0;
@@ -73,7 +72,6 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 		tableModelResumo.addRow(new String[]{ margin + "Cheques", Util.formatCurrency(resumoPeriodo.getCheques()) + margin });
 		
 		List<ResumoPeriodoTotalCartao> listTotalCartoes = resumoPeriodo.getCartoes();
-		Collections.sort(listTotalCartoes);
 		for (ResumoPeriodoTotalCartao resumoPeriodoTotalCartao : listTotalCartoes) {
 			tableModelResumo.addRow(new String[]{ margin + resumoPeriodoTotalCartao.getCartaoContratado().getNome(), 
 														   Util.formatCurrency(resumoPeriodoTotalCartao.getTotal()) + margin });
@@ -107,7 +105,7 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 			}
 		});
 		
-		tableResumo.setPreferredScrollableViewportSize(new Dimension(350, 330));
+		tableResumo.setPreferredScrollableViewportSize(new Dimension(350, 400));
 		TableColumn descricaoColumn                = tableResumo.getColumnModel().getColumn(0);
 		TableColumn valorColumn                    = tableResumo.getColumnModel().getColumn(1);
 		DefaultTableCellRenderer descricaoRenderer = new ResumoGeralTableCellRenderer(qtdeCartoes,true);
@@ -123,7 +121,7 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 		descricaoColumn.setPreferredWidth(140);
 		
 		int X = 350;
-		int Y = 90;
+		int Y = 80;
 		JScrollPane jScrollPane = new JScrollPane(tableResumo);
 		String lblPeriodoResumoText = this.updateLabelResumo();
 		lblPeriodoResumo = new JLabel(lblPeriodoResumoText,SwingConstants.CENTER);
@@ -137,7 +135,7 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 		lblPeriodoResumo.addMouseListener(this);
 		
 		Y += 34;
-		jScrollPane.setBounds(X, Y, 350, 330);
+		jScrollPane.setBounds(X, Y, 350, 400);
 		panelParent.add(lblPeriodoResumo);
 		panelParent.add(jScrollPane);
 	}
@@ -184,20 +182,19 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 		//TODO: Para testes, voltar ao normal depois
 		
 		// TESTES
-		int mesAtual = 5;                  
-		int anoAtual = 2018;                       
-		int diaFinal = 30;  
-		                                                                                
-		this.dataInicial = Util.parseDate(1, mesAtual, anoAtual);                       
-		this.dataFinal   = Util.parseDate(diaFinal, mesAtual, anoAtual);                
+//		int mesAtual = 5;                  
+//		int anoAtual = 2018;                       
+//		int diaFinal = 30;  
+//		this.dataInicial = Util.parseDate(1, mesAtual, anoAtual);                       
+//		this.dataFinal   = Util.parseDate(diaFinal, mesAtual, anoAtual);                
 		
 		// NORMAL
-		//int mesAtual = Calendar.getInstance().get(Calendar.MONTH) + 1;
-    	//int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
-    	//int diaFinal = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
-    	//
-    	//this.dataInicial = Util.parseDate(1, mesAtual, anoAtual);
-    	//this.dataFinal   = Util.parseDate(diaFinal, mesAtual, anoAtual);
+		int mesAtual = Calendar.getInstance().get(Calendar.MONTH) + 1;
+    	int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
+    	int diaFinal = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
+    	
+    	this.dataInicial = Util.parseDate(1, mesAtual, anoAtual);
+    	this.dataFinal   = Util.parseDate(diaFinal, mesAtual, anoAtual);
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -246,39 +243,52 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 				loadingFrame.setStatus("Resumo do Período: " + Util.formatDate(frame.dataInicial) + " até " + Util.formatDate(frame.dataFinal),1);
 				frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 			}
+			
+			int row = 0;
 			resumoPeriodo = frame.getResumoPeriodo();
 			String margin = "\u0020\u0020\u0020";
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Saldo Anterior",2);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoAnterior()) + margin,0, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Cheque",3);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getCheques()) + margin,1, 1);
-
-			//TODO: RESUMO PERIODO Cartoes
-//			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Visa Crédito",4);
-//			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getVisa()) + margin,2, 1);
-//			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Visa Electron",5);
-//			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getElectron()) + margin,3, 1);
-//			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Mastercard",6);
-//			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getMastercard()) + margin,4, 1);
 			
+			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Saldo Anterior",2);
+			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoAnterior()) + margin,row, 1);
+			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Cheque",3);
+			row++;
+			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getCheques())       + margin,row, 1);
+			
+			List<ResumoPeriodoTotalCartao> listTotalCartoes = resumoPeriodo.getCartoes();
+			for (ResumoPeriodoTotalCartao resumoPeriodoTotalCartao : listTotalCartoes) {
+				row++;
+				frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodoTotalCartao.getTotal()) + margin, row, 1);
+			}
+
+			row++;
 			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Saques",7);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaques()) + margin,5, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Débitos",8);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDebitosCC()) + margin,6, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Despesas",9);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDespesas()) + margin,7, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Depósitos",10);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDepositos()) + margin,8, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Investimentos",11);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getInvestimentos()) + margin,9, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Transferências",12);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getTransferencias()) + margin,10, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Salário",13);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSalario()) + margin,11, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Saldo Previsto",14);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoPrevisto()) + margin,12, 1);
-			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Saldo Real",15);
-			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoReal()) + margin,13, 1);
+			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaques())         + margin,row, 1);
+			row++;
+			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Débitos",8);                             
+			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDebitosCC())      + margin,row, 1);
+			row++;
+			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Despesas",9);                            
+			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDespesas())       + margin,row, 1);
+			row++;
+			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Depósitos",10);                          
+			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getDepositos())      + margin,row, 1);
+			row++;
+			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Investimentos",11);                      
+			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getInvestimentos())  + margin,row, 1);
+			row++;
+			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Transferências",12);                     
+			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getTransferencias()) + margin,row, 1);
+			row++;
+			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Salário",13);                            
+			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSalario())        + margin,row, 1);
+			row++;
+			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Saldo Previsto",14);                     
+			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoPrevisto())  + margin,row, 1);
+			row++;
+			if (!backgroundUpdate)loadingFrame.setStatus("Carregando Saldo Real",15);                         
+			frame.tableModelResumo.setValueAt(Util.formatCurrency(resumoPeriodo.getSaldoReal())      + margin,row, 1);
+			row++;
+			
 			return null;
 		}
 		

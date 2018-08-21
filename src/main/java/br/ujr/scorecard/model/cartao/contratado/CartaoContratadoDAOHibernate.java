@@ -71,7 +71,7 @@ public class CartaoContratadoDAOHibernate extends HibernateDaoSupport implements
 
 	public List<CartaoContratado> list() {
 		try {
-			StringBuffer strQuery = new StringBuffer(" from ContaCorrente as cc");
+			StringBuffer strQuery = new StringBuffer(" from CartaoContratado as cc");
 			List<CartaoContratado> list = (List<CartaoContratado>)this.getHibernateTemplate().find(strQuery.toString());
 			return list;
 		} catch (DataAccessException e) {
