@@ -15,13 +15,18 @@ public interface ScorecardPropertyKeys {
 	public static String ArquivoExtratoSantander = "arquivo.extrato.contacorrete.santander";
 	public static String TabResumoGeral          = "tab.resumo.geral";
 	
-	public static int IdCCBancoBrasil = 64;
-	public static int IdCCSantander = 66;
-	public static int IdCCItau = 67;
-	public static int IdCCDeutsche = 69;
+	public static String BancSabadellN43Path     = "banc.sabadell.n43.path";
+	public static String BancSabadellN43Ext      = "banc.sabadell.n43.ext";
 	
-	public static int IdSANTANDER = 59;
-	public static int IdITAU = 60; 
-	public static int IdDeutsche = 62;
+	public static String IdBanSabadell = "banc.sabadell.id";
+	
+	//TODO: Send this values to scorecard.properties
+	public static int IdCCBancoBrasil  = 64;
+	public static int IdCCSantander    = 66;
+	public static int IdCCItau         = 67;
+	public static int IdCCDeutsche     = 69;
+	public static int IdSANTANDER      = 59;
+	public static int IdITAU           = 60; 
+	public static int IdDeutsche       = 62;
 	
 }

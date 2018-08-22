@@ -56,11 +56,11 @@ public class ResumoGeralTableCellRenderer extends DefaultTableCellRenderer {
 		} else
 		// Cartoes
 		if ( hasCheques && (row > linhaCheque && row <= (linhaCheque + linhasCartoes)) ) {
-			this.setBackground(new Color(240,240,240));
+			this.setBackground(new Color(220,220,220));
 			this.setForeground(Color.RED);
 		} else
 		if ( !hasCheques && ( row > 0  && row <= linhasCartoes ) ) {
-			this.setBackground(new Color(248,248,248));
+			this.setBackground(new Color(220,220,220));
 			this.setForeground(Color.RED);
 		} else
 		if ( row == linhaSaques || row == linhaDebito ) {

@@ -121,7 +121,7 @@ public class ResumoPeriodoGeral extends JPanel implements MouseListener {
 		descricaoColumn.setPreferredWidth(140);
 		
 		int X = 350;
-		int Y = 80;
+		int Y = 70;
 		JScrollPane jScrollPane = new JScrollPane(tableResumo);
 		String lblPeriodoResumoText = this.updateLabelResumo();
 		lblPeriodoResumo = new JLabel(lblPeriodoResumoText,SwingConstants.CENTER);

@@ -1,16 +1,23 @@
-package br.ujr.scorecard.analisador.extrato.contacorrente.deutsche;
+package br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.Period;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -31,13 +38,14 @@ import br.ujr.scorecard.model.passivo.debitocc.DebitoCC;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
 import br.ujr.scorecard.model.passivo.saque.Saque;
 import br.ujr.scorecard.model.transferencia.Transferencia;
+import br.ujr.scorecard.util.ScorecardProperties;
 import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
 
 
-public class AnalisadorExtratoCCDeutsche {
+public class AnalisadorExtratoCCBanSabadell {
 
-	private List<LinhaExtratoContaCorrenteDeutsche> extratoContaCorrente = new ArrayList<LinhaExtratoContaCorrenteDeutsche>();
+	private List<LinhaExtratoContaCorrenteBanSabadell> extratoContaCorrente = new ArrayList<LinhaExtratoContaCorrenteBanSabadell>();
 	private ScorecardManager scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
 	private ContaCorrente cc;
 	private Set<Passivo> passivos;
@@ -46,7 +54,7 @@ public class AnalisadorExtratoCCDeutsche {
 	private String conteudo;
 	
 
-	private static Logger logger = Logger.getLogger(AnalisadorExtratoCCDeutsche.class);
+	private static Logger logger = Logger.getLogger(AnalisadorExtratoCCBanSabadell.class);
 	private static final DateTimeFormatter DATE_TIME_FORMATTER  = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	private static final DateTimeFormatter DATE_TIME_FORMATTER2 = DateTimeFormatter.ofPattern("dd/M/yyyy");
 	private static final DateTimeFormatter DATE_TIME_FORMATTER3 = DateTimeFormatter.ofPattern("d/MM/yyyy");
@@ -74,20 +82,20 @@ public class AnalisadorExtratoCCDeutsche {
 		return Calendar.getInstance().getTime();
 	}
 	
-	public AnalisadorExtratoCCDeutsche(long referencia) {
-		this.cc = scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche);
-		this.passivos = scorecardManager.getPassivosPorReferencia(cc, referencia);
-		this.ativos = scorecardManager.getAtivosPorReferencia(cc, referencia);
+	public AnalisadorExtratoCCBanSabadell(long referencia) {
+		this.cc         = scorecardManager.getContaCorrentePorId( Integer.parseInt(ScorecardProperties.getProperty(ScorecardPropertyKeys.IdBanSabadell)) );
+		this.passivos   = scorecardManager.getPassivosPorReferencia(cc, referencia);
+		this.ativos     = scorecardManager.getAtivosPorReferencia(cc, referencia);
 		this.referencia = referencia;
-		this.conteudo = Util.getClipBoarContent();
+		//this.conteudo   = Util.getClipBoarContent();
 	}
 	
 	/**
 	 *  Verifica os lançamentos que estão no Extrato MAS NÃO estão na Base de dados
 	 */
-	public List<LinhaExtratoContaCorrenteDeutsche> getLancamentosNaoExistentesBaseDados() {
-		List<LinhaExtratoContaCorrenteDeutsche> listaNaoEncontrados = new ArrayList<LinhaExtratoContaCorrenteDeutsche>();
-		for(LinhaExtratoContaCorrenteDeutsche linha : this.extratoContaCorrente) {
+	public List<LinhaExtratoContaCorrenteBanSabadell> getLancamentosNaoExistentesBaseDados() {
+		List<LinhaExtratoContaCorrenteBanSabadell> listaNaoEncontrados = new ArrayList<LinhaExtratoContaCorrenteBanSabadell>();
+		for(LinhaExtratoContaCorrenteBanSabadell linha : this.extratoContaCorrente) {
 			BigDecimal valorExtrato = linha.getValorAsBigDecimal();
 			if ( !linha.isAtivo()  ) {
 				boolean    encontrado   = false;
@@ -144,9 +152,9 @@ public class AnalisadorExtratoCCDeutsche {
 	/**
 	 *  Verifica os lançamentos que estão no Extrato E TAMBÉM QUE ESTÃO na Base de dados
 	 */
-	public List<LinhaExtratoContaCorrenteDeutsche> getLancamentosExistentesBaseDados() {
-		List<LinhaExtratoContaCorrenteDeutsche> listaEncontrados = new ArrayList<LinhaExtratoContaCorrenteDeutsche>();
-		for(LinhaExtratoContaCorrenteDeutsche linha : this.extratoContaCorrente) {
+	public List<LinhaExtratoContaCorrenteBanSabadell> getLancamentosExistentesBaseDados() {
+		List<LinhaExtratoContaCorrenteBanSabadell> listaEncontrados = new ArrayList<LinhaExtratoContaCorrenteBanSabadell>();
+		for(LinhaExtratoContaCorrenteBanSabadell linha : this.extratoContaCorrente) {
 			
 			if ( !linha.isSaldoAnterior() ) {
 				BigDecimal valorExtrato = linha.getValorAsBigDecimal();
@@ -172,97 +180,83 @@ public class AnalisadorExtratoCCDeutsche {
 	}
 	
 	/**
-	 * Formato Esperado:
-	 * 
-	 * -- BEGIN --
-	 * Hoy
-     * 23/3/2018	TARJETA- CARNICERIA ALBARAKA	-8,74	4.468,04
-     * Hoy
-     * 23/3/2018	TARJETA- MERCADONA PASEO RUBIO I O	-25,87	4.476,78
-     * Ayer
-     * 22/3/2018	TARJETA- CAPRABO - 7651 SABADELL	-12,49	4.502,65
-     * Ayer
-     * 22/3/2018	COM. CAJ. LA CAIXA 029	-2,00	4.515,14
-     * Ayer
-     * 22/3/2018	REINTEGRO CAJERO LA CAIXA 029	-40,00	4.517,14
-     * 21/3/2018
-     * 21/3/2018	ELECTRON ZONA BLAVA-ESTA	-4,50	4.557,14
-     * -- END --
-     * 
+	 * Formato Esperado: N43, check PDF
 	 * @return
 	 */
 	public String analisarExtrato() {
-		this.extratoContaCorrente = new ArrayList<LinhaExtratoContaCorrenteDeutsche>();
-		
-		MappingAnalisadorDeutsche mappingAnalisadorDeutsche = new MappingAnalisadorDeutsche();
-		try {
-			int i = 0;
-			String dataOperacao = "";
-			String dataValor    = "";
-			String historico    = "";
-			String valor        = "";
-			String saldo        = "";
-			String[] linhas = this.conteudo.split("\\n");
-	    	for (String linhaClip : linhas) {
-	    		i++;
-	    		// Lineas pares tienen Fecha Valor, Historico, Valor e Saldo
-	    		if ( (i % 2) == 0 ) {
-	    			String columns[] = linhaClip.split("\\t");
-	    			
-	    			if (columns.length < 4 ) {
-		    			logger.info(this.conteudo);
-		    			return this.conteudo;
-		    		}
-	    			
-    				dataValor    = columns[0];
-    				historico    = columns[1];
-    				valor        = columns[2];
-    				saldo        = columns[3];
-    				
-    				if ( StringUtils.isBlank(valor) ) {
-	    				valor = "0,00";
-	    			}
-	    			if ( StringUtils.isBlank(saldo) ) {
-	    				saldo = "0,00";
-	    			}
-	    			
-	    			LinhaExtratoContaCorrenteDeutsche linha = new LinhaExtratoContaCorrenteDeutsche();
-					linha.setDataOperacao(dataOperacao.replaceAll("\\.", "/"));
-					
-					
-					 
-					linha.setDataValor(convertDate(dataValor));
-					linha.setHistorico(StringUtils.trim(historico));
-					linha.setValor(Util.cleanNumber(valor));
-					linha.setSaldo(Util.cleanNumber(saldo));
-					
-					if ( linha.getHistorico().contains("TARJETA") )  {
-						linha.setTipo("Visa Electron");
-					}
-					mappingAnalisadorDeutsche.checkMappingDescricaoVsContaContabil(linha.getHistorico(),linha);
-
-					this.extratoContaCorrente.add(linha);
-    				
-	    		// Lineas impares tienen solo la fecha de Operacion	
-	    		} else {
-	    			//String columns[] = linhaClip.split("\\t");
-	    			dataOperacao = linhaClip.trim();
-	    			if ( "Hoy".contentEquals(dataOperacao) ) {
-	    				dataOperacao = DATE_TIME_FORMATTER.format(LocalDate.now());
-	    			} else
-    				if ( "Ayer".contentEquals(dataOperacao) ) {
-    					dataOperacao = DATE_TIME_FORMATTER.format( LocalDate.now().minus(Period.ofDays(1)) );
-    				} else {
-    					dataOperacao = convertDate(dataOperacao);
-    				}
-	    		}
-	    		
-	    	}
-		} catch (Exception e) {
-			logger.fatal(e);
-			return this.conteudo;
+		String pathN43Files = ScorecardProperties.getProperty(ScorecardPropertyKeys.BancSabadellN43Path);
+		if ( pathN43Files == null ) {
+			throw new RuntimeException("Não foi encontrado a configuração de PATH para os arquivos N43, chave=" + ScorecardPropertyKeys.BancSabadellN43Path);
 		}
+		String extN43 = ScorecardProperties.getProperty(ScorecardPropertyKeys.BancSabadellN43Ext);
+		if ( extN43 == null ) {
+			throw new RuntimeException("Não foi encontrado a configuração de EXTENSION para os arquivos N43, chave=" + ScorecardPropertyKeys.BancSabadellN43Ext);
+		}
+		
+		Path       path         = Paths.get(pathN43Files);
+		List<Path> listFilesN43 = null;
+		try {
+		   listFilesN43 = Files.walk(path)
+                               .filter(s -> s.toString().endsWith("." + extN43))
+                               .map(Path::toAbsolutePath)
+                               .sorted()
+                               .collect(Collectors.toList());
+		} catch(IOException e) {
+			logger.error(e);
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		if ( listFilesN43.size() == 0 ) {
+			String msg = "Não foi encontrado nenhum arquivo N43 no caminho " + pathN43Files; 
+			logger.warn(msg);
+			return msg;
+		}
+		
+		MappingAnalisadorBanSabadell mappingAnalisadorBanSabadell = new MappingAnalisadorBanSabadell();
+		this.extratoContaCorrente   = new ArrayList<LinhaExtratoContaCorrenteBanSabadell>();
+		Stream<String> lines        = null;
+		final Map<String,String> values = new HashMap<String,String>();
+		try {
+			lines = Files.lines(listFilesN43.get(0));
+			lines.filter(line -> line.startsWith("22") || line.startsWith("23"))
+			     .forEach(line -> {
+			    	 
+			    	 if ( line.startsWith("22") ) {
+			    		 values.put("dataOperacao", extractDataFromLine(line));
+			    		 values.put("valor", line.substring(28,42));
+			    		 values.put("negativePositive", line.substring(27,28));
+			    	 } else
+		    		 if ( line.startsWith("23") ) {
+		    			 LinhaExtratoContaCorrenteBanSabadell linhaExtratoContaCorrenteBanSabadell = new LinhaExtratoContaCorrenteBanSabadell();
+		    			 linhaExtratoContaCorrenteBanSabadell.setDataOperacao(values.get("dataOperacao"));
+		    			 linhaExtratoContaCorrenteBanSabadell.setValor(values.get("valor"), values.get("negativePositive"));
+		    			 linhaExtratoContaCorrenteBanSabadell.setHistorico(line.substring(4,42));
+		    			 mappingAnalisadorBanSabadell.checkMappingDescricaoVsContaContabil(linhaExtratoContaCorrenteBanSabadell.getHistorico(),linhaExtratoContaCorrenteBanSabadell);
+		    			 this.extratoContaCorrente.add(linhaExtratoContaCorrenteBanSabadell);
+		    			 values.clear();
+		    		 }
+			    	 
+			     });
+						 
+			
+		} catch (IOException e) {
+			logger.error(e);
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			if ( lines != null ) {
+				lines.close();
+			}
+		}
+
 		return null;
+	}
+
+	private String extractDataFromLine(String line) {
+		String dt    = line.substring(10, 16);
+		 String year  = "20" + dt.substring(0,2);
+		 String month = dt.substring(2,4);
+		 String day   = dt.substring(4);
+		 dt           = day + month + year;
+		return dt;
 	}
 
 	private String convertDate(String dataValor) {
@@ -283,56 +277,47 @@ public class AnalisadorExtratoCCDeutsche {
 		return dt;
 	}
 	
-	public static class LinhaExtratoContaCorrenteDeutsche implements Comparable<LinhaExtratoContaCorrenteDeutsche>{
+	public static class LinhaExtratoContaCorrenteBanSabadell implements Comparable<LinhaExtratoContaCorrenteBanSabadell>{
 		private String dataOperacao;
-		private String dataValor;
 		private String historico;
 		private String valor;
-		private String saldo;
 		private String tipo;
 		private Conta contaContabil;
+		private boolean isNegative;
 		
-		public LinhaExtratoContaCorrenteDeutsche() {
+		public LinhaExtratoContaCorrenteBanSabadell() {
 		}
 		
-		private String cleanValue(String vlr) {
-			return vlr.replaceAll("\"", "");
-		}
 		public String getDataOperacao() {
 			return dataOperacao;
 		}
+		public String getDataOperacaoFormatted() {
+			return Util.formatDate(this.getDataOperacaoAsDate());
+		}
 		public Date getDataOperacaoAsDate() {
-			return Util.parseDate(this.getDataOperacao());
+			int day   = Integer.parseInt(this.getDataOperacao().substring(0,2));
+			int month = Integer.parseInt(this.getDataOperacao().substring(2,4));
+			int year  = Integer.parseInt(this.getDataOperacao().substring(4,8));
+			return Util.parseDate(day,month,year);
 		}
 		public void setDataOperacao(String dataOp) {
-			dataOp = cleanValue(dataOp);
 			this.dataOperacao = dataOp;
-		}
-		public String getSaldo() {
-			return saldo;
-		}
-
-		public String getDataValor() {
-			return dataValor;
-		}
-		public void setDataValor(String dataValor) {
-			this.dataValor = dataValor;
-		}
-		public void setSaldo(String saldo) {
-			this.saldo = saldo;
 		}
 		public String getHistorico() {
 			return historico;
 		}
 		public void setHistorico(String historico) {
-			this.historico = cleanValue(historico);
+			this.historico = historico;
 		}
 
 		public String getValor() {
 			return valor;
 		}
-		public void setValor(String valor) {
-			this.valor = cleanValue(valor);
+		public void setValor(String valor, String negativoPositive) {
+			this.valor = valor;
+			if ( StringUtils.equalsIgnoreCase(negativoPositive, "1") ) {
+				this.isNegative = true;
+			}
 		}
 		
 		
@@ -355,26 +340,20 @@ public class AnalisadorExtratoCCDeutsche {
 
 		public BigDecimal getValorAsBigDecimal() {
 			try {
-				if ( StringUtils.equalsIgnoreCase("Valor", this.getValor()) ) {
+				if ( StringUtils.isNotBlank(this.valor) ) { 
+					String vlrInteger  = this.valor.substring(0, this.valor.length() - 2);
+					String vlrFraction = this.valor.substring(this.valor.length() - 2);
+					BigDecimal result  = new BigDecimal(vlrInteger + "." + vlrFraction);
+					if ( this.isNegative ) {
+						return result.multiply(new BigDecimal(-1));
+					}
+					return result;
+				} else {
 					return new BigDecimal(0);
 				}
-				return new BigDecimal(this.getValor().trim());
 			} catch (RuntimeException e) {
 				logger.fatal(e);
-				System.out.println("Problemas Conversao Valor: " + this.getValor());
-				throw e;
-			}
-			
-		}
-		public BigDecimal getSaldoAsBigDecimal() {
-			try {
-				if ( StringUtils.equalsIgnoreCase("Valor", this.getSaldo()) ) {
-					return new BigDecimal(0);
-				}
-				return new BigDecimal(this.getSaldo().trim());
-			} catch (RuntimeException e) {
-				logger.fatal(e);
-				System.out.println("Problemas Conversao Valor: " + this.getValor());
+				System.out.println("Problemas Conversao Valor: (14 posicoes, duas ultimas sao cents)" + this.getValor());
 				throw e;
 			}
 			
@@ -417,20 +396,22 @@ public class AnalisadorExtratoCCDeutsche {
 			String separador = " | ";
 			return   StringUtils.rightPad(this.dataOperacao, 13)
 				   + separador
-				   + StringUtils.rightPad(this.dataValor, 13)
+				   + StringUtils.rightPad("" + this.getDataOperacaoAsDate(), 65)
 				   + separador
 				   + StringUtils.rightPad(this.historico, 65)
 				   + separador
-				   + StringUtils.rightPad(this.valor, 30);
+				   + StringUtils.rightPad(this.valor, 14)
+				   + separador
+				   + StringUtils.rightPad("" + this.getValorAsBigDecimal(), 14);
 		}
 		
-		public int compareTo(LinhaExtratoContaCorrenteDeutsche o) {
+		public int compareTo(LinhaExtratoContaCorrenteBanSabadell o) {
 			return this.getHistorico().compareTo(o.getHistorico());
 		}
 		
 	}
 	
-	public static Transferencia converterLinhaTransferencia(LinhaExtratoContaCorrenteDeutsche linha, Conta conta, ContaCorrente contaCorrente, String tipo) {
+	public static Transferencia converterLinhaTransferencia(LinhaExtratoContaCorrenteBanSabadell linha, Conta conta, ContaCorrente contaCorrente, String tipo) {
 		Transferencia transferencia = new Transferencia();
 		transferencia.setConta(conta);
 		transferencia.setContaCorrente(contaCorrente);
@@ -440,7 +421,7 @@ public class AnalisadorExtratoCCDeutsche {
 		transferencia.setValor(linha.getValorAsBigDecimal().multiply(new BigDecimal(-1)));
 		return transferencia;
 	}
-	public static Ativo converterLinhaAtivo(LinhaExtratoContaCorrenteDeutsche linha, Conta conta, ContaCorrente contaCorrente, String tipo) {
+	public static Ativo converterLinhaAtivo(LinhaExtratoContaCorrenteBanSabadell linha, Conta conta, ContaCorrente contaCorrente, String tipo) {
 		Ativo ativo = null;
 		if ( StringUtils.equalsIgnoreCase("Depósito",tipo) ) {
 			ativo = new Deposito();
@@ -461,11 +442,10 @@ public class AnalisadorExtratoCCDeutsche {
 		ativo.setContaCorrente(contaCorrente);
 		return ativo;
 	}
-	public static Passivo converterLinhaPassivo(LinhaExtratoContaCorrenteDeutsche linha, Conta conta, ContaCorrente contaCorrente, String tipo) {
+	public static Passivo converterLinhaPassivo(LinhaExtratoContaCorrenteBanSabadell linha, Conta conta, ContaCorrente contaCorrente, String tipo) {
 		Passivo passivo = null;
 		Parcela parcela = new Parcela();
 		Cartao  cartao  = new Cartao();
-		
 		
 		ScorecardManager scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
 		List<CartaoContratado> listCartaoContratados = scorecardManager.getCartoesContaCorrente(contaCorrente);
@@ -473,10 +453,12 @@ public class AnalisadorExtratoCCDeutsche {
 		listCartaoContratados.stream()
 		                     .filter(cc -> cc.getNome().equalsIgnoreCase(tipo))
 		                     .forEach(cc -> {
+            cartao.setCartaoContratado(cc);
 			cartao.setOperadora(cc.getCartaoOperadora());
 		});
 		
-		if ( cartao.getEnumOperadora() != null ) {
+		
+		if ( cartao.getCartaoContratado() != null ) {
 			passivo = cartao;
 		} else
 		if ( StringUtils.equalsIgnoreCase("Saque",tipo)) {
@@ -495,7 +477,7 @@ public class AnalisadorExtratoCCDeutsche {
 		passivo.setHistorico(linha.getHistorico());
 		passivo.setDataMovimento(linha.getDataOperacaoAsDate());
 		passivo.setConta(conta);
-		parcela.setDataVencimento(linha.getDataOperacao());
+		parcela.setDataVencimento(linha.getDataOperacaoFormatted());
 		parcela.setEfetivado(true);
 		parcela.setNumero(1);
 		parcela.setReferencia(linha.getDataOperacaoAsDate());

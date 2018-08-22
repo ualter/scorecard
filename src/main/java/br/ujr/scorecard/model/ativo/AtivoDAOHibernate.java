@@ -2,6 +2,8 @@ package br.ujr.scorecard.model.ativo;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
@@ -43,7 +45,7 @@ public class AtivoDAOHibernate extends HibernateDaoSupport implements AtivoDAO {
 		}
 	}
 
-	//@Transactional
+	@Transactional
 	public Ativo save(Ativo ativo) {
 		try {
 			boolean isNew = ativo.getId() > 0 ? false : true;

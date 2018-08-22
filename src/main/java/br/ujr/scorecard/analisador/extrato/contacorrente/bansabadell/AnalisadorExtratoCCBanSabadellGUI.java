@@ -1,11 +1,12 @@
+package br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell;
 
-package br.ujr.scorecard.analisador.extrato.contacorrente.deutsche;
-
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -21,9 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -53,11 +56,10 @@ import br.ujr.components.gui.field.JTextFieldDateEditor;
 import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.components.gui.tabela.DefaultOrdenadorTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
-import br.ujr.scorecard.analisador.extrato.contacorrente.deutsche.AnalisadorExtratoCCDeutsche.LinhaExtratoContaCorrenteDeutsche;
+import br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell.AnalisadorExtratoCCBanSabadell.LinhaExtratoContaCorrenteBanSabadell;
 import br.ujr.scorecard.gui.view.screen.ContaFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.bankpanel.HeaderListener;
-import br.ujr.scorecard.gui.view.utils.AbstractDialog;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
@@ -66,34 +68,32 @@ import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.transferencia.Transferencia;
+import br.ujr.scorecard.util.ScorecardProperties;
 import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
 import br.ujr.scorecard.util.UtilGUI;
 
-//public class AnalisadorExtratoCCDeutscheGUI extends JDialog implements MouseListener, ActionListener, FocusListener {
-public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements MouseListener, ActionListener, FocusListener {
+public class AnalisadorExtratoCCBanSabadellGUI extends JDialog implements MouseListener, ActionListener, FocusListener {
+//public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements MouseListener, ActionListener, FocusListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1005761561571805210L;
-	private int							width		= 1235;
+	private int							width		= 1036;
 	private int							height		= 602;
 	private JPanel						panMain		= null;
 
 	private JTable						tabNaoEncontrados;
 	private DefaultTableModel			modelTabNaoEncontrados;
 
-	private static Logger				logger		= Logger.getLogger(AnalisadorExtratoCCDeutscheGUI.class);
+	private static Logger				logger		= Logger.getLogger(AnalisadorExtratoCCBanSabadellGUI.class);
 
 	private JDateChooser				txtDtRef	= new JDateChooser("MM/yyyy", "##/####", '_');
 	private ScorecardManager	scorecardManager;
 
-	public AnalisadorExtratoCCDeutscheGUI() {
+	public AnalisadorExtratoCCBanSabadellGUI() {
 		this(null);
 	}
 
-	public AnalisadorExtratoCCDeutscheGUI(JFrame owner) {
+	public AnalisadorExtratoCCBanSabadellGUI(JFrame owner) {
 		super(owner);
 
 		this.setModal(true);
@@ -110,13 +110,13 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		this.getContentPane().setLayout(null);
 		this.getContentPane().add(this.panMain);
 
-		this.setTitle("Scoredcard - Analisador Extrato Conta Corrente: D E U T S C H E");
-		this.setName("AnalisadorExtratoContaCorrenteBancoDeutsche");
+		this.setTitle("Scoredcard - Analisador Extrato Conta Corrente:   B A N C    S A B A D E L L  ");
+		this.setName("AnalisadorExtratoContaCorrenteBanSabadell");
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		// Table Nao Encontrados na Base de Dados
 		this.modelTabNaoEncontrados = new DefaultModelLinhaExtrato(null,
-				new Object[] { "Data Operação", "Data Valor", "Histórico", "Valor", "Saldo", "Tipo", "C.Contabil", "Object" });
+				new Object[] { "Data Operação", "Histórico", "Valor", "Tipo", "C.Contabil", "Object" });
 
 		tabNaoEncontrados = new JTable(this.modelTabNaoEncontrados) {
 
@@ -137,7 +137,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		this.layOutTableNaoEncontrados();
 		JScrollPane jScrollPaneTabNaoEncontrados = new JScrollPane(tabNaoEncontrados);
 		jScrollPaneTabNaoEncontrados.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-		jScrollPaneTabNaoEncontrados.setBounds(10, 50, 1209, 400);
+		jScrollPaneTabNaoEncontrados.setBounds(10, 50, 1010, 400);
 		this.tabNaoEncontrados.setEnabled(false);
 
 		JLabel lblCodigo = new JLabel("Mês/Ano:");
@@ -146,22 +146,23 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		this.txtDtRef.setBounds(70, 18, 75, 20);
 		this.txtDtRef.setEnabled(true);
 		this.txtDtRef.setFocusable(true);
+		this.txtDtRef.setFont(new Font("Courier New", Font.PLAIN, 11));
 		((JTextFieldDateEditor) this.txtDtRef.getDateEditor()).addFocusListener(this);
 		((JTextFieldDateEditor) this.txtDtRef.getDateEditor()).setName("MES_ANO");
 
-		JLabel lblLctoNaoEncontrados = new JLabel("Lançamentos  D E U T S C H E  não encontrados na Base de Dados", SwingConstants.LEFT);
+		JLabel lblLctoNaoEncontrados = new JLabel("Lançamentos    B A N C    S A B A D E L L    não encontrados na Base de Dados", SwingConstants.LEFT);
 		lblLctoNaoEncontrados.setFont(new Font("Arial", Font.BOLD, 13));
 		lblLctoNaoEncontrados.setHorizontalAlignment(SwingConstants.CENTER);
 		lblLctoNaoEncontrados.setOpaque(true);
 		lblLctoNaoEncontrados.setBackground(Color.BLUE);
 		lblLctoNaoEncontrados.setForeground(Color.WHITE);
 		lblLctoNaoEncontrados.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		lblLctoNaoEncontrados.setBounds(150, 10, 1068, 35);
+		lblLctoNaoEncontrados.setBounds(150, 10, 869, 35);
 
 		btnTranferir = new JButton(" Transferir");
 		btnTranferir.setIcon(new ImageIcon(Util.loadImage(this, "salvar.png")));
 		Util.setToolTip(this, btnTranferir, "Transfere o lançamento para a base de dados");
-		btnTranferir.setBounds(230, 25, 170, 50);
+		btnTranferir.setBounds(135, 25, 170, 50);
 		btnTranferir.setActionCommand("TRANSFERIR");
 		btnTranferir.addActionListener(this);
 
@@ -194,22 +195,41 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		panelBtn.add(btnRemover);
 		panelBtn.add(btnContaContabil);
 		panelBtn.add(btnSair);
-		panelBtn.setBounds(10, 460, 1209, 100);
+		panelBtn.setBounds(10, 460, 1010, 100);
 
 		this.panMain.add(lblLctoNaoEncontrados);
 		this.panMain.add(jScrollPaneTabNaoEncontrados);
 		this.panMain.add(lblCodigo);
 		this.panMain.add(txtDtRef);
 		this.panMain.add(panelBtn);
+		
+		KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		tabNaoEncontrados.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, "SELECT_CONTA_CONTABIL_CELL");
+		tabNaoEncontrados.getActionMap().put("SELECT_CONTA_CONTABIL_CELL", new EnterAction());
 
 		((JTextFieldDateEditor) this.txtDtRef.getDateEditor()).requestFocus();
 		this.txtDtRef.requestFocus();
 		this.txtDtRef.requestFocusInWindow();
-		this.txtDtRef.setDate(AnalisadorExtratoCCDeutsche.foundInThePath());
+		this.txtDtRef.setDate(AnalisadorExtratoCCBanSabadell.foundInThePath());
+		
+		InputMap inputMap = ((JPanel)this.getContentPane()).getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = ((JPanel)this.getContentPane()).getActionMap();
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "VK_ESCAPE");
+		actionMap.put("VK_ESCAPE", new ActionsWindow(this));
+		 
+	}
+	private static class ActionsWindow extends AbstractAction {
+		
+		private JDialog dialog;
 
-		KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		tabNaoEncontrados.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, "SELECT_CONTA_CONTABIL_CELL");
-		tabNaoEncontrados.getActionMap().put("SELECT_CONTA_CONTABIL_CELL", new EnterAction());
+		public ActionsWindow(JDialog panel) {
+			this.dialog = panel;
+		}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.out.println(e.getActionCommand());
+			this.dialog.dispose();
+		}
 	}
 
 	private class EnterAction extends AbstractAction {
@@ -249,12 +269,12 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 	}
 
 	/**
-	 * Conta Corrente do Deutsche
+	 * Conta Corrente do Banc Sabadell
 	 * 
 	 * @return
 	 */
 	private ContaCorrente getContaCorrente() {
-		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche);
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId( Integer.parseInt(ScorecardProperties.getProperty(ScorecardPropertyKeys.IdBanSabadell)) );
 		return cc;
 	}
 
@@ -277,61 +297,56 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 	}
 
 	private void carregarTabNaoEncontrados(long ref) {
-		AnalisadorExtratoCCDeutsche analisador = new AnalisadorExtratoCCDeutsche(ref);
+		AnalisadorExtratoCCBanSabadell analisador = new AnalisadorExtratoCCBanSabadell(ref);
 		String status = analisador.analisarExtrato();
 		if (status == null) {
-			// this.carregarSaldos(analisador.getSaldo().getSaldoAsBigDecimal(),
-			// analisador.getSaldoAnterior().getSaldoAsBigDecimal());
-			List<AnalisadorExtratoCCDeutsche.LinhaExtratoContaCorrenteDeutsche> listaNaoEncontrados = analisador.getLancamentosNaoExistentesBaseDados();
-			for (LinhaExtratoContaCorrenteDeutsche linha : listaNaoEncontrados) {
-				Object row[] = new Object[] { linha.getDataOperacao(), linha.getDataValor(), linha.getHistorico(), linha.getValor(), linha.getSaldo(),
-						(linha.getTipo() != null ? linha.getTipo() : ""), (linha.getContaContabil() != null ? linha.getContaContabil() : ""), linha };
+			List<AnalisadorExtratoCCBanSabadell.LinhaExtratoContaCorrenteBanSabadell> listaNaoEncontrados = analisador.getLancamentosNaoExistentesBaseDados();
+			for (LinhaExtratoContaCorrenteBanSabadell linha : listaNaoEncontrados) {
+				Object row[] = new Object[] { 
+						Util.formatDate(linha.getDataOperacaoAsDate()), 
+						linha.getHistorico(), 
+						linha.getValor(), 
+						(linha.getTipo() != null ? linha.getTipo() : ""),
+						(linha.getContaContabil() != null ? linha.getContaContabil() : ""),
+						linha
+				};
 				this.modelTabNaoEncontrados.addRow(row);
 			}
 			this.btnRemover.setEnabled(true);
 			this.btnContaContabil.setEnabled(true);
 		} else {
-			JOptionPane.showMessageDialog(this, "Problemas na leitura do Clipboard:\n\n" + status, "Atenção", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Problemas na leitura do arquivo:\n\n" + status, "Atenção", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	private static final int	COLUMN_DATA_OPERACAO	= 0;
-	private static final int	COLUMN_DATA_VALOR		= 1;
-	private static final int	COLUMN_HISTORICO		= 2;
-	private static final int	COLUMN_VALOR			= 3;
-	private static final int	COLUMN_SALDO			= 4;
-	private static final int	COLUMN_COMBO_IDENT		= 5;
-	private static final int	COLUMN_CONTA_CONTABIL	= 6;
-	private static final int	COLUMN_OBJECT			= 7;
+	private static final int	COLUMN_HISTORICO		= 1;
+	private static final int	COLUMN_VALOR			= 2;
+	private static final int	COLUMN_COMBO_IDENT		= 3;
+	private static final int	COLUMN_CONTA_CONTABIL	= 4;
+	private static final int	COLUMN_OBJECT			= 5;
 	private String[]			valoresCombos			= null;
 	private JButton				btnTranferir;
 	private JButton				btnRemover;
 	private JButton				btnSair;
 	private JButton				btnContaContabil;
-	private JLabel				lblSaldoAnterior;
-	private JLabel				lblSaldo;
-	private BigDecimal			bdSaldoExtrato;
-	private BigDecimal			bdSaldoAnteriorExtrato;
 
 	private void layOutTableNaoEncontrados() {
 		tabNaoEncontrados.removeColumn(tabNaoEncontrados.getColumnModel().getColumn(COLUMN_OBJECT));
 
 		TableColumn dataOperacaoColumn = tabNaoEncontrados.getColumnModel().getColumn(COLUMN_DATA_OPERACAO);
-		TableColumn dataValorColumn = tabNaoEncontrados.getColumnModel().getColumn(COLUMN_DATA_VALOR);
-		TableColumn historicoColumn = tabNaoEncontrados.getColumnModel().getColumn(COLUMN_HISTORICO);
-		TableColumn valorColumn = tabNaoEncontrados.getColumnModel().getColumn(COLUMN_VALOR);
-		TableColumn saldoColumn = tabNaoEncontrados.getColumnModel().getColumn(COLUMN_SALDO);
-		TableColumn contaColumn = tabNaoEncontrados.getColumnModel().getColumn(COLUMN_CONTA_CONTABIL);
-		TableColumn identColumn = tabNaoEncontrados.getColumnModel().getColumn(COLUMN_COMBO_IDENT);
+		TableColumn historicoColumn    = tabNaoEncontrados.getColumnModel().getColumn(COLUMN_HISTORICO);
+		TableColumn valorColumn        = tabNaoEncontrados.getColumnModel().getColumn(COLUMN_VALOR);
+		TableColumn contaColumn        = tabNaoEncontrados.getColumnModel().getColumn(COLUMN_CONTA_CONTABIL);
+		TableColumn identColumn        = tabNaoEncontrados.getColumnModel().getColumn(COLUMN_COMBO_IDENT);
 
 		DefaultTableCellRenderer dataOperacaoRenderer = new AnalisadorExtratoTableCellRenderer();
-		DefaultTableCellRenderer dataValorRenderer = new AnalisadorExtratoTableCellRenderer();
 		DefaultTableCellRenderer historicoRenderer = new AnalisadorExtratoTableCellRenderer();
 		DefaultTableCellRenderer valorRenderer = new AnalisadorExtratoTableCellRenderer();
-		DefaultTableCellRenderer saldoRenderer = new AnalisadorExtratoTableCellRenderer();
 		DefaultTableCellRenderer contaRenderer = new AnalisadorExtratoTableCellRenderer();
 		DefaultTableCellRenderer identificacaoRenderer = new AnalisadorExtratoTableCellRenderer();
 
+		
 		List<String> vlr = new ArrayList<String>();
 		vlr.add("");
 		this.scorecardManager.getCartoesContaCorrente(this.getContaCorrente()).forEach(cc -> vlr.add(cc.getNome()));
@@ -370,23 +385,17 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 
 		dataOperacaoRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
 		valorRenderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
-		saldoRenderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
-		dataValorRenderer.setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
 		historicoRenderer.setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
 
 		dataOperacaoColumn.setCellRenderer(dataOperacaoRenderer);
-		dataValorColumn.setCellRenderer(dataValorRenderer);
 		historicoColumn.setCellRenderer(historicoRenderer);
 		valorColumn.setCellRenderer(valorRenderer);
-		saldoColumn.setCellRenderer(saldoRenderer);
 		identColumn.setCellRenderer(identificacaoRenderer);
 		contaColumn.setCellRenderer(contaRenderer);
 
 		dataOperacaoColumn.setPreferredWidth(85);
-		dataValorColumn.setPreferredWidth(85);
 		historicoColumn.setPreferredWidth(383);
 		valorColumn.setPreferredWidth(120);
-		saldoColumn.setPreferredWidth(120);
 		identColumn.setPreferredWidth(120);
 		contaColumn.setPreferredWidth(280);
 	}
@@ -458,7 +467,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
-			LinhaExtratoContaCorrenteDeutsche linha = (LinhaExtratoContaCorrenteDeutsche) table.getModel().getValueAt(row, COLUMN_OBJECT);
+			LinhaExtratoContaCorrenteBanSabadell linha = (LinhaExtratoContaCorrenteBanSabadell) table.getModel().getValueAt(row, COLUMN_OBJECT);
 
 			if (isSelected) {
 				this.setFont(new Font("Courier New", Font.BOLD, 11));
@@ -482,15 +491,11 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 				selectedTemp = ((Boolean) table.getModel().getValueAt(row, 6)).booleanValue();
 			}
 
-			if (column == COLUMN_DATA_VALOR) {
-				this.setValue(" " + value);
-			} else if (column == COLUMN_DATA_OPERACAO) {
+			if (column == COLUMN_DATA_OPERACAO) {
 				this.setValue(" " + value);
 			} else if (column == COLUMN_HISTORICO) {
 				this.setValue(" " + value);
 			} else if (column == COLUMN_VALOR) {
-				this.layOutCellMoney(value, linha);
-			} else if (column == COLUMN_SALDO) {
 				this.layOutCellMoney(value, linha);
 			} else if (column == COLUMN_COMBO_IDENT) {
 				this.setValue(" " + value);
@@ -508,11 +513,11 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 			return this;
 		}
 
-		private void layOutCellMoney(Object value, LinhaExtratoContaCorrenteDeutsche linha) {
+		private void layOutCellMoney(Object value, LinhaExtratoContaCorrenteBanSabadell linha) {
 			this.layOutCellMoney(value, null, linha);
 		}
 
-		private void layOutCellMoney(Object value, Color color, LinhaExtratoContaCorrenteDeutsche linha) {
+		private void layOutCellMoney(Object value, Color color, LinhaExtratoContaCorrenteBanSabadell linha) {
 			String valor = String.valueOf(value);
 			valor = StringUtils.leftPad(valor, 9);
 			valor = " R$ " + Util.formatCurrency(linha.getValorAsBigDecimal()) + " ";
@@ -539,7 +544,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 
 			if (row > -1) {
 				JComboBox j = (JComboBox) e.getSource();
-				LinhaExtratoContaCorrenteDeutsche linha = (LinhaExtratoContaCorrenteDeutsche) modelTabNaoEncontrados.getValueAt(row, COLUMN_OBJECT);
+				LinhaExtratoContaCorrenteBanSabadell linha = (LinhaExtratoContaCorrenteBanSabadell) modelTabNaoEncontrados.getValueAt(row, COLUMN_OBJECT);
 				String vlr = j.getSelectedItem().toString();
 
 				// "Visa Electron","Saque","Cheque","Débito","Depósito",
@@ -633,7 +638,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 			e.printStackTrace();
 		}
 
-		AnalisadorExtratoCCDeutscheGUI gui = new AnalisadorExtratoCCDeutscheGUI();
+		AnalisadorExtratoCCBanSabadellGUI gui = new AnalisadorExtratoCCBanSabadellGUI();
 		gui.setVisible(true);
 	}
 
@@ -643,7 +648,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 			int row = tab.getSelectedRow();
 			int col = tab.getSelectedColumn();
 			if (row > -1 && col > -1) {
-				LinhaExtratoContaCorrenteDeutsche linha = (LinhaExtratoContaCorrenteDeutsche) tab.getModel().getValueAt(row, COLUMN_OBJECT);
+				LinhaExtratoContaCorrenteBanSabadell linha = (LinhaExtratoContaCorrenteBanSabadell) tab.getModel().getValueAt(row, COLUMN_OBJECT);
 				this.checkBotoes(row);
 			}
 		}
@@ -672,14 +677,14 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 				if ( this.modelTabNaoEncontrados != null && this.modelTabNaoEncontrados.getRowCount() > 0) {
 					int rowSelected = this.tabNaoEncontrados.getSelectedRow();
 					if ( rowSelected > -1 ) {
-						ContaTableCellEditor contaEditor = (ContaTableCellEditor)this.tabNaoEncontrados.getCellEditor(rowSelected, 6);
+						ContaTableCellEditor contaEditor = (ContaTableCellEditor)this.tabNaoEncontrados.getCellEditor(rowSelected, COLUMN_CONTA_CONTABIL);
 						contaEditor.cancelCellEditing();
 						
 						ContaFrame contaFrame = new ContaFrame(this);
 						contaFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 						contaFrame.setVisible(true);
 						
-						this.tabNaoEncontrados.setValueAt(contaFrame.getConta(), rowSelected, 6);
+						this.tabNaoEncontrados.setValueAt(contaFrame.getConta(), rowSelected, COLUMN_CONTA_CONTABIL);
 						this.checkBotoes(rowSelected);
 					}
 				}
@@ -709,15 +714,15 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 
 	private class Salvar extends SwingWorker<String, String> {
 
-		private AnalisadorExtratoCCDeutscheGUI		frame;
-		private LinhaExtratoContaCorrenteDeutsche	linha;
-		private LoadingFrame						loadingFrame;
-		private Conta								conta;
-		private ContaCorrente						cc;
-		private ScorecardManager			        scorecardManager;
-		private String								tipo;
+		private AnalisadorExtratoCCBanSabadellGUI	 frame;
+		private LinhaExtratoContaCorrenteBanSabadell linha;
+		private LoadingFrame						 loadingFrame;
+		private Conta								 conta;
+		private ContaCorrente						 cc;
+		private ScorecardManager			         scorecardManager;
+		private String								 tipo;
 
-		public Salvar(AnalisadorExtratoCCDeutscheGUI frame, LinhaExtratoContaCorrenteDeutsche linha, Conta conta, ContaCorrente cc, ScorecardManager scorecardManager,
+		public Salvar(AnalisadorExtratoCCBanSabadellGUI frame, LinhaExtratoContaCorrenteBanSabadell linha, Conta conta, ContaCorrente cc, ScorecardManager scorecardManager,
 				String tipo) {
 			this.frame = frame;
 			this.linha = linha;
@@ -733,14 +738,14 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 
 		protected String doInBackground() throws Exception {
 			if ("Transferência".equalsIgnoreCase(tipo)) {
-				Transferencia transferencia = AnalisadorExtratoCCDeutsche.converterLinhaTransferencia(linha, conta, cc, tipo);
-				transferencia.setAtivoTransferido(getContaCorrenteAlvoTransferencia(), getContaContabilDeposito(), Deposito.class, "Depósito Deutsche");
+				Transferencia transferencia = AnalisadorExtratoCCBanSabadell.converterLinhaTransferencia(linha, conta, cc, tipo);
+				transferencia.setAtivoTransferido(getContaCorrenteAlvoTransferencia(), getContaContabilDeposito(), Deposito.class, "Depósito Banc Sabadell");
 				scorecardManager.saveTransferencia(transferencia);
 			} else if (linha.isPassivo()) {
-				Passivo passivo = AnalisadorExtratoCCDeutsche.converterLinhaPassivo(linha, conta, cc, tipo);
+				Passivo passivo = AnalisadorExtratoCCBanSabadell.converterLinhaPassivo(linha, conta, cc, tipo);
 				scorecardManager.savePassivo(passivo);
 			} else if (linha.isAtivo()) {
-				Ativo ativo = AnalisadorExtratoCCDeutsche.converterLinhaAtivo(linha, conta, cc, tipo);
+				Ativo ativo = AnalisadorExtratoCCBanSabadell.converterLinhaAtivo(linha, conta, cc, tipo);
 				scorecardManager.saveAtivo(ativo);
 			}
 			return null;
@@ -759,13 +764,13 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		if (!(this.modelTabNaoEncontrados.getValueAt(row, COLUMN_CONTA_CONTABIL) instanceof String)) {
 			String ident = (String) this.modelTabNaoEncontrados.getValueAt(row, COLUMN_COMBO_IDENT);
 			if (StringUtils.isNotEmpty(ident)) {
-				LinhaExtratoContaCorrenteDeutsche linha = (LinhaExtratoContaCorrenteDeutsche) this.modelTabNaoEncontrados.getValueAt(row, COLUMN_OBJECT);
+				LinhaExtratoContaCorrenteBanSabadell linha = (LinhaExtratoContaCorrenteBanSabadell) this.modelTabNaoEncontrados.getValueAt(row, COLUMN_OBJECT);
 				Conta conta = (Conta) this.modelTabNaoEncontrados.getValueAt(row, COLUMN_CONTA_CONTABIL);
 				String tipo = (String) this.modelTabNaoEncontrados.getValueAt(row, COLUMN_COMBO_IDENT);
 				String hist = (String) this.modelTabNaoEncontrados.getValueAt(row, COLUMN_HISTORICO);
 				linha.setHistorico(hist);
 				try {
-					new Salvar(this, linha, conta, getContaCorrente(), this.scorecardManager, tipo).execute();
+					new Salvar(this, linha, conta, this.getContaCorrente(), this.scorecardManager, tipo).execute();
 					this.modelTabNaoEncontrados.removeRow(row);
 				} catch (Throwable t) {
 					logger.fatal(t);
@@ -847,4 +852,5 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 			}
 		}
 	}
+	
 }
