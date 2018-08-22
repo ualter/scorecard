@@ -10,6 +10,7 @@ public interface ContaCorrenteDAO {
 	public void remove(ContaCorrente conta);
 	public ContaCorrente findById(int id);
 	public List<ContaCorrente> findByDescricao(String descricao);
+	public List<ContaCorrente> findByBanco(Banco banco);
 	public List<ContaCorrente> list();
 	public boolean isRemovable(ContaCorrente cc);
 

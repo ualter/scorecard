@@ -144,6 +144,8 @@ public interface ScorecardManager
     
     public List<ContaCorrente> getContaCorrentePorDescricao(String descricao);
     
+    public List<ContaCorrente> getContaCorrentePorBanco(Banco banco);
+    
     public List<ContaCorrente> listarContaCorrente();
     
     public void saveBanco(Banco Banco);
@@ -216,5 +218,7 @@ public interface ScorecardManager
     public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal);
 
 	public CartaoContratado getCartaoContratado(Integer keyCartaoContratado);
+	
+	public List<CartaoContratado> getCartaoContratado(ContaCorrente contaCorrente);
 
 }

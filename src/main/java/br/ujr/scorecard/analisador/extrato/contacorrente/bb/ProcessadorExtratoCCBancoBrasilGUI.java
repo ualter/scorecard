@@ -278,7 +278,7 @@ public class ProcessadorExtratoCCBancoBrasilGUI extends JDialog implements Mouse
 	 * @return
 	 */
 	private ContaCorrente getContaCorrente() {
-		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCBancoBrasil);
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCBancoBrasil));
 		return cc;
 	}
 	/**
@@ -286,7 +286,7 @@ public class ProcessadorExtratoCCBancoBrasilGUI extends JDialog implements Mouse
 	 * @return
 	 */
 	private ContaCorrente getContaCorrenteAlvoTransferencia() {
-		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander));
 		return cc;
 	}
 	private Conta getContaContabilDeposito() {

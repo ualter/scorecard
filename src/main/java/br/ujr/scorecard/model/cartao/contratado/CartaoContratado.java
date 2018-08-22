@@ -6,7 +6,6 @@ import br.ujr.scorecard.model.persistence.BusinessObject;
 
 public class CartaoContratado extends BusinessObject implements Comparable<CartaoContratado> {
 	
-	
 	private Integer operadora;
 	private String nome;
 	private ContaCorrente contaCorrente;
@@ -89,7 +88,8 @@ public class CartaoContratado extends BusinessObject implements Comparable<Carta
 
 	@Override
 	public String toString() {
-		return "CartaoContratado [operadora=" + operadora + ", nome=" + nome + ", contaCorrente=" + contaCorrente + "]";
+		return this.nome;
+		//return "CartaoContratado [operadora=" + operadora + ", nome=" + nome + ", contaCorrente=" + contaCorrente + "]";
 	}
 	
 	public Cartao.Operadora getCartaoOperadora() {

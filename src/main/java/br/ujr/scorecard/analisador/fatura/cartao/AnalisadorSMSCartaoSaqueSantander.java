@@ -1,27 +1,26 @@
 package br.ujr.scorecard.analisador.fatura.cartao;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
 import br.ujr.scorecard.model.ScorecardManager;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.conta.Conta;
-import br.ujr.scorecard.model.passivo.cartao.Cartao;
 import br.ujr.scorecard.util.Util;
 
 public class AnalisadorSMSCartaoSaqueSantander extends AnalisadorSMSCartaoSantander {
 	
 	
 	public static void main(String[] args) {
-		Date hoje = Calendar.getInstance().getTime();
-		Cartao.Operadora operadora = Cartao.Operadora.MASTERCARD;
-		AnalisadorSMSCartaoSaqueSantander a =  new AnalisadorSMSCartaoSaqueSantander(hoje, operadora);
+//		Date hoje = Calendar.getInstance().getTime();
+//		Cartao.Operadora operadora = Cartao.Operadora.MASTERCARD;
+//		AnalisadorSMSCartaoSaqueSantander a =  new AnalisadorSMSCartaoSaqueSantander(hoje, operadora);
 	}
 	
-	public AnalisadorSMSCartaoSaqueSantander(Date mesAnoRefencia, Cartao.Operadora operadora) {
-		super(mesAnoRefencia, operadora); 
+	public AnalisadorSMSCartaoSaqueSantander(Date mesAnoRefencia, CartaoContratado cartaoContratado) {
+		super(mesAnoRefencia, cartaoContratado); 
 	}
 	
 	public List<LinhaLancamento> getLista() {

@@ -61,29 +61,8 @@ public class AnalisadorExtratoCCBanSabadell {
 	private static final DateTimeFormatter DATE_TIME_FORMATTER4 = DateTimeFormatter.ofPattern("d/M/yyyy");
 	
 	
-	public static Date foundInThePath() {
-		/*try {
-			String name = ScorecardProperties.getProperty(ScorecardPropertyKeys.ArquivoExtratoSantander);
-			File dir = new File(name.substring(0,name.lastIndexOf("/")));
-			name = name.substring(name.lastIndexOf("/") + 1,name.lastIndexOf("-$MESANO"));
-			if ( dir.exists() ) {
-				for(File file : dir.listFiles()) {
-					if (file.getName().contains(name)) {
-						String anoMes = file.getName().substring(file.getName().lastIndexOf("-")+1,file.getName().lastIndexOf("."));
-						return Util.parseDate("01" + "/" + anoMes.substring(4) + "/" + anoMes.substring(0,4));
-					}
-				}
-			}
-		} catch (Throwable e) {
-			Log.warn(e);
-			throw new RuntimeException(e);
-		}
-		return null;*/
-		return Calendar.getInstance().getTime();
-	}
-	
 	public AnalisadorExtratoCCBanSabadell(long referencia) {
-		this.cc         = scorecardManager.getContaCorrentePorId( Integer.parseInt(ScorecardProperties.getProperty(ScorecardPropertyKeys.IdBanSabadell)) );
+		this.cc         = scorecardManager.getContaCorrentePorId( Integer.parseInt(ScorecardProperties.getProperty(ScorecardPropertyKeys.IdCCBanSabadell)) );
 		this.passivos   = scorecardManager.getPassivosPorReferencia(cc, referencia);
 		this.ativos     = scorecardManager.getAtivosPorReferencia(cc, referencia);
 		this.referencia = referencia;
@@ -206,7 +185,7 @@ public class AnalisadorExtratoCCBanSabadell {
 			throw new RuntimeException(e.getMessage(),e);
 		}
 		if ( listFilesN43.size() == 0 ) {
-			String msg = "Não foi encontrado nenhum arquivo N43 no caminho " + pathN43Files; 
+			String msg = "Não foi encontrado nenhum arquivo N43 no diretório: " + pathN43Files; 
 			logger.warn(msg);
 			return msg;
 		}

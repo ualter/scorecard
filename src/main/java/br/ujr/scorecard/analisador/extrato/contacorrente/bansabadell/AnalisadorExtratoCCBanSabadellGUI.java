@@ -1,12 +1,10 @@
 package br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell;
 
-import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -19,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -60,6 +59,7 @@ import br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell.AnalisadorE
 import br.ujr.scorecard.gui.view.screen.ContaFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.bankpanel.HeaderListener;
+import br.ujr.scorecard.gui.view.utils.AbstractDialog;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
@@ -73,8 +73,8 @@ import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
 import br.ujr.scorecard.util.UtilGUI;
 
-public class AnalisadorExtratoCCBanSabadellGUI extends JDialog implements MouseListener, ActionListener, FocusListener {
-//public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements MouseListener, ActionListener, FocusListener {
+//public class AnalisadorExtratoCCBanSabadellGUI extends JDialog implements MouseListener, ActionListener, FocusListener {
+public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements MouseListener, ActionListener, FocusListener {
 
 	private static final long serialVersionUID = 1005761561571805210L;
 	private int							width		= 1036;
@@ -110,7 +110,7 @@ public class AnalisadorExtratoCCBanSabadellGUI extends JDialog implements MouseL
 		this.getContentPane().setLayout(null);
 		this.getContentPane().add(this.panMain);
 
-		this.setTitle("Scoredcard - Analisador Extrato Conta Corrente:   B A N C    S A B A D E L L  ");
+		this.setTitle("Scoredcard - Analisador Extrato Conta Corrente via Arquivo N43:    B A N C    S A B A D E L L");
 		this.setName("AnalisadorExtratoContaCorrenteBanSabadell");
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -207,27 +207,26 @@ public class AnalisadorExtratoCCBanSabadellGUI extends JDialog implements MouseL
 		tabNaoEncontrados.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, "SELECT_CONTA_CONTABIL_CELL");
 		tabNaoEncontrados.getActionMap().put("SELECT_CONTA_CONTABIL_CELL", new EnterAction());
 
+		InputMap  inputMap  = ((JPanel)this.getContentPane()).getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = ((JPanel)this.getContentPane()).getActionMap();
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "VK_ESCAPE");
+		actionMap.put("VK_ESCAPE", new EscapeActions(this));
+		
 		((JTextFieldDateEditor) this.txtDtRef.getDateEditor()).requestFocus();
 		this.txtDtRef.requestFocus();
 		this.txtDtRef.requestFocusInWindow();
-		this.txtDtRef.setDate(AnalisadorExtratoCCBanSabadell.foundInThePath());
-		
-		InputMap inputMap = ((JPanel)this.getContentPane()).getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
-		ActionMap actionMap = ((JPanel)this.getContentPane()).getActionMap();
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "VK_ESCAPE");
-		actionMap.put("VK_ESCAPE", new ActionsWindow(this));
+		this.txtDtRef.setDate(Calendar.getInstance().getTime());
 		 
 	}
-	private static class ActionsWindow extends AbstractAction {
+	private static class EscapeActions extends AbstractAction {
 		
 		private JDialog dialog;
 
-		public ActionsWindow(JDialog panel) {
+		public EscapeActions(JDialog panel) {
 			this.dialog = panel;
 		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println(e.getActionCommand());
 			this.dialog.dispose();
 		}
 	}
@@ -274,7 +273,7 @@ public class AnalisadorExtratoCCBanSabadellGUI extends JDialog implements MouseL
 	 * @return
 	 */
 	private ContaCorrente getContaCorrente() {
-		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId( Integer.parseInt(ScorecardProperties.getProperty(ScorecardPropertyKeys.IdBanSabadell)) );
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId( Integer.parseInt(ScorecardProperties.getProperty(ScorecardPropertyKeys.IdCCBanSabadell)) );
 		return cc;
 	}
 

@@ -28,6 +28,7 @@ import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -43,6 +44,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXPanel;
 
 import br.ujr.components.gui.combo.UjrComboBox;
@@ -54,7 +57,9 @@ import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.UtilTableCells;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
 import br.ujr.scorecard.model.ScorecardManager;
+import br.ujr.scorecard.model.ScorecardManagerImpl;
 import br.ujr.scorecard.model.banco.Banco;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
@@ -75,17 +80,19 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 	 */
 	private static final long serialVersionUID = -1092445806277556773L;
 	
-	protected JLabel                      lblVecto = new JLabel("Vencimento:");
-	protected JDateChooser                txtRefVecto = new JDateChooser("dd/MM/yyyy","##/####",'_');
-	protected DefaultModelTabela                 tableModelFatura;
+	private static Logger logger = Logger.getLogger(AnalisadorLancamentosCartaoGUI.class);
+	
+	protected JLabel                      lblVecto          = new JLabel("Vencimento:");
+	protected JDateChooser                txtRefVecto       = new JDateChooser("dd/MM/yyyy","##/####",'_');
+	protected DefaultModelTabela          tableModelFatura;
 	protected JTable                      tableFatura;
 	protected JButton                     btnOk             = new JButton();
 	protected JButton                     btnCancela        = new JButton();
 	protected JButton                     btnVerificar      = new JButton();
 	protected JButton                     btnContas         = new JButton();
-	protected JComboBox                   cmbBanco          = new JComboBox();
-	protected JComboBox                   cmbCartao         = new JComboBox();
-	protected JComboBox                   cmbOrigem         = new JComboBox();
+	protected JComboBox<Banco>            cmbBanco          = new JComboBox<Banco>();
+	protected JComboBox<CartaoContratado> cmbCartao         = new JComboBox<CartaoContratado>();
+	protected JComboBox<String>           cmbOrigem         = new JComboBox<String>();
 	private JXPanel blinder;
 	private ContaCorrente contaCorrente;
 	
@@ -111,7 +118,7 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 	}
 	
 	public String getTitulo() {
-		return "Análise Lançamentos de Cartão Crédito (Em Memória - Clipboard) v3";
+		return "Análise Lançamentos de Cartão Crédito (Em Memória - Clipboard)";
 	}
 	
 	protected void createUI() {
@@ -200,7 +207,6 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 		return UtilTableCells.DEFAULT_COLUMN_EFETIVADO - 1;
 	}
 	
-	
 	private void buildPanelCartaoFatura(JPanel panOrcamento) {
 		int X          = 10;
 		int Y          = 14;
@@ -218,13 +224,13 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 			if ( banco.isAtivo() )
 				this.cmbBanco.addItem(banco);
 		}
-		this.cmbBanco.setSelectedIndex(this.cmbBanco.getModel().getSize() - 1);
+		//this.cmbBanco.setSelectedIndex(this.cmbBanco.getModel().getSize() - 1);
 		
 		JLabel lblCartao = new JLabel("Cartão:");
 		lblCartao.setBounds(X + 180, Y, 100, 20);
 		this.cmbCartao.setBounds(X + 225,Y,150,20);
-		this.cmbCartao.addItem(Cartao.Operadora.MASTERCARD);
-		this.cmbCartao.addItem(Cartao.Operadora.VISA);
+		//this.cmbCartao.addItem(Cartao.Operadora.MASTERCARD);
+		//this.cmbCartao.addItem(Cartao.Operadora.VISA);
 		this.cmbCartao.setSelectedIndex(1);
 
 		lblVecto.setBounds(X+410, Y, WIDTH_LBLS, 20);
@@ -424,14 +430,14 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 				this.scorecardBusiness = (ScorecardManager)Util.getBean("scorecardManager");
 			}
 			int banco = getSelectedBanco();
-			if (banco == ScorecardPropertyKeys.IdSANTANDER) {
-				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander));
+			if (banco == Util.getInstance().getIdBanco(ScorecardPropertyKeys.IdBancoSantander)) {
+				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander)));
 			} else
-			if (banco == ScorecardPropertyKeys.IdITAU) {
-				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(ScorecardPropertyKeys.IdCCItau));
+			if (banco == Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdBancoItau)) {
+				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCItau)));
 			} else
-			if (banco == ScorecardPropertyKeys.IdDeutsche) {
-				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche));
+			if (banco == Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdBancoDeutsche)) {
+				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCDeutsche)));
 			}
 			
 			this.dispararCargaFatura();
@@ -454,19 +460,22 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 	}
 	
 	private class CarregarLancamentosFromClipboard extends SwingWorker<String, Object[]> {
+		
+		private Logger logger = Logger.getLogger(CarregarLancamentosFromClipboard.class); 
+		
 		private LoadingFrame loadingFrame;
 		private AnalisadorLancamentosCartaoGUI frame;
-		private Cartao.Operadora operadora;
+		private CartaoContratado cartaoContratado;
 		private String origem;
 		private int banco;
 		private Date ref;
 		
 		public CarregarLancamentosFromClipboard(AnalisadorLancamentosCartaoGUI frame) {
-			this.frame         = frame;
-			this.operadora     = (Cartao.Operadora)frame.cmbCartao.getSelectedItem();
-			this.origem	       = frame.cmbOrigem.getSelectedItem().toString();
-			this.ref           = frame.txtRefVecto.getDate();
-			this.banco         = frame.getSelectedBanco();
+			this.frame            = frame;
+			this.cartaoContratado = (CartaoContratado)frame.cmbCartao.getSelectedItem();
+			this.origem	          = frame.cmbOrigem.getSelectedItem().toString();
+			this.ref              = frame.txtRefVecto.getDate();
+			this.banco            = frame.getSelectedBanco();
 		}
 		
 		@Override
@@ -475,31 +484,38 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 			loadingFrame.showLoadinFrame();
 			List<LinhaLancamento> linhasLancamentos = new ArrayList<LinhaLancamento>();
 			try {
-				if (this.banco == ScorecardPropertyKeys.IdSANTANDER) {
+				if (this.banco == Util.getInstance().getIdBanco(ScorecardPropertyKeys.IdBancoSantander)) {
 					if (this.origem.equalsIgnoreCase("SMS")) {
-						AnalisadorSMSCartaoTransacaoSantander analisadorSMSCartaoSantander = new AnalisadorSMSCartaoTransacaoSantander(this.ref, this.operadora);
+						AnalisadorSMSCartaoTransacaoSantander analisadorSMSCartaoSantander = new AnalisadorSMSCartaoTransacaoSantander(this.ref, this.cartaoContratado);
 						linhasLancamentos = analisadorSMSCartaoSantander.getLista();
 					} else if (this.origem.equalsIgnoreCase("Fatura")) {
-						AnalisadorFaturaCartaoSantander analisadorFaturaCartaoSantander = new AnalisadorFaturaCartaoSantander(this.ref, this.operadora);
+						AnalisadorFaturaCartaoSantander analisadorFaturaCartaoSantander = new AnalisadorFaturaCartaoSantander(this.ref, this.cartaoContratado);
 						linhasLancamentos = analisadorFaturaCartaoSantander.getLista();
 					}
 				} else
-				if (this.banco == ScorecardPropertyKeys.IdITAU) {
+				if (this.banco == Util.getInstance().getIdBanco(ScorecardPropertyKeys.IdBancoItau)) {
 					/**
 					 * No caso do ITAU o Cartão VISA o Emissor é a empresa Porto Seguro
 					 */
 					if (this.origem.equalsIgnoreCase("Fatura")) {
-						AnalisadorFaturaCartaoItau analisadorFaturaCartaoItau = new AnalisadorFaturaCartaoItau(this.ref, this.operadora);
+						AnalisadorFaturaCartaoItau analisadorFaturaCartaoItau = new AnalisadorFaturaCartaoItau(this.ref, this.cartaoContratado);
 						linhasLancamentos = analisadorFaturaCartaoItau.getLista();
 					}
 				} else
-				if (this.banco == ScorecardPropertyKeys.IdDeutsche) {
+				if (this.banco == Util.getInstance().getIdBanco(ScorecardPropertyKeys.IdBancoDeutsche)) {
 					if (this.origem.equalsIgnoreCase("Fatura")) {
-						AnalisadorFaturaCartaoDeutsche analisadorFaturaCartaoDeutsche = new AnalisadorFaturaCartaoDeutsche(this.ref, this.operadora);
+						AnalisadorFaturaCartaoDeutsche analisadorFaturaCartaoDeutsche = new AnalisadorFaturaCartaoDeutsche(this.ref, this.cartaoContratado);
 						linhasLancamentos = analisadorFaturaCartaoDeutsche.getLista();
 					}
-				}
+				} else
+				if (this.banco == Util.getInstance().getIdBanco(ScorecardPropertyKeys.IdBancoBanSabadell)) {
+					if (this.origem.equalsIgnoreCase("Fatura")) {
+						AnalisadorFaturaCartaoDeutsche analisadorFaturaCartaoDeutsche = new AnalisadorFaturaCartaoDeutsche(this.ref, this.cartaoContratado);
+						linhasLancamentos = analisadorFaturaCartaoDeutsche.getLista();
+					}
+				}	
 			} catch (Throwable e) {
+				logger.error(ExceptionUtils.getStackTrace(e));
 				loadingFrame.dispose();
 				frame.btnCancela.requestFocus();
 				JOptionPane.showMessageDialog(null, e.getMessage());
@@ -679,6 +695,7 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 			CarregarLancamentosFromClipboard task = new CarregarLancamentosFromClipboard(this);
 			task.execute();
 		} catch (Throwable e) {
+			logger.error(ExceptionUtils.getStackTrace(e));
 			JOptionPane.showMessageDialog(this, e.getMessage());
 		}
 		
@@ -712,6 +729,18 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 	public void itemStateChanged(ItemEvent evt) {
 		if ( evt.getSource() instanceof JComboBox ) {
 			alterarDiaVecto();
+			
+			JComboBox combo = (JComboBox)evt.getSource();
+			if ( combo.getName().equalsIgnoreCase("BANCO") ) {
+				Banco banco = (Banco)combo.getSelectedItem();
+				
+				cmbCartao.removeAllItems();
+				this.scorecardBusiness.getContaCorrentePorBanco(banco).forEach(cc -> {
+					this.scorecardBusiness.getCartaoContratado(cc).forEach(cartaoContratado -> {
+						cmbCartao.addItem(cartaoContratado);
+					});
+				});
+			}
 		}
 	}
 
@@ -720,10 +749,10 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 		if ("BANCO".equalsIgnoreCase(cmb.getName())) {
 			int diaVcto = 0;
 			Banco banco = (Banco)cmb.getSelectedItem();
-			if ( cmbCartao.getSelectedItem() != null && cmbCartao.getSelectedItem().toString().equals(Cartao.Operadora.MASTERCARD.name()) ) {
+			if ( cmbCartao.getSelectedItem() != null && cmbCartao.getSelectedItem().toString().contains(Cartao.Operadora.MASTERCARD.name()) ) {
 				diaVcto = banco.getDiaVencimentoMastercard();
 			} else
-			if ( cmbCartao.getSelectedItem() != null && cmbCartao.getSelectedItem().toString().equals(Cartao.Operadora.VISA.name()) ) {
+			if ( cmbCartao.getSelectedItem() != null && cmbCartao.getSelectedItem().toString().contains(Cartao.Operadora.VISA.name()) ) {
 				diaVcto = banco.getDiaVencimentoVisa();
 			}
 			Calendar cal = Calendar.getInstance();

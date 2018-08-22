@@ -33,6 +33,7 @@ import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 
+import br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell.AnalisadorExtratoCCBanSabadellGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.bb.ProcessadorExtratoCCBancoBrasilGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.deutsche.AnalisadorExtratoCCDeutscheGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.santander.AnalisadorExtratoCCSantanderGUI;
@@ -144,11 +145,23 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
         itemReplicarOrcamentos.setMnemonic(KeyEvent.VK_M);
         menuProcessamentos.add(itemReplicarOrcamentos);
         
-        JMenuItem itemAnalisadorExtratoCCSantander = new JMenuItem("Processar extrato C/C SANTANDER");
+        JMenuItem itemAnalisadorExtratoCCSantander = new JMenuItem("Processar extrato SANTANDER");
         itemAnalisadorExtratoCCSantander.addActionListener(this);
         itemAnalisadorExtratoCCSantander.setActionCommand("ANALISAR_EXTRATO_CC_SANTANDER");
         itemAnalisadorExtratoCCSantander.setMnemonic(KeyEvent.VK_R);
         menuProcessamentos.add(itemAnalisadorExtratoCCSantander);
+        
+        JMenuItem itemAnalisadorExtratoDeutsche = new JMenuItem("Processar extrato DEUTSCHE");
+        itemAnalisadorExtratoDeutsche.addActionListener(this);
+        itemAnalisadorExtratoDeutsche.setActionCommand("ANALISAR_EXTRATO_CC_DEUTSCHE");
+        itemAnalisadorExtratoDeutsche.setMnemonic(KeyEvent.VK_D);
+        menuProcessamentos.add(itemAnalisadorExtratoDeutsche);
+        
+        JMenuItem itemAnalisadorExtratoBanSabadell = new JMenuItem("Processar extrato BANC SABADELL");
+        itemAnalisadorExtratoBanSabadell.addActionListener(this);
+        itemAnalisadorExtratoBanSabadell.setActionCommand("ANALISAR_EXTRATO_CC_BANSABADELL");
+        itemAnalisadorExtratoBanSabadell.setMnemonic(KeyEvent.VK_L);
+        menuProcessamentos.add(itemAnalisadorExtratoBanSabadell);
         
         JMenuItem itemAnalisadorFaturaCartaoSantander = new JMenuItem("Analisar Lançamentos Cartão de Crédito (ClipBoard)");
         itemAnalisadorFaturaCartaoSantander.addActionListener(this);
@@ -210,6 +223,13 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
         btnAnalisarExtratoDeutsche.addActionListener(this);
         Util.setToolTip(this, btnAnalisarExtratoDeutsche, "Analisar Extrato Deutsche Bank em memória");
         toolBar.add(btnAnalisarExtratoDeutsche);
+        
+        //JButton btnAnalisarExtratoBanSabadell = new JButton(new ImageIcon(Util.loadImage(this, "deutsche_bank_logo.png")));
+        JButton btnAnalisarExtratoBanSabadell = new JButton("TO DO...");
+        btnAnalisarExtratoBanSabadell.setActionCommand("ANALISAR_EXTRATO_BANSABADELL");
+        btnAnalisarExtratoBanSabadell.addActionListener(this);
+        Util.setToolTip(this, btnAnalisarExtratoBanSabadell, "Analisar Extrato Banc Sabadell em arquivo N43 baixado");
+        toolBar.add(btnAnalisarExtratoBanSabadell);
         
         toolBar.addSeparator();
         
@@ -372,6 +392,16 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
 			proSantanderGUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			proSantanderGUI.setVisible(true);
 		} else
+		if ("ANALISAR_EXTRATO_CC_DEUTSCHE".equals(a)) {
+			AnalisadorExtratoCCDeutscheGUI deutscheGUI = new AnalisadorExtratoCCDeutscheGUI();
+			deutscheGUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			deutscheGUI.setVisible(true);
+		} else
+		if ("ANALISAR_EXTRATO_CC_BANSABADELL".equals(a)) {
+			AnalisadorExtratoCCBanSabadellGUI banSabadellGUI = new AnalisadorExtratoCCBanSabadellGUI();
+			banSabadellGUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			banSabadellGUI.setVisible(true);
+		} else	
 		if ("ANALISAR_EXTRATO_CC_BB".equals(a)) {
 			ProcessadorExtratoCCBancoBrasilGUI proSantanderGUI = new ProcessadorExtratoCCBancoBrasilGUI();
 			proSantanderGUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -386,7 +416,12 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
 			AnalisadorExtratoCCDeutscheGUI analisadorExtratoCCDeutscheGUI = new AnalisadorExtratoCCDeutscheGUI(this);
 			analisadorExtratoCCDeutscheGUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			analisadorExtratoCCDeutscheGUI.setVisible(true);
-		}
+		} else
+		if ("ANALISAR_EXTRATO_BANSABADELL".equals(a)) {
+			AnalisadorExtratoCCBanSabadellGUI analisadorExtratoCCBanSabadellGUI = new AnalisadorExtratoCCBanSabadellGUI(this);
+			analisadorExtratoCCBanSabadellGUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			analisadorExtratoCCBanSabadellGUI.setVisible(true);
+		}	
 	}
 
 	public void mouseClicked(MouseEvent e) {

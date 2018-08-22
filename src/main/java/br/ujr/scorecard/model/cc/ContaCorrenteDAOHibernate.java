@@ -6,6 +6,8 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
+import br.ujr.scorecard.model.banco.Banco;
+
 public class ContaCorrenteDAOHibernate extends HibernateDaoSupport implements ContaCorrenteDAO {
 
 	private static Logger log = Logger.getLogger(ContaCorrenteDAOHibernate.class);
@@ -89,6 +91,18 @@ public class ContaCorrenteDAOHibernate extends HibernateDaoSupport implements Co
 				return false;
 			}
 			return true;
+		} catch (DataAccessException e) {
+			log.error(e.getMessage(),e);
+			throw e;
+		}
+	}
+
+	@Override
+	public List<ContaCorrente> findByBanco(Banco banco) {
+		try {
+			StringBuffer strQuery = new StringBuffer(" from ContaCorrente as cc where cc.banco.id = ?0 ");
+			List<ContaCorrente> list = (List<ContaCorrente>)this.getHibernateTemplate().find(strQuery.toString(),banco.getId());
+			return list;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);
 			throw e;

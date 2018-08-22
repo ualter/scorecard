@@ -292,7 +292,7 @@ public class AnalisadorExtratoCCSantanderGUI extends JDialog implements MouseLis
 	 * @return
 	 */
 	private ContaCorrente getContaCorrente() {
-		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander));
 		return cc;
 	}
 	/**

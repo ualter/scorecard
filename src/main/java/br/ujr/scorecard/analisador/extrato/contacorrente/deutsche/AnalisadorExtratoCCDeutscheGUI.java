@@ -110,7 +110,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		this.getContentPane().setLayout(null);
 		this.getContentPane().add(this.panMain);
 
-		this.setTitle("Scoredcard - Analisador Extrato Conta Corrente: D E U T S C H E");
+		this.setTitle("Scoredcard - Analisador Extrato Conta Corrente via Clipboard:    D E U T S C H E");
 		this.setName("AnalisadorExtratoContaCorrenteBancoDeutsche");
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -254,7 +254,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 	 * @return
 	 */
 	private ContaCorrente getContaCorrente() {
-		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche);
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCDeutsche));
 		return cc;
 	}
 

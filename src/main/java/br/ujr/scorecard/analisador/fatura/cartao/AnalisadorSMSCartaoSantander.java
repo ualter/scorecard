@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.ujr.scorecard.model.ScorecardManager;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
@@ -16,19 +17,19 @@ public abstract class AnalisadorSMSCartaoSantander {
 	protected String conteudo;
 	protected List<LinhaLancamento> lista = new ArrayList<LinhaLancamento>();
 	protected Date mesAnoRefencia;
-	protected Cartao.Operadora operadora;
+	protected CartaoContratado cartaoContratado;
 	protected ContaCorrente santander;
 	protected ScorecardManager bd;
 	
 	
-	public AnalisadorSMSCartaoSantander(Date mesAnoRefencia, Cartao.Operadora operadora) {
+	public AnalisadorSMSCartaoSantander(Date mesAnoRefencia, CartaoContratado operadora) {
 		try {
 			
 			this.bd = (ScorecardManager)Util.getBean("scorecardManager");
-			this.santander = bd.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
+			this.santander = bd.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander));
 			
 			this.mesAnoRefencia = mesAnoRefencia;
-			this.operadora = operadora;
+			this.cartaoContratado = operadora;
 			this.conteudo = Util.getClipBoarContent();
 			
 			this.traduzirConteudo();

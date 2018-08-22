@@ -81,7 +81,7 @@ public class AnalisadorExtratoCCSantander {
 	}
 	
 	public AnalisadorExtratoCCSantander(long referencia) {
-		this.cc = scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
+		this.cc = scorecardManager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander));
 		this.passivos = scorecardManager.getPassivosPorReferencia(cc, referencia);
 		this.ativos = scorecardManager.getAtivosPorReferencia(cc, referencia);
 		this.referencia = referencia;

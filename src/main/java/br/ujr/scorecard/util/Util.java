@@ -430,4 +430,18 @@ public class Util {
         return result;
 	}
 	
+	public int getIdContaCorrenteBanco(String propertyNameContaCorrenteId) {
+		if ( ScorecardProperties.getProperty(propertyNameContaCorrenteId) == null ) {
+			throw new RuntimeException("Nao encontrado Key Property para o ID de Conta Corrente: " + propertyNameContaCorrenteId);
+		}
+		return Integer.parseInt(ScorecardProperties.getProperty(propertyNameContaCorrenteId).trim());
+	}
+	
+	public int getIdBanco(String propertyNameBancoId) {
+		if ( ScorecardProperties.getProperty(propertyNameBancoId) == null ) {
+			throw new RuntimeException("Nao encontrado Key Property para o ID de Banco: " + propertyNameBancoId);
+		}
+		return Integer.parseInt(ScorecardProperties.getProperty(propertyNameBancoId).trim());
+	}
+	
 }

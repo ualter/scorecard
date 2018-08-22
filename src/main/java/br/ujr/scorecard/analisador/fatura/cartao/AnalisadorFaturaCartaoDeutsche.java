@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import br.ujr.scorecard.model.ScorecardManager;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
@@ -21,25 +22,25 @@ public class AnalisadorFaturaCartaoDeutsche {
 	private String conteudo;
 	private List<LinhaLancamento> lista = new ArrayList<LinhaLancamento>();
 	private Date mesAnoRefencia;
-	private Cartao.Operadora operadora;
+	private CartaoContratado cartaoContratado;
 	private ContaCorrente deutsche;
 	private ScorecardManager bd;
 	private static Logger logger = Logger.getLogger(AnalisadorFaturaCartaoDeutsche.class);
 	
 	public static void main(String[] args) {
-		Date hoje = Calendar.getInstance().getTime();
-		Cartao.Operadora operadora = Cartao.Operadora.MASTERCARD;
-		AnalisadorFaturaCartaoDeutsche a =  new AnalisadorFaturaCartaoDeutsche(hoje, operadora);
+//		Date hoje = Calendar.getInstance().getTime();
+//		Cartao.Operadora operadora = Cartao.Operadora.MASTERCARD;
+//		AnalisadorFaturaCartaoDeutsche a =  new AnalisadorFaturaCartaoDeutsche(hoje, operadora);
 	}
 	
-	public AnalisadorFaturaCartaoDeutsche(Date mesAnoRefencia, Cartao.Operadora operadora) {
+	public AnalisadorFaturaCartaoDeutsche(Date mesAnoRefencia, CartaoContratado cartaoContratado) {
 		try {
 			
 			this.bd = (ScorecardManager)Util.getBean("scorecardManager");
-			this.deutsche = bd.getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche);
+			this.deutsche = bd.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCDeutsche));
 			
 			this.mesAnoRefencia = mesAnoRefencia;
-			this.operadora = operadora;
+			this.cartaoContratado = cartaoContratado;
 			this.conteudo = Util.getClipBoarContent();
 			
 			this.traduzirConteudo();
@@ -79,7 +80,7 @@ public class AnalisadorFaturaCartaoDeutsche {
 			 * Verifica a existencia desta linha da fatura na base de dados
 			 */
 			Cartao cartao = new Cartao();
-			cartao.setOperadora(operadora);
+			cartao.setCartaoContratado(cartaoContratado);
 			cartao.setContaCorrente(deutsche);
 			Parcela parcela = new Parcela();
 			parcela.setValor( Util.parseCurrency(valor) );

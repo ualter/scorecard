@@ -75,7 +75,7 @@ public class AnalisadorExtratoCCDeutsche {
 	}
 	
 	public AnalisadorExtratoCCDeutsche(long referencia) {
-		this.cc = scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCDeutsche);
+		this.cc = scorecardManager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCDeutsche));
 		this.passivos = scorecardManager.getPassivosPorReferencia(cc, referencia);
 		this.ativos = scorecardManager.getAtivosPorReferencia(cc, referencia);
 		this.referencia = referencia;

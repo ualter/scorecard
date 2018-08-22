@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+        "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
     <class name="br.ujr.scorecard.model.conta.Conta" table="CONTA">
@@ -18,7 +18,7 @@
 	    <property name="nivel" column="NIVEL"/>
 	    <property name="descricao" column="DESCRICAO"/>
 	    
-	    <many-to-one 
+	    <many-to-one  embed-xml="false"
 	    	name="contaPai" 
 	    	column="CONTAPAI_ID" 
 	    	class="br.ujr.scorecard.model.conta.Conta"
@@ -26,7 +26,7 @@
 	    	lazy="false"
 	    	not-null="false"/>
 	    
-	    <set name="contasFilhos" 
+	    <set name="contasFilhos"  
 	         inverse="true" 
 	         outer-join="true"
 	         lazy="false" 

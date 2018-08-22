@@ -87,7 +87,7 @@ public class ChequeFrame extends PassivoFrame {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ContaCorrente cc = ((ScorecardManager)Util.getBean("scorecardManager")).getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
+					ContaCorrente cc = ((ScorecardManager)Util.getBean("scorecardManager")).getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander));
 					
 					JFrame frame = new JFrame();
 					frame.setLayout(null);

@@ -89,7 +89,7 @@ public class ProcessadorExtratoCCBancoBrasil {
 	public ProcessadorExtratoCCBancoBrasil(long referencia) {
 		String file      = ScorecardProperties.getProperty(ScorecardPropertyKeys.ArquivoExtratoCC_BB);
 		this.pathExtrato = file.replaceAll("\\$MESANO", referencia + "");;
-		this.cc = scorecardManager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCBancoBrasil);
+		this.cc = scorecardManager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCBancoBrasil));
 		this.passivos = scorecardManager.getPassivosPorReferencia(cc, referencia);
 		this.ativos = scorecardManager.getAtivosPorReferencia(cc, referencia);
 		this.referencia = referencia;

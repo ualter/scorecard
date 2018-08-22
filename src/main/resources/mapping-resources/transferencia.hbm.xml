@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+        "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
         
 <hibernate-mapping>
 
@@ -24,7 +24,7 @@
 	    <!-- 
 	    Ativo Pertence a uma Conta Corrente
 	    -->
-	    <many-to-one name="contaCorrente"
+	    <many-to-one name="contaCorrente" embed-xml="false"
 	    	column="CONTA_CORRENTE_ID"
 	    	unique="true"
 	    	not-null="true"
@@ -34,7 +34,7 @@
 	    <!--  
 	    Passivo associa-se a 1 Conta
 	    -->
-	    <many-to-one name="conta"
+	    <many-to-one name="conta" embed-xml="false"
 	    		column="CONTA_ID"
 	    		unique="true"
 	    		not-null="true"
@@ -45,7 +45,7 @@
 	    Ativo Criado na Transferência para Ativo em Conta Corrente 
 	    	(Relacionamento com Ativo Transferido para outra C/C)
 	    -->
-	    <many-to-one name="ativoTransferido"
+	    <many-to-one name="ativoTransferido" embed-xml="false"
 	    	column="ATIVO_TRANSFERIDO"
 	    	unique="true"
 	    	not-null="true"

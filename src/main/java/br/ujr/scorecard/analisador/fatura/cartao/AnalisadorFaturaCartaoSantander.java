@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import br.ujr.scorecard.model.ScorecardManager;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
@@ -24,26 +25,26 @@ public class AnalisadorFaturaCartaoSantander {
 	private String conteudo;
 	private List<LinhaLancamento> lista = new ArrayList<LinhaLancamento>();
 	private Date mesAnoRefencia;
-	private Cartao.Operadora operadora;
+	private CartaoContratado cartaoContratado;
 	private ContaCorrente santander;
 	private ScorecardManager bd;
 	private static Logger logger = Logger.getLogger(AnalisadorFaturaCartaoSantander.class);
 	
 	public static void main(String[] args) {
-		Date hoje = Calendar.getInstance().getTime();
-		Cartao.Operadora operadora = Cartao.Operadora.MASTERCARD;
-		AnalisadorFaturaCartaoSantander a =  new AnalisadorFaturaCartaoSantander(hoje, operadora);
+//		Date hoje = Calendar.getInstance().getTime();
+//		Cartao.Operadora operadora = Cartao.Operadora.MASTERCARD;
+//		AnalisadorFaturaCartaoSantander a =  new AnalisadorFaturaCartaoSantander(hoje, operadora);
 	}
 	
-	public AnalisadorFaturaCartaoSantander(Date mesAnoRefencia, Cartao.Operadora operadora) {
+	public AnalisadorFaturaCartaoSantander(Date mesAnoRefencia, CartaoContratado cartaoContratado) {
 		try {
 			
 			this.bd = (ScorecardManager)Util.getBean("scorecardManager");
-			this.santander = bd.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
+			this.santander = bd.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander));
 			
-			this.mesAnoRefencia = mesAnoRefencia;
-			this.operadora = operadora;
-			this.conteudo = Util.getClipBoarContent();
+			this.mesAnoRefencia   = mesAnoRefencia;
+			this.cartaoContratado = cartaoContratado;
+			this.conteudo         = Util.getClipBoarContent();
 			
 			this.traduzirConteudo();
 		} catch (Throwable e) {
@@ -81,7 +82,7 @@ public class AnalisadorFaturaCartaoSantander {
 			 * Verifica a existencia desta linha da fatura na base de dados
 			 */
 			Cartao cartao = new Cartao();
-			cartao.setOperadora(operadora);
+			cartao.setCartaoContratado(cartaoContratado);
 			cartao.setContaCorrente(santander);
 			Parcela parcela = new Parcela();
 			parcela.setValor( Util.parseCurrency(valor) );

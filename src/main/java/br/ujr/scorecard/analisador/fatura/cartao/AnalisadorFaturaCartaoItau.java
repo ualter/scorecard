@@ -1,7 +1,6 @@
 package br.ujr.scorecard.analisador.fatura.cartao;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +10,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 import br.ujr.scorecard.model.ScorecardManager;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
@@ -23,24 +23,24 @@ public class AnalisadorFaturaCartaoItau {
 	private String conteudo;
 	private List<LinhaLancamento> lista = new ArrayList<LinhaLancamento>();
 	private Date mesAnoRefencia;
-	private Cartao.Operadora operadora;
+	private CartaoContratado cartaoContratado;
 	private ContaCorrente itau;
 	private ScorecardManager bd;
 	
 	public static void main(String[] args) {
-		Date hoje = Calendar.getInstance().getTime();
-		Cartao.Operadora operadora = Cartao.Operadora.VISA;
-		AnalisadorFaturaCartaoItau a =  new AnalisadorFaturaCartaoItau(hoje, operadora);
+//		Date hoje = Calendar.getInstance().getTime();
+//		Cartao.Operadora operadora = Cartao.Operadora.VISA;
+//		AnalisadorFaturaCartaoItau a =  new AnalisadorFaturaCartaoItau(hoje, operadora);
 	}
 	
-	public AnalisadorFaturaCartaoItau(Date mesAnoRefencia, Cartao.Operadora operadora) {
+	public AnalisadorFaturaCartaoItau(Date mesAnoRefencia, CartaoContratado cartaoContratado) {
 		try {
 			
 			this.bd = (ScorecardManager)Util.getBean("scorecardManager");
-			this.itau = bd.getContaCorrentePorId(ScorecardPropertyKeys.IdCCItau);
+			this.itau = bd.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCItau));
 			
 			this.mesAnoRefencia = mesAnoRefencia;
-			this.operadora = operadora;
+			this.cartaoContratado = cartaoContratado;
 			this.conteudo = Util.getClipBoarContent();
 			
 			this.traduzirConteudo();
@@ -85,7 +85,7 @@ public class AnalisadorFaturaCartaoItau {
 			 * Verifica a existencia desta linha da fatura na base de dados
 			 */
 			Cartao cartao = new Cartao();
-			cartao.setOperadora(operadora);
+			cartao.setCartaoContratado(cartaoContratado);
 			cartao.setContaCorrente(itau);
 			Parcela parcela = new Parcela();
 			parcela.setValor( Util.parseCurrency(valor) );

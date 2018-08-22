@@ -77,8 +77,8 @@ INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES 
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('1', 'VISA Electron DB', @contaCorrenteIdDeutsche);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard DB',    @contaCorrenteIdDeutsche);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'VISA BS',          @contaCorrenteIdSabadell);
-INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('1', 'VISA Electron BS', @contaCorrenteIdSabadell);
-INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard BS',    @contaCorrenteIdSabadell);
+
+INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard Debit', @contaCorrenteIdSabadell);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'VISA Citibank',          @contaCorrenteIdCitiBank);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('1', 'VISA Electron Citibank', @contaCorrenteIdCitiBank);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard Citibank',    @contaCorrenteIdCitiBank);
@@ -110,6 +110,9 @@ where c.cartao_contratado_id IS NULL;
 # Logo CartaoContratado
 ALTER TABLE `cartao_contratado` 
 ADD COLUMN `LOGO` VARCHAR(80) NULL AFTER `CONTA_CORRENTE_ID`;
+
+# Add Cartao VISA SIN de Banc Sabadell
+INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'VISA SIN', @contaCorrenteIdSabadell);
 
 UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`NOME` LIKE '%VISA%');
 UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`NOME` LIKE '%VISA Electron%');

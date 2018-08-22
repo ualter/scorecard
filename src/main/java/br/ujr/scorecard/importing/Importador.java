@@ -354,7 +354,7 @@ public class Importador {
 	public void doImport() {
 		ScorecardManager manager = (ScorecardManager)Util.getBean("scorecardManager");
 		
-		ContaCorrente contaCorrente = manager.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander);
+		ContaCorrente contaCorrente = manager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander));
 		if ( contaCorrente == null ) {
 			throw new RuntimeException("Conta corrente Ualter Jr. não encontrada.");
 		}

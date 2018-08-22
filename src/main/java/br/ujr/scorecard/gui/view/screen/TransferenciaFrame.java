@@ -165,7 +165,7 @@ public class TransferenciaFrame extends AbstractDialog implements FocusListener 
 			transf.toStringMode = 1;
 			this.txtConta.setSelectedItem(transf);
 			this.txtDescricao.setText("Repasse Santander");
-			this.txtContaCorrenteDestino.setSelectedItem(this.scorecardBusiness.getContaCorrentePorId(ScorecardPropertyKeys.IdCCSantander));
+			this.txtContaCorrenteDestino.setSelectedItem(this.scorecardBusiness.getContaCorrentePorId( Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander) ));
 			this.txtHistoricoDestino.setText("Deposito Itaú");
 			Conta depos = this.scorecardBusiness.getContaPorDescricao("Depósito").get(0);
 			depos.toStringMode = 1;

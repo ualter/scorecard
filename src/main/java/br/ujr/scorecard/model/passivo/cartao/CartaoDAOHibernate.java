@@ -59,27 +59,26 @@ public class CartaoDAOHibernate extends HibernateDaoSupport implements CartaoDAO
 			List<Object> listParams = new ArrayList<Object>();
 			listParams.add(referenciaInicial);
 			listParams.add(referenciaFinal);
-			listParams.add(cartao.getContaCorrente());
+			listParams.add(cartao.getContaCorrente().getId());
 			
 			Set<Cartao> result = new HashSet<Cartao>();
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append(" select P.passivo, P from Parcela as P ");
-			strQuery.append(" where P.referencia >= ? and P.referencia <= ? ");
-			strQuery.append(" and P.passivo.contaCorrente.id = ? ");
+			strQuery.append(" where P.referencia >= ?0 and P.referencia <= ?1 ");
+			strQuery.append(" and P.passivo.contaCorrente.id = ?2 ");
 			/*
-			 * Operadora
+			 * Cartao Contratado
 			 */
-			if ( cartao.getEnumOperadora() != null ) {
-				strQuery.append(" and P.passivo.operadora = ? ");
-				listParams.add(cartao.getEnumOperadora().ordinal());
+			if ( cartao.getCartaoContratado() != null ) {
+				strQuery.append(" and P.passivo.cartaoContratado.id = ?3 ");
+				listParams.add(cartao.getCartaoContratado().getId());
 			}
 			/* 
 			 * Valor
 			 */
 			if ( cartao.getParcela() != null ) {
-				strQuery.append(" and P.valor = ? ");
-				String vlr = Util.formatCurrency(cartao.getParcela().getValor(),true); 
-				listParams.add( Util.cleanNumber(vlr) );
+				strQuery.append(" and P.valor = ?4 ");
+				listParams.add( cartao.getParcela().getValor() );
 			}
 			
 			Object[] params = listParams.toArray();

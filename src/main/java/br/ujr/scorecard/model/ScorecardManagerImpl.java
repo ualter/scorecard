@@ -1036,5 +1036,15 @@ public class ScorecardManagerImpl implements ScorecardManager
 	public CartaoContratado getCartaoContratado(Integer keyCartaoContratado) {
 		return this.getCartaoContratadoDAO().findById(keyCartaoContratado);
 	}
+
+	@Override
+	public List<ContaCorrente> getContaCorrentePorBanco(Banco banco) {
+		return this.getContaCorrenteDAO().findByBanco(banco);
+	}
+
+	@Override
+	public List<CartaoContratado> getCartaoContratado(ContaCorrente contaCorrente) {
+		return this.getCartaoContratadoDAO().findByContaCorrente(contaCorrente);
+	}
 	
 }
