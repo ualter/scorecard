@@ -46,6 +46,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 
 import br.ujr.components.gui.tabela.DefaultModelTabela;
@@ -1812,30 +1813,36 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 		@Override
 		protected String doInBackground() throws Exception {
-			loadingFrame.showLoadinFrame();
-			bankPanel.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-			loadingFrame.setStatus("Carregando Cheques", 1);
-			bankPanel.updateViewCheque();
-			loadingFrame.setStatus("Carregando Débitos", 2);
-			bankPanel.updateViewDebito();
-			loadingFrame.setStatus("Carregando Depósitos", 3);
-			bankPanel.updateViewDeposito();
-			loadingFrame.setStatus("Carregando Investimentos", 4);
-			bankPanel.updateViewInvestimento();
-			loadingFrame.setStatus("Carregando Orçamento", 5);
-			bankPanel.updateViewOrcamento();
-			loadingFrame.setStatus("Carregando Salário", 6);
-			bankPanel.updateViewSalario();
-			loadingFrame.setStatus("Carregando Transferências", 7);
-			bankPanel.updateViewTransferencia();
-			loadingFrame.setStatus("Carregando Cartoes", 8);
-			bankPanel.updateViewCartoes();
-			loadingFrame.setStatus("Carregando Saques", 9);
-			bankPanel.updateViewSaque();
-			loadingFrame.setStatus("Carregando Resumo do Período", 10);
-			bankPanel.updateViewPeriodo();
-			loadingFrame.setMessage("Finalizado");
-			return null;
+			try {
+				loadingFrame.showLoadinFrame();
+				bankPanel.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+				loadingFrame.setStatus("Carregando Cheques", 1);
+				bankPanel.updateViewCheque();
+				loadingFrame.setStatus("Carregando Débitos", 2);
+				bankPanel.updateViewDebito();
+				loadingFrame.setStatus("Carregando Depósitos", 3);
+				bankPanel.updateViewDeposito();
+				loadingFrame.setStatus("Carregando Investimentos", 4);
+				bankPanel.updateViewInvestimento();
+				loadingFrame.setStatus("Carregando Orçamento", 5);
+				bankPanel.updateViewOrcamento();
+				loadingFrame.setStatus("Carregando Salário", 6);
+				bankPanel.updateViewSalario();
+				loadingFrame.setStatus("Carregando Transferências", 7);
+				bankPanel.updateViewTransferencia();
+				loadingFrame.setStatus("Carregando Cartoes", 8);
+				bankPanel.updateViewCartoes();
+				loadingFrame.setStatus("Carregando Saques", 9);
+				bankPanel.updateViewSaque();
+				loadingFrame.setStatus("Carregando Resumo do Período", 10);
+				bankPanel.updateViewPeriodo();
+				loadingFrame.setMessage("Finalizado");
+				return null;
+			} catch (Throwable e) {
+				logger.error(ExceptionUtils.getStackTrace(e));
+				System.out.println(ExceptionUtils.getStackTrace(e));
+				throw new RuntimeException(e.getMessage(), e);
+			}
 		}
 
 		@Override
@@ -1977,9 +1984,11 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	}
 
 	public void updateViewCheque() {
-		this.loadCheques();
-		this.tableCheque.setModel(this.tableModelCheque);
-		this.layOutTableCheque();
+		if ( this.getContaCorrente().isCheque() ) {
+			this.loadCheques();
+			this.tableCheque.setModel(this.tableModelCheque);
+			this.layOutTableCheque();
+		}
 	}
 
 	public void  updateViewCartoes() {
