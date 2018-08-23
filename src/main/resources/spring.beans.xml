@@ -13,15 +13,14 @@
 
 	<context:component-scan base-package="br.ujr.*"/>
 	
-	<!-- <tx:annotation-driven transaction-manager="transactionManager" /> -->
-
-    <!-- <bean id="scorecardDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-	    <property name="driverClassName"><value>com.mysql.cj.jdbc.Driver</value></property>
-	    <property name="url"><value>${url.database}</value></property>
-	    <property name="url"><value>jdbc:mysql://localhost:3306/scorecard_v7?serverTimezone=Europe/Madrid&amp;autoReconnect=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</value></property>
-	    <property name="username"><value>Scorecard</value></property>
-	    <property name="password"><value>card</value></property>
-	</bean> -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>scorecard-mac.properties</value>
+                <value>scorecard-win.properties</value>
+            </list>
+        </property>
+    </bean>
 	
 	<bean id="scorecardDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
 	    <property name="driverClassName"><value>com.mysql.cj.jdbc.Driver</value></property>
@@ -169,7 +168,5 @@
    	   		<value>1</value>
    	   </property>
    </bean>
-   
-   <!-- <bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/> -->
    
 </beans>

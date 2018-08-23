@@ -29,6 +29,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jfree.util.Log;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
  * 
@@ -40,7 +42,7 @@ public class Util {
 	private	static DecimalFormatSymbols           dfs        = new DecimalFormatSymbols(locale);
 	private static DecimalFormat                  df         = new DecimalFormat();
 	private static SimpleDateFormat               sdf        = new SimpleDateFormat("dd/MM/yyyy");
-	private static ClassPathXmlApplicationContext context;
+	private static GenericXmlApplicationContext  context;
 	private static Util                           me         = new Util();
 	private static File                           imgToolTip = null;
 	
@@ -57,7 +59,27 @@ public class Util {
 	{
 		df.setDecimalFormatSymbols(dfs);
 		df.applyLocalizedPattern("###.###.###.##0,00");
-		context = new ClassPathXmlApplicationContext("spring.beans.xml");
+		
+		context = new GenericXmlApplicationContext();
+		ConfigurableEnvironment env = context.getEnvironment();
+		String[] profiles = env.getActiveProfiles();
+		
+		boolean loaded = false;
+		for (String profile : profiles) {
+			if ( profile.equalsIgnoreCase("dev") || profile.equalsIgnoreCase("default") ) {
+				context.load("spring.beans-dev.xml");
+				loaded = true;
+			} else
+			if ( profile.equalsIgnoreCase("prod") ) {
+				//context.load("spring.beans.xml");
+				context.load("spring.beans-prod.xml");
+				loaded = true;
+			}
+		}
+		if ( !loaded ) {
+			context.load("spring.beans-dev.xml");
+		}
+		context.refresh();
 	}
 	
 	public static Date today()
@@ -198,9 +220,15 @@ public class Util {
 		return (T)context.getBean(bean);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static <T extends Object> T getBean(Class clazz) {
+		return (T)context.getBean(clazz);
+	}
+	
 	public static void setToolTip(Component comp,JComponent cmp, String msg) {
 		Util.setToolTip(comp,cmp, msg, null);
 	}
+	
 	public static File getImageToolTip() {
 		if ( imgToolTip == null ) {
 			String pathTemp = System.getProperty("java.io.tmpdir");

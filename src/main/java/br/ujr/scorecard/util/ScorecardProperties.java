@@ -3,6 +3,11 @@ package br.ujr.scorecard.util;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * @Deprecated
+ *
+ * Substituir por br.ujr.scorecard.util.properties.ScorecardProperties (via Spring Bean)
+ */
 public class ScorecardProperties {
 	
 	private static Properties properties;

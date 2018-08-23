@@ -25,7 +25,11 @@ public class JarResources {
 	private static Logger logger = Logger.getLogger(JarResources.class);
 	
 	public synchronized static JarResources getInstance() {
-		String pathFolder = ScorecardProperties.getProperty(ScorecardPropertyKeys.PathInstallation);
+		br.ujr.scorecard.util.properties.ScorecardProperties scorecardProperties =  Util.getBean(br.ujr.scorecard.util.properties.ScorecardProperties.class);
+		String pathFolder = scorecardProperties.getProperty(ScorecardPropertyKeys.PathInstallation);
+		
+		System.out.println(scorecardProperties.getProperty("database.jdbc.url"));
+		
 		String pathFile   = null;
 		File folder = new File(pathFolder);
 		for (File f : folder.listFiles()) {
