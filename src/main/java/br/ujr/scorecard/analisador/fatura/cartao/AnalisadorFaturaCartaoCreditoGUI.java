@@ -22,13 +22,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -57,7 +58,6 @@ import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.UtilTableCells;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
 import br.ujr.scorecard.model.ScorecardManager;
-import br.ujr.scorecard.model.ScorecardManagerImpl;
 import br.ujr.scorecard.model.banco.Banco;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
@@ -178,8 +178,48 @@ public class AnalisadorFaturaCartaoCreditoGUI extends AbstractDialog implements 
 		panMain.add(panOrigem);
 		panMain.add(panBtnAcoes);
 		//panMain.add(panContaCorrente);
+		
+		KeyStroke vk_1 = KeyStroke.getKeyStroke(KeyEvent.VK_1, 0);
+		KeyStroke vk_2 = KeyStroke.getKeyStroke(KeyEvent.VK_2, 0);
+		InputMap  inputMap  = ((JPanel)this.getContentPane()).getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = ((JPanel)this.getContentPane()).getActionMap();
+		inputMap.put(vk_1, "VK_1");
+		inputMap.put(vk_2, "VK_2");
+		actionMap.put("VK_1", new KeyStrokeAction(this));
+		actionMap.put("VK_2", new KeyStrokeAction(this));
 
 		this.setFocusTraversalPolicy(new InternalFocusManager(txtRefVecto));
+	}
+	
+	public class KeyStrokeAction extends AbstractAction {
+		
+		private static final long serialVersionUID = -4069915047328619478L;
+		private AnalisadorFaturaCartaoCreditoGUI owner;
+		
+		public KeyStrokeAction(AnalisadorFaturaCartaoCreditoGUI owner) {
+			this.owner = owner;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if ( e.getActionCommand().equalsIgnoreCase("1") ) {
+				int index = owner.cmbBanco.getSelectedIndex();
+				index++;
+				if ( (index+1) > owner.cmbBanco.getItemCount() ) {
+					index = 0;
+				}
+				owner.cmbBanco.setSelectedIndex(index);
+			} else
+			if ( e.getActionCommand().equalsIgnoreCase("2") ) {
+				int index = owner.cmbCartao.getSelectedIndex();
+				index++;
+				if ( (index+1) > owner.cmbCartao.getItemCount() ) {
+					index = 0;
+				}
+				owner.cmbCartao.setSelectedIndex(index);
+			}
+		}
+		
 	}
 
 	/**
