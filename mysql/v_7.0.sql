@@ -77,7 +77,6 @@ INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES 
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('1', 'VISA Electron DB', @contaCorrenteIdDeutsche);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard DB',    @contaCorrenteIdDeutsche);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'VISA BS',          @contaCorrenteIdSabadell);
-
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard Debit', @contaCorrenteIdSabadell);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'VISA Citibank',          @contaCorrenteIdCitiBank);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('1', 'VISA Electron Citibank', @contaCorrenteIdCitiBank);
@@ -117,3 +116,7 @@ INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES 
 UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`NOME` LIKE '%VISA%');
 UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`NOME` LIKE '%VISA Electron%');
 UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`NOME` LIKE '%Mastercard%');
+
+# Disable Cheques Banc Sabadell
+UPDATE `conta_corrente` SET `HAS_CHEQUE` = 'F' WHERE (`ID` = @contaCorrenteIdSabadell);
+

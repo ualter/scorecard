@@ -562,15 +562,15 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 		private LoadingFrame loadingFrame;
 		private AnalisadorLancamentosCartaoGUI frame;
 		private Date refVecto;
-		private Cartao.Operadora operadora;
+		private CartaoContratado cartaoContratado;
 		private List<Cartao> listaRegistrosGravar = new ArrayList<Cartao>();
 		
 		public GravarRegistrosFaturaCartao(AnalisadorLancamentosCartaoGUI frame) {
-			this.frame      = frame;
-			this.operadora  = (Cartao.Operadora)frame.cmbCartao.getSelectedItem();
-			this.refVecto   = frame.txtRefVecto.getDate();
-			loadingFrame = new LoadingFrame();
-			int total = 0;
+			this.frame            = frame;
+			this.cartaoContratado = (CartaoContratado)frame.cmbCartao.getSelectedItem();
+			this.refVecto         = frame.txtRefVecto.getDate();
+			loadingFrame          = new LoadingFrame();
+			int total             = 0;
 			
 			/*
 			 * Buscando os lancamentos selecionados para serem gravados como Cartoes na Base de Dados
@@ -584,7 +584,8 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 					Conta      contaContabil = (Conta) frame.tableModelFatura.getValueAt(i, 4);
 					
 					Cartao cartao = new Cartao();
-					cartao.setOperadora(this.operadora);
+					cartao.setCartaoContratado(this.cartaoContratado);
+					cartao.setOperadora(cartaoContratado.getCartaoOperadora());
 					cartao.setContaCorrente(frame.contaCorrente);
 					cartao.setConta(contaContabil);
 					cartao.setDataMovimento(movimento);

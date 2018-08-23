@@ -146,6 +146,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		this.txtDtRef.setBounds(70, 18, 75, 20);
 		this.txtDtRef.setEnabled(true);
 		this.txtDtRef.setFocusable(true);
+		this.txtDtRef.setFont(new Font("Courier New", Font.PLAIN, 11));
 		((JTextFieldDateEditor) this.txtDtRef.getDateEditor()).addFocusListener(this);
 		((JTextFieldDateEditor) this.txtDtRef.getDateEditor()).setName("MES_ANO");
 
