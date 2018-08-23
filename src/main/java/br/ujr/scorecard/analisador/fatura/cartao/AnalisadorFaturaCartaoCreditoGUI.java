@@ -69,18 +69,20 @@ import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
 
 /**
- * Analise da Fatura do Cartao que esta no Clipboard (copia da pagina do IB), apresentacao na tela dos lancamentos
- * e oportunidade para lancar no programa o que estiver faltando
+ * Analise da Fatura do Cartao que esta no Clipboard ou em Arquivo baixado:
+ *  - Deutsche: implementado via Clipboard, copiado do Internet Banking;
+ *  - Banc Sabadell: implementado via Arquivo baixado da fatura do cartão, formato csv 
+ * Apresentacao na tela dos lancamentos e oportunidade para lancar no programa o que estiver faltando
  * @author ualter.junior
  */
-public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements FocusListener, MouseListener, ItemListener {
+public class AnalisadorFaturaCartaoCreditoGUI extends AbstractDialog implements FocusListener, MouseListener, ItemListener {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1092445806277556773L;
 	
-	private static Logger logger = Logger.getLogger(AnalisadorLancamentosCartaoGUI.class);
+	private static Logger logger = Logger.getLogger(AnalisadorFaturaCartaoCreditoGUI.class);
 	
 	protected JLabel                      lblVecto          = new JLabel("Vencimento:");
 	protected JDateChooser                txtRefVecto       = new JDateChooser("dd/MM/yyyy","##/####",'_');
@@ -105,7 +107,7 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 		this.contaCorrente = contaCorrente;
 	}
 
-	public AnalisadorLancamentosCartaoGUI(JFrame owner) {
+	public AnalisadorFaturaCartaoCreditoGUI(JFrame owner) {
 		super(owner);
 		this.title = this.getTitulo();
 		this.createUI();
@@ -118,7 +120,7 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 	}
 	
 	public String getTitulo() {
-		return "Análise Lançamentos de Cartão Crédito (Em Memória - Clipboard)";
+		return "Análise Lançamentos de Cartão Crédito";
 	}
 	
 	protected void createUI() {
@@ -433,13 +435,15 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 			if (banco == Util.getInstance().getIdBanco(ScorecardPropertyKeys.IdBancoSantander)) {
 				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander)));
 			} else
-			if (banco == Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdBancoItau)) {
+			if (banco == Util.getInstance().getIdBanco(ScorecardPropertyKeys.IdBancoItau)) {
 				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCItau)));
 			} else
-			if (banco == Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdBancoDeutsche)) {
+			if (banco == Util.getInstance().getIdBanco(ScorecardPropertyKeys.IdBancoDeutsche)) {
 				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCDeutsche)));
-			}
-			
+			} else
+			if (banco == Util.getInstance().getIdBanco(ScorecardPropertyKeys.IdBancoBanSabadell)) {
+				this.setContaCorrente(this.scorecardBusiness.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCBanSabadell)));
+			}	
 			this.dispararCargaFatura();
 		} else
 		if ( e.getActionCommand().indexOf("CONTAS") != -1 ){
@@ -459,18 +463,18 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 		return ((Banco)this.cmbBanco.getSelectedItem()).getId();
 	}
 	
-	private class CarregarLancamentosFromClipboard extends SwingWorker<String, Object[]> {
+	private class CarregarLancamentos extends SwingWorker<String, Object[]> {
 		
-		private Logger logger = Logger.getLogger(CarregarLancamentosFromClipboard.class); 
+		private Logger logger = Logger.getLogger(CarregarLancamentos.class); 
 		
 		private LoadingFrame loadingFrame;
-		private AnalisadorLancamentosCartaoGUI frame;
+		private AnalisadorFaturaCartaoCreditoGUI frame;
 		private CartaoContratado cartaoContratado;
 		private String origem;
 		private int banco;
 		private Date ref;
 		
-		public CarregarLancamentosFromClipboard(AnalisadorLancamentosCartaoGUI frame) {
+		public CarregarLancamentos(AnalisadorFaturaCartaoCreditoGUI frame) {
 			this.frame            = frame;
 			this.cartaoContratado = (CartaoContratado)frame.cmbCartao.getSelectedItem();
 			this.origem	          = frame.cmbOrigem.getSelectedItem().toString();
@@ -510,8 +514,8 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 				} else
 				if (this.banco == Util.getInstance().getIdBanco(ScorecardPropertyKeys.IdBancoBanSabadell)) {
 					if (this.origem.equalsIgnoreCase("Fatura")) {
-						AnalisadorFaturaCartaoDeutsche analisadorFaturaCartaoDeutsche = new AnalisadorFaturaCartaoDeutsche(this.ref, this.cartaoContratado);
-						linhasLancamentos = analisadorFaturaCartaoDeutsche.getLista();
+						AnalisadorFaturaCartaoBancSabadell analisadorFaturaCartaoBancSabadell = new AnalisadorFaturaCartaoBancSabadell(this.ref, this.cartaoContratado);
+						linhasLancamentos = analisadorFaturaCartaoBancSabadell.getLista();
 					}
 				}	
 			} catch (Throwable e) {
@@ -560,12 +564,13 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 	
 	private class GravarRegistrosFaturaCartao extends SwingWorker<String, Cartao> {
 		private LoadingFrame loadingFrame;
-		private AnalisadorLancamentosCartaoGUI frame;
+		private AnalisadorFaturaCartaoCreditoGUI frame;
 		private Date refVecto;
 		private CartaoContratado cartaoContratado;
+		private ContaCorrente contaCorrente;
 		private List<Cartao> listaRegistrosGravar = new ArrayList<Cartao>();
 		
-		public GravarRegistrosFaturaCartao(AnalisadorLancamentosCartaoGUI frame) {
+		public GravarRegistrosFaturaCartao(AnalisadorFaturaCartaoCreditoGUI frame) {
 			this.frame            = frame;
 			this.cartaoContratado = (CartaoContratado)frame.cmbCartao.getSelectedItem();
 			this.refVecto         = frame.txtRefVecto.getDate();
@@ -646,7 +651,7 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 			GravarRegistrosFaturaCartao task = new GravarRegistrosFaturaCartao(this);
 			task.execute();
 			this.resetTableLctosFatura();
-			this.loadFaturaFromClipboard();
+			this.loadFaturaCartao();
 		}
 		
 	}
@@ -680,7 +685,7 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 
 	private void dispararCargaFatura() {
 		this.resetTableLctosFatura();
-		this.loadFaturaFromClipboard();
+		this.loadFaturaCartao();
 	}
 
 	private void resetTableLctosFatura() {
@@ -691,9 +696,9 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 		}
 	}
 	
-	private void loadFaturaFromClipboard() {
+	private void loadFaturaCartao() {
 		try {
-			CarregarLancamentosFromClipboard task = new CarregarLancamentosFromClipboard(this);
+			CarregarLancamentos task = new CarregarLancamentos(this);
 			task.execute();
 		} catch (Throwable e) {
 			logger.error(ExceptionUtils.getStackTrace(e));
@@ -708,7 +713,7 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 	}
 	
 	public static void main(String[] args) {
-		AnalisadorLancamentosCartaoGUI p = new AnalisadorLancamentosCartaoGUI(null);
+		AnalisadorFaturaCartaoCreditoGUI p = new AnalisadorFaturaCartaoCreditoGUI(null);
 		p.setVisible(true);
 	}
 
@@ -737,9 +742,12 @@ public class AnalisadorLancamentosCartaoGUI extends AbstractDialog implements Fo
 				
 				cmbCartao.removeAllItems();
 				this.scorecardBusiness.getContaCorrentePorBanco(banco).forEach(cc -> {
-					this.scorecardBusiness.getCartaoContratado(cc).forEach(cartaoContratado -> {
-						cmbCartao.addItem(cartaoContratado);
-					});
+					this.scorecardBusiness.getCartaoContratado(cc)
+						.stream()
+						.filter( c -> c.getCategoriaCartao() == CartaoContratado.CategoriaCartao.CREDITO )
+						.forEach(cartaoContratado -> {
+							cmbCartao.addItem(cartaoContratado);
+						});
 				});
 			}
 		}

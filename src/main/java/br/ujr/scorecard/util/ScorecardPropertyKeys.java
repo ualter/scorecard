@@ -16,7 +16,7 @@ public interface ScorecardPropertyKeys {
 	public static String TabResumoGeral          = "tab.resumo.geral";
 	
 	public static String BancSabadellN43Path     = "banc.sabadell.n43.path";
-	public static String BancSabadellN43Ext      = "banc.sabadell.n43.ext";
+	public static String BancSabadellCsvPath     = "banc.sabadell.csv.path";
 	
 	public static String IdCCBanSabadell = "banc.sabadell.contacorrente.id";
 	public static String IdCCSantander   = "santander.contacorrente.id";

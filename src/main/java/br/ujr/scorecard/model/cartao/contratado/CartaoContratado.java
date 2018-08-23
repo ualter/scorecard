@@ -1,5 +1,7 @@
 package br.ujr.scorecard.model.cartao.contratado;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
 import br.ujr.scorecard.model.persistence.BusinessObject;
@@ -10,6 +12,21 @@ public class CartaoContratado extends BusinessObject implements Comparable<Carta
 	private String nome;
 	private ContaCorrente contaCorrente;
 	private String logo;
+	private String categoria;
+	
+	public enum CategoriaCartao {
+		DEBITO("D"), CREDITO("C");
+		
+		private final String categoria;
+		
+		CategoriaCartao(String categoria) {
+			this.categoria = categoria;
+		}
+
+		public String getCategoria() {
+			return categoria;
+		}
+	}
 	
 	public String getLogo() {
 		return logo;
@@ -96,5 +113,25 @@ public class CartaoContratado extends BusinessObject implements Comparable<Carta
 		return Cartao.Operadora.values()[this.getOperadora()];
 	}
 
+	public String getCategoria() {
+		return categoria;
+	}
 
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
+	}
+	
+	public void setCategoriaCartao(CategoriaCartao categoriaCartao) {
+		this.categoria = categoriaCartao.getCategoria();
+	}
+	
+	public CategoriaCartao getCategoriaCartao() {
+		if (StringUtils.equalsIgnoreCase(CategoriaCartao.CREDITO.getCategoria(), this.getCategoria())) {
+			return CategoriaCartao.CREDITO;
+		} else
+		if (StringUtils.equalsIgnoreCase(CategoriaCartao.DEBITO.getCategoria(), this.getCategoria())) {
+			return CategoriaCartao.DEBITO;
+		}
+		throw new RuntimeException("Valor de Categoria Cartao desconhecida: \"" + this.getCategoria() + "\"");
+	}
 }

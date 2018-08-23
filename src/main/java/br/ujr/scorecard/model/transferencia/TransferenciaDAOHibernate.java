@@ -2,6 +2,8 @@ package br.ujr.scorecard.model.transferencia;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
@@ -42,6 +44,7 @@ public class TransferenciaDAOHibernate extends HibernateDaoSupport implements Tr
 		}
 	}
 
+	@Transactional
 	public Transferencia save(Transferencia Transferencia) {
 		try {
 			boolean isNew = Transferencia.getId() > 0 ? false : true;

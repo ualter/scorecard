@@ -87,7 +87,7 @@ public class AnalisadorFaturaCartaoSantander {
 			Parcela parcela = new Parcela();
 			parcela.setValor( Util.parseCurrency(valor) );
 			cartao.addParcela(parcela);
-			Set<Cartao> cartoes = this.bd.getCartaoPorFiltro(refInicial, refFinal, cartao);
+			Set<Cartao> cartoes = this.bd.getCartaoPorFiltro(refInicial, refFinal, cartao, null);
 			boolean isInDatabaseAlready  = cartoes.size() > 0;
 			
 			LinhaLancamento linhaFatura = new LinhaLancamento(isInDatabaseAlready,data, descricao, valor, valorDolar);

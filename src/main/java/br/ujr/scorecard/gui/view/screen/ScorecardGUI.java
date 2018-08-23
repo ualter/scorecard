@@ -37,7 +37,7 @@ import br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell.AnalisadorE
 import br.ujr.scorecard.analisador.extrato.contacorrente.bb.ProcessadorExtratoCCBancoBrasilGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.deutsche.AnalisadorExtratoCCDeutscheGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.santander.AnalisadorExtratoCCSantanderGUI;
-import br.ujr.scorecard.analisador.fatura.cartao.AnalisadorLancamentosCartaoGUI;
+import br.ujr.scorecard.analisador.fatura.cartao.AnalisadorFaturaCartaoCreditoGUI;
 import br.ujr.scorecard.gui.view.screen.bankpanel.BankPanel;
 import br.ujr.scorecard.gui.view.screen.passivo.PassivoConstanteFrame;
 import br.ujr.scorecard.gui.view.screen.reports.ResumoMensalFrame;
@@ -163,7 +163,7 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
         itemAnalisadorExtratoBanSabadell.setMnemonic(KeyEvent.VK_L);
         menuProcessamentos.add(itemAnalisadorExtratoBanSabadell);
         
-        JMenuItem itemAnalisadorFaturaCartaoSantander = new JMenuItem("Analisar Lançamentos Cartão de Crédito (ClipBoard)");
+        JMenuItem itemAnalisadorFaturaCartaoSantander = new JMenuItem("Analisar Fatura de Cartão de Crédito");
         itemAnalisadorFaturaCartaoSantander.addActionListener(this);
         itemAnalisadorFaturaCartaoSantander.setActionCommand("ANALISAR_FATURA_CARTAO_LCTO");
         itemAnalisadorFaturaCartaoSantander.setMnemonic(KeyEvent.VK_N);
@@ -215,7 +215,7 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
         JButton btnContaLctoCartaoCredito = new JButton(new ImageIcon(Util.loadImage(this, "credit-cards-icon.png")));
         btnContaLctoCartaoCredito.setActionCommand("ANALISAR_FATURA_CARTAO_LCTO");
         btnContaLctoCartaoCredito.addActionListener(this);
-        Util.setToolTip(this, btnContaLctoCartaoCredito, "Analisar Lançamentos Cartão de Crédito");
+        Util.setToolTip(this, btnContaLctoCartaoCredito, "Analisar Fatura de Cartão de Crédito");
         toolBar.add(btnContaLctoCartaoCredito);
         
         JButton btnAnalisarExtratoDeutsche = new JButton(new ImageIcon(Util.loadImage(this, "deutsche_bank_logo.png")));
@@ -408,7 +408,7 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
 			proSantanderGUI.setVisible(true);
 		} else
 		if ("ANALISAR_FATURA_CARTAO_LCTO".equals(a)) {
-			AnalisadorLancamentosCartaoGUI anaFaturaCartaoSantanderGUI = new AnalisadorLancamentosCartaoGUI(this);
+			AnalisadorFaturaCartaoCreditoGUI anaFaturaCartaoSantanderGUI = new AnalisadorFaturaCartaoCreditoGUI(this);
 			anaFaturaCartaoSantanderGUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			anaFaturaCartaoSantanderGUI.setVisible(true);
 		} else

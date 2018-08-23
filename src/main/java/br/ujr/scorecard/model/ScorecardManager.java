@@ -60,7 +60,7 @@ public interface ScorecardManager
 
     public Set<Passivo> getPassivoPorHistorico(String historico);
     
-    public Set<Cartao> getCartaoPorFiltro(long referenciaInicial, long referenciaFinal, Cartao cartao);
+    public Set<Cartao> getCartaoPorFiltro(long referenciaInicial, long referenciaFinal, Cartao cartao, Date dataMovimento);
     
     public Set<Passivo> getPassivoPorValor(ContaCorrente cc, float valor);
     

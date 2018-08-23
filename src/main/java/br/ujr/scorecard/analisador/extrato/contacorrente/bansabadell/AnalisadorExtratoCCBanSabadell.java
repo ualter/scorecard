@@ -5,11 +5,9 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,7 +30,6 @@ import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
-import br.ujr.scorecard.model.passivo.cartao.Cartao.Operadora;
 import br.ujr.scorecard.model.passivo.cheque.Cheque;
 import br.ujr.scorecard.model.passivo.debitocc.DebitoCC;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
@@ -167,16 +164,12 @@ public class AnalisadorExtratoCCBanSabadell {
 		if ( pathN43Files == null ) {
 			throw new RuntimeException("Não foi encontrado a configuração de PATH para os arquivos N43, chave=" + ScorecardPropertyKeys.BancSabadellN43Path);
 		}
-		String extN43 = ScorecardProperties.getProperty(ScorecardPropertyKeys.BancSabadellN43Ext);
-		if ( extN43 == null ) {
-			throw new RuntimeException("Não foi encontrado a configuração de EXTENSION para os arquivos N43, chave=" + ScorecardPropertyKeys.BancSabadellN43Ext);
-		}
 		
 		Path       path         = Paths.get(pathN43Files);
 		List<Path> listFilesN43 = null;
 		try {
 		   listFilesN43 = Files.walk(path)
-                               .filter(s -> s.toString().endsWith("." + extN43))
+                               .filter(s -> s.toString().endsWith(".n43"))
                                .map(Path::toAbsolutePath)
                                .sorted()
                                .collect(Collectors.toList());

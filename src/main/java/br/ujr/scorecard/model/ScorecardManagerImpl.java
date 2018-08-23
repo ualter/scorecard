@@ -1003,8 +1003,8 @@ public class ScorecardManagerImpl implements ScorecardManager
 		return this.getPassivoPorValor(null, valor);
 	}
 
-	public Set<Cartao> getCartaoPorFiltro(long referenciaInicial, long referenciaFinal, Cartao cartao) {
-		return this.getCartaoDAO().getCartaoPorFiltro(referenciaInicial, referenciaFinal, cartao);
+	public Set<Cartao> getCartaoPorFiltro(long referenciaInicial, long referenciaFinal, Cartao cartao, Date dataMovimento) {
+		return this.getCartaoDAO().getCartaoPorFiltro(referenciaInicial, referenciaFinal, cartao, dataMovimento);
 	}
 	
 	public List<Ativo> getAtivosPorReferencia(ContaCorrente contaCorrente,Class clazz, Date referenciaInicial, Date referenciaFinal) {

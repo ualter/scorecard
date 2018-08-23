@@ -1,5 +1,7 @@
 package br.ujr.scorecard.analisador.fatura.cartao;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -67,6 +69,8 @@ public class AnalisadorFaturaCartaoDeutsche {
 		long refInicial = Util.extrairReferencia(this.mesAnoRefencia);
 		long refFinal   = Util.extrairReferencia(this.mesAnoRefencia);
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
 		this.setLista(new ArrayList<LinhaLancamento>());
 		String[] linhas = this.conteudo.split("\\n");
     	for (String linha : linhas) {
@@ -75,6 +79,14 @@ public class AnalisadorFaturaCartaoDeutsche {
 			String data       = columns[0];
 			String descricao  = columns[1];
 			String valor      = columns[2];
+			
+			Date dataMovimento = null;
+			try {
+				dataMovimento = sdf.parse(data);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			/*
 			 * Verifica a existencia desta linha da fatura na base de dados
@@ -85,7 +97,7 @@ public class AnalisadorFaturaCartaoDeutsche {
 			Parcela parcela = new Parcela();
 			parcela.setValor( Util.parseCurrency(valor) );
 			cartao.addParcela(parcela);
-			Set<Cartao> cartoes = this.bd.getCartaoPorFiltro(refInicial, refFinal, cartao);
+			Set<Cartao> cartoes = this.bd.getCartaoPorFiltro(refInicial, refFinal, cartao, dataMovimento);
 			boolean isInDatabaseAlready  = cartoes.size() > 0;
 			
 			LinhaLancamento linhaFatura = new LinhaLancamento(isInDatabaseAlready,data, descricao, valor, "0");

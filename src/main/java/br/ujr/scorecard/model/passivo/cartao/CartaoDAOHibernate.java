@@ -1,6 +1,7 @@
 package br.ujr.scorecard.model.passivo.cartao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +13,6 @@ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.passivo.Passivo;
-import br.ujr.scorecard.util.Util;
 
 public class CartaoDAOHibernate extends HibernateDaoSupport implements CartaoDAO  {
 
@@ -53,7 +53,7 @@ public class CartaoDAOHibernate extends HibernateDaoSupport implements CartaoDAO
 		}
 	}
 	
-	public Set<Cartao> getCartaoPorFiltro(long referenciaInicial, long referenciaFinal, Cartao cartao) {
+	public Set<Cartao> getCartaoPorFiltro(long referenciaInicial, long referenciaFinal, Cartao cartao, Date dataMovimento) {
 		try {
 			
 			List<Object> listParams = new ArrayList<Object>();
@@ -79,6 +79,13 @@ public class CartaoDAOHibernate extends HibernateDaoSupport implements CartaoDAO
 			if ( cartao.getParcela() != null ) {
 				strQuery.append(" and P.valor = ?4 ");
 				listParams.add( cartao.getParcela().getValor() );
+			}
+			/* 
+			 * Data Movimento
+			 */
+			if ( dataMovimento != null ) {
+				strQuery.append(" and P.passivo.dataMovimento = ?5 ");
+				listParams.add( dataMovimento );
 			}
 			
 			Object[] params = listParams.toArray();

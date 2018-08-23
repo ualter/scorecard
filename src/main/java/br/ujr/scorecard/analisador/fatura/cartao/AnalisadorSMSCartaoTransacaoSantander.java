@@ -98,7 +98,7 @@ public class AnalisadorSMSCartaoTransacaoSantander extends AnalisadorSMSCartaoSa
 		Parcela parcela = new Parcela();
 		parcela.setValor( Util.parseCurrency(valor) );
 		cartao.addParcela(parcela);
-		Set<Cartao> cartoes = this.bd.getCartaoPorFiltro(refInicial, refFinal, cartao);
+		Set<Cartao> cartoes = this.bd.getCartaoPorFiltro(refInicial, refFinal, cartao, null);
 		if ( cartoes.size() > 0 ) {
 			return cartoes.iterator().next().getConta();
 		}

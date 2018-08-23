@@ -30,7 +30,8 @@
 	    		fetch="join">
 	    </many-to-one>
 	    
-	    <property name="logo"/> 
+	    <property name="logo"/>
+	    <property name="categoria" column="DEBITO_CREDITO"/> 
 	    
 	</class>
     

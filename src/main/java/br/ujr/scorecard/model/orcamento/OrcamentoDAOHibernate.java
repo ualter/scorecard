@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
@@ -52,6 +54,7 @@ public class OrcamentoDAOHibernate extends HibernateDaoSupport implements Orcame
 		}
 	}
 
+	@Transactional
 	public boolean save(Orcamento orcamento) {
 		try {
 			boolean isNew = orcamento.getId() > 0 ? false : true;
@@ -78,7 +81,7 @@ public class OrcamentoDAOHibernate extends HibernateDaoSupport implements Orcame
 	private boolean checkOrcamentoContaExistente(Orcamento orcamento) {
 		StringBuffer strQuery = new StringBuffer();
 		strQuery.append("  select O from Orcamento as O ");
-		strQuery.append("  where O.contaAssociada.id = ? and O.referencia = ? and O.contaCorrente.id = ?");
+		strQuery.append("  where O.contaAssociada.id = ?0 and O.referencia = ?1 and O.contaCorrente.id = ?2");
 		List list = this.getHibernateTemplate().find(strQuery.toString(),
 				new Object[]{orcamento.getContaAssociada().getId(),orcamento.getReferencia(), orcamento.getContaCorrente().getId()});
 		if ( list.size() > 0 ) {

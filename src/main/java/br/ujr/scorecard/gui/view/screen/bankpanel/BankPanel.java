@@ -200,10 +200,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 	private ScorecardManager scorecardServices;
 
-	public enum Operacoes {
-		VISA, VISA_ELECTRON, MASTERCARD, DEBITO, CHEQUE, ORCAMENTO, ATIVOS;
-	}
-
 	public BankPanel(JFrame owner, ContaCorrente contaCorrente) {
 		this.owner = owner;
 		this.contaCorrente = contaCorrente;
@@ -508,11 +504,15 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			
 			setGenericBounds(jScrollPane, lblCartao, logo);
 			
+			lblCartao.setBounds(100, 10, 667, 26);
+			btnInserirCartao.get(cartaoContratado).setBounds(10, 10, 27, 26);
+			btnExcluirCartao.get(cartaoContratado).setBounds(40, 10, 27, 26);
+			btnConfirmarCartao.get(cartaoContratado).setBounds(70, 10, 27, 26);
+			
 			JPanel panelCartao = this.panCartoes.get(cartaoContratado);
 			
 			panelCartao.add(this.btnConfirmarCartao.get(cartaoContratado));
-			panelCartao.add(logo);
-			//panelCartao.add(lblVisaElectron);
+			panelCartao.add(lblCartao);
 			panelCartao.add(jScrollPane);
 			panelCartao.add(this.btnInserirCartao.get(cartaoContratado));
 			panelCartao.add(this.btnExcluirCartao.get(cartaoContratado));
@@ -520,12 +520,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		}
 	}
 
-	private void setGenericBounds(Operacoes operacao, JScrollPane scrollPane, JLabel lbl, JLabel logo) {
-		logo.setBounds(10, 10, 40, 26);
-		lbl.setBounds(143, 10, 624, 26);
-		scrollPane.setBounds(10, 41, 758, 458);
-	}
-	
 	private void setGenericBounds(JScrollPane scrollPane, JLabel lbl, JLabel logo) {
 		logo.setBounds(10, 10, 40, 26);
 		lbl.setBounds(143, 10, 624, 26);
@@ -717,7 +711,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		lblCheques.setForeground(Color.WHITE);
 		lblCheques.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-		setGenericBounds(Operacoes.CHEQUE, jScrollPane, lblCheques, lblCheques);
+		setGenericBounds(jScrollPane, lblCheques, lblCheques);
 
 		lblCheques.setBounds(100, 10, 667, 26);
 		btnInserirCheque.setBounds(10, 10, 27, 26);
@@ -1115,7 +1109,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		lblOrcamentos.setForeground(Color.WHITE);
 		lblOrcamentos.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-		setGenericBounds(Operacoes.ORCAMENTO, jScrollPane, lblOrcamentos, lblOrcamentos);
+		setGenericBounds(jScrollPane, lblOrcamentos, lblOrcamentos);
 
 		lblOrcamentos.setBounds(100, 10, 667, 26);
 		btnInserirOrcamento.setBounds(10, 10, 27, 26);
@@ -1201,7 +1195,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		lblDebito.setForeground(Color.WHITE);
 		lblDebito.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-		setGenericBounds(Operacoes.DEBITO, jScrollPane, lblDebito, lblDebito);
+		setGenericBounds(jScrollPane, lblDebito, lblDebito);
 
 		lblDebito.setBounds(100, 10, 667, 26);
 		btnInserirDebito.setBounds(10, 10, 27, 26);
@@ -1237,7 +1231,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		lblSaque.setForeground(Color.WHITE);
 		lblSaque.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-		setGenericBounds(Operacoes.DEBITO, jScrollPane, lblSaque, lblSaque);
+		setGenericBounds(jScrollPane, lblSaque, lblSaque);
 
 		lblSaque.setBounds(130, 10, 627, 26);
 		btnInserirSaque.setBounds(10, 10, 27, 26);
@@ -1275,7 +1269,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		lblTransferencia.setForeground(Color.WHITE);
 		lblTransferencia.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-		setGenericBounds(Operacoes.DEBITO, jScrollPane, lblTransferencia, lblTransferencia);
+		setGenericBounds(jScrollPane, lblTransferencia, lblTransferencia);
 
 		lblTransferencia.setBounds(70, 10, 697, 26);
 		btnInserirTransferencia.setBounds(10, 10, 27, 26);

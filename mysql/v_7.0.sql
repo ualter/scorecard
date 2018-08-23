@@ -120,3 +120,13 @@ UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`NOME` LIKE '%Ma
 # Disable Cheques Banc Sabadell
 UPDATE `conta_corrente` SET `HAS_CHEQUE` = 'F' WHERE (`ID` = @contaCorrenteIdSabadell);
 
+# Update Table Structure Cartao Contratado Info Debito ou Credito
+ALTER TABLE `cartao_contratado` 
+ADD COLUMN `DEBITO_CREDITO` VARCHAR(1) NULL DEFAULT 'C' AFTER `LOGO`;
+
+# Update Info Cartao Contratado
+UPDATE `cartao_contratado` SET `DEBITO_CREDITO` = 'D' WHERE (`NOME` LIKE '%Electron%');
+UPDATE `cartao_contratado` SET `DEBITO_CREDITO` = 'D' WHERE (`NOME` LIKE '%Mastercard Debit%')
+
+
+
