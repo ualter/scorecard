@@ -13,9 +13,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.ujr.scorecard.util.ScorecardProperties;
-import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
+import br.ujr.scorecard.util.properties.ScorecardPropertiesUtil;
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
 public class VerificarExtratoCartao {
 	
@@ -53,7 +53,7 @@ public class VerificarExtratoCartao {
 	}
 	
 	public void loadLinhas() {
-		String strValorDolar = ScorecardProperties.getProperty(ScorecardPropertyKeys.ValorDolar);
+		String strValorDolar = ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.ValorDolar);
 		float  vlrDolar      = Float.parseFloat(strValorDolar);
 		
 		this.linhas = new ArrayList<LinhaExtratoCartao>();

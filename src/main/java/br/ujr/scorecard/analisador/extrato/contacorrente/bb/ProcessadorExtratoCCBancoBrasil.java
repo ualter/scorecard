@@ -28,9 +28,9 @@ import br.ujr.scorecard.model.passivo.debitocc.DebitoCC;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
 import br.ujr.scorecard.model.passivo.saque.Saque;
 import br.ujr.scorecard.model.transferencia.Transferencia;
-import br.ujr.scorecard.util.ScorecardProperties;
-import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
+import br.ujr.scorecard.util.properties.ScorecardPropertiesUtil;
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
 
 public class ProcessadorExtratoCCBancoBrasil {
@@ -68,7 +68,7 @@ public class ProcessadorExtratoCCBancoBrasil {
 	
 	public static Date foundInThePath() {
 		try {
-			String name = ScorecardProperties.getProperty(ScorecardPropertyKeys.ArquivoExtratoCC_BB);
+			String name = ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.ArquivoExtratoCC_BB);
 			File dir = new File(name.substring(0,name.lastIndexOf("/")));
 			name = name.substring(name.lastIndexOf("/") + 1,name.lastIndexOf("-$MESANO"));
 			if ( dir.exists() ) {
@@ -87,7 +87,7 @@ public class ProcessadorExtratoCCBancoBrasil {
 	}
 	
 	public ProcessadorExtratoCCBancoBrasil(long referencia) {
-		String file      = ScorecardProperties.getProperty(ScorecardPropertyKeys.ArquivoExtratoCC_BB);
+		String file      = ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.ArquivoExtratoCC_BB);
 		this.pathExtrato = file.replaceAll("\\$MESANO", referencia + "");;
 		this.cc = scorecardManager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCBancoBrasil));
 		this.passivos = scorecardManager.getPassivosPorReferencia(cc, referencia);

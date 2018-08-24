@@ -60,9 +60,9 @@ import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.transferencia.Transferencia;
-import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
 import br.ujr.scorecard.util.UtilGUI;
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
 public class ProcessadorExtratoCCBancoBrasilGUI extends JDialog implements MouseListener, ActionListener, FocusListener {
 	

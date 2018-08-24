@@ -28,9 +28,9 @@ import javax.swing.JComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jfree.util.Log;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
+
+import br.ujr.scorecard.util.properties.ScorecardPropertiesUtil;
 
 /**
  * 
@@ -43,6 +43,7 @@ public class Util {
 	private static DecimalFormat                  df         = new DecimalFormat();
 	private static SimpleDateFormat               sdf        = new SimpleDateFormat("dd/MM/yyyy");
 	private static GenericXmlApplicationContext  context;
+	//private static ClassPathXmlApplicationContext  context;
 	private static Util                           me         = new Util();
 	private static File                           imgToolTip = null;
 	
@@ -61,25 +62,28 @@ public class Util {
 		df.applyLocalizedPattern("###.###.###.##0,00");
 		
 		context = new GenericXmlApplicationContext();
-		ConfigurableEnvironment env = context.getEnvironment();
-		String[] profiles = env.getActiveProfiles();
-		
-		boolean loaded = false;
-		for (String profile : profiles) {
-			if ( profile.equalsIgnoreCase("dev") || profile.equalsIgnoreCase("default") ) {
-				context.load("spring.beans-dev.xml");
-				loaded = true;
-			} else
-			if ( profile.equalsIgnoreCase("prod") ) {
-				//context.load("spring.beans.xml");
-				context.load("spring.beans-prod.xml");
-				loaded = true;
-			}
-		}
-		if ( !loaded ) {
-			context.load("spring.beans-dev.xml");
-		}
+		context.load("spring.config.xml");
 		context.refresh();
+		
+//		ConfigurableEnvironment env = context.getEnvironment();
+//		String[] profiles = env.getActiveProfiles();
+//		
+//		boolean loaded = false;
+//		for (String profile : profiles) {
+//			if ( profile.equalsIgnoreCase("dev") || profile.equalsIgnoreCase("default") ) {
+//				context.load("spring.beans-dev.xml");
+//				loaded = true;
+//			} else
+//			if ( profile.equalsIgnoreCase("prod") ) {
+//				context.load("spring.beans-prod.xml");
+//				loaded = true;
+//			}
+//		}
+//		if ( !loaded ) {
+//			context.load("spring.beans-dev.xml");
+//		}
+//		context.refresh();
+		
 	}
 	
 	public static Date today()
@@ -459,17 +463,17 @@ public class Util {
 	}
 	
 	public int getIdContaCorrenteBanco(String propertyNameContaCorrenteId) {
-		if ( ScorecardProperties.getProperty(propertyNameContaCorrenteId) == null ) {
+		if ( ScorecardPropertiesUtil.getProperty(propertyNameContaCorrenteId) == null ) {
 			throw new RuntimeException("Nao encontrado Key Property para o ID de Conta Corrente: " + propertyNameContaCorrenteId);
 		}
-		return Integer.parseInt(ScorecardProperties.getProperty(propertyNameContaCorrenteId).trim());
+		return Integer.parseInt(ScorecardPropertiesUtil.getProperty(propertyNameContaCorrenteId).trim());
 	}
 	
 	public int getIdBanco(String propertyNameBancoId) {
-		if ( ScorecardProperties.getProperty(propertyNameBancoId) == null ) {
+		if ( ScorecardPropertiesUtil.getProperty(propertyNameBancoId) == null ) {
 			throw new RuntimeException("Nao encontrado Key Property para o ID de Banco: " + propertyNameBancoId);
 		}
-		return Integer.parseInt(ScorecardProperties.getProperty(propertyNameBancoId).trim());
+		return Integer.parseInt(ScorecardPropertiesUtil.getProperty(propertyNameBancoId).trim());
 	}
 	
 }

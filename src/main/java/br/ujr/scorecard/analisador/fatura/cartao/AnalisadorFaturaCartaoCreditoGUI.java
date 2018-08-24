@@ -65,8 +65,8 @@ import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
-import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
 /**
  * Analise da Fatura do Cartao que esta no Clipboard ou em Arquivo baixado:

@@ -13,6 +13,8 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
 
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
+
 public class JarResources {
 
 	private static JarResources me; 
@@ -27,9 +29,6 @@ public class JarResources {
 	public synchronized static JarResources getInstance() {
 		br.ujr.scorecard.util.properties.ScorecardProperties scorecardProperties =  Util.getBean(br.ujr.scorecard.util.properties.ScorecardProperties.class);
 		String pathFolder = scorecardProperties.getProperty(ScorecardPropertyKeys.PathInstallation);
-		
-		System.out.println(scorecardProperties.getProperty("database.jdbc.url"));
-		
 		String pathFile   = null;
 		File folder = new File(pathFolder);
 		for (File f : folder.listFiles()) {

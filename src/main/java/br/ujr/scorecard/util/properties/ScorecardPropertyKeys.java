@@ -1,4 +1,4 @@
-package br.ujr.scorecard.util;
+package br.ujr.scorecard.util.properties;
 
 public interface ScorecardPropertyKeys {
 	

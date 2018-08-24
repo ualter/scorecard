@@ -45,8 +45,8 @@ import br.ujr.scorecard.model.passivo.cheque.Cheque;
 import br.ujr.scorecard.model.passivo.debitocc.DebitoCC;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
 import br.ujr.scorecard.model.passivo.saque.Saque;
-import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
 /**
  * Executa a importação da Planilha de Contas, interpretando e traduzindo o movimento.

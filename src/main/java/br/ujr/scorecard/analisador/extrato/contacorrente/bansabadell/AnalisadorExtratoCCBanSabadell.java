@@ -35,9 +35,9 @@ import br.ujr.scorecard.model.passivo.debitocc.DebitoCC;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
 import br.ujr.scorecard.model.passivo.saque.Saque;
 import br.ujr.scorecard.model.transferencia.Transferencia;
-import br.ujr.scorecard.util.ScorecardProperties;
-import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
+import br.ujr.scorecard.util.properties.ScorecardPropertiesUtil;
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
 
 public class AnalisadorExtratoCCBanSabadell {
@@ -59,7 +59,7 @@ public class AnalisadorExtratoCCBanSabadell {
 	
 	
 	public AnalisadorExtratoCCBanSabadell(long referencia) {
-		this.cc         = scorecardManager.getContaCorrentePorId( Integer.parseInt(ScorecardProperties.getProperty(ScorecardPropertyKeys.IdCCBanSabadell)) );
+		this.cc         = scorecardManager.getContaCorrentePorId( Integer.parseInt(ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.IdCCBanSabadell)) );
 		this.passivos   = scorecardManager.getPassivosPorReferencia(cc, referencia);
 		this.ativos     = scorecardManager.getAtivosPorReferencia(cc, referencia);
 		this.referencia = referencia;
@@ -160,7 +160,7 @@ public class AnalisadorExtratoCCBanSabadell {
 	 * @return
 	 */
 	public String analisarExtrato() {
-		String pathN43Files = ScorecardProperties.getProperty(ScorecardPropertyKeys.BancSabadellN43Path);
+		String pathN43Files = ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.BancSabadellN43Path);
 		if ( pathN43Files == null ) {
 			throw new RuntimeException("Não foi encontrado a configuração de PATH para os arquivos N43, chave=" + ScorecardPropertyKeys.BancSabadellN43Path);
 		}

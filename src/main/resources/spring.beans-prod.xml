@@ -11,14 +11,24 @@
    http://www.springframework.org/schema/tx
    http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
-   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
-                <value>database-prod.properties</value>
+            	<value>application-prod.properties</value>
+                <value>scorecard-mac.properties</value>
+                <value>scorecard-win.properties</value>
+                <value>scorecard.properties</value>
             </list>
         </property>
     </bean>
 	
-	<import resource="spring.beans.xml"/>
+	<bean id="scorecardDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+	    <property name="driverClassName"><value>com.mysql.cj.jdbc.Driver</value></property>
+	    <property name="url"><value>${database.jdbc.url}</value></property>
+	    <property name="username"><value>Scorecard</value></property>
+	    <property name="password"><value>card</value></property>
+	</bean>
+	
+	<!-- <import resource="spring.beans.xml"/> -->
    
 </beans>

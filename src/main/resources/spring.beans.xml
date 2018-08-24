@@ -10,27 +10,8 @@
    http://www.springframework.org/schema/context/spring-context-4.3.xsd
    http://www.springframework.org/schema/tx
    http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
-
-	<context:component-scan base-package="br.ujr.*"/>
-	
-	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>scorecard-mac.properties</value>
-                <value>scorecard-win.properties</value>
-            </list>
-        </property>
-    </bean>
-	
-	<bean id="scorecardDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
-	    <property name="driverClassName"><value>com.mysql.cj.jdbc.Driver</value></property>
-	    <!-- <property name="url"><value>${url.database}</value></property> -->
-	    <property name="url"><value>jdbc:mysql://localhost:3306/scorecard_v7?serverTimezone=Europe/Madrid&amp;autoReconnect=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</value></property>
-	    <property name="username"><value>Scorecard</value></property>
-	    <property name="password"><value>card</value></property>
-	</bean>
-	
-	<!-- Session Factory for Hibernate -->
+   
+    <!-- Session Factory for Hibernate -->
 	<bean id="scorecardSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
        <property name="mappingResources">
            <list>
@@ -129,7 +110,7 @@
           <ref bean="scorecardSessionFactory"/>
        </property>
    </bean>
-	
+
    <bean id="scorecardManager" class="br.ujr.scorecard.model.ScorecardManagerImpl">
 	   <property name="contaDAO">
 		   <ref bean="contaDAO"/>

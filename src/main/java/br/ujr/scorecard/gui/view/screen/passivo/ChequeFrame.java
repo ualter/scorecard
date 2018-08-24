@@ -28,9 +28,9 @@ import br.ujr.scorecard.model.passivo.parcela.Parcela;
 import br.ujr.scorecard.model.passivo.parcela.ParcelaOrdenador;
 import br.ujr.scorecard.util.MessageManager;
 import br.ujr.scorecard.util.MessagesEnum;
-import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
 import br.ujr.scorecard.util.UtilGUI;
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
 /**
  * @author ualter.junior

@@ -15,8 +15,8 @@ import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.reports.resumomensal.ResumoMensal;
 import br.ujr.scorecard.model.reports.totalcontacontabil.TotalContaContabil;
 import br.ujr.scorecard.util.JarResources;
-import br.ujr.scorecard.util.ScorecardProperties;
-import br.ujr.scorecard.util.ScorecardPropertyKeys;
+import br.ujr.scorecard.util.properties.ScorecardPropertiesUtil;
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -33,10 +33,10 @@ public class ReportManager {
 	private static Logger logger = Logger.getLogger(ReportManager.class); 
 	
 	static {
-		PDF_READER = ScorecardProperties.getProperty(ScorecardPropertyKeys.PdfReader);
-		PDF_READER_PARAMETERS = ScorecardProperties.getProperty(ScorecardPropertyKeys.PdfReaderParameters);
-		PDF_REPORT_PATH = ScorecardProperties.getProperty(ScorecardPropertyKeys.PdfReportPath);
-		PDF_CLEAN = ScorecardProperties.getProperty(ScorecardPropertyKeys.PdfClean);
+		PDF_READER = ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.PdfReader);
+		PDF_READER_PARAMETERS = ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.PdfReaderParameters);
+		PDF_REPORT_PATH = ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.PdfReportPath);
+		PDF_CLEAN = ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.PdfClean);
 	}
 	
 	public ReportManager() {

@@ -32,6 +32,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell.AnalisadorExtratoCCBanSabadellGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.bb.ProcessadorExtratoCCBancoBrasilGUI;
@@ -45,9 +46,9 @@ import br.ujr.scorecard.gui.view.screen.reports.TotalContaContabilFrame;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.cc.ContaCorrenteOrdenador;
-import br.ujr.scorecard.util.ScorecardProperties;
-import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
+import br.ujr.scorecard.util.properties.ScorecardPropertiesUtil;
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
 /**
  * @author ualter.junior
@@ -85,12 +86,12 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
 		this.getContentPane().setLayout(null);
 		this.getContentPane().add(this.panMain);
     	
-        this.setTitle("Scoredcard by Ualter Jr. - Release " + ScorecardProperties.getProperty(ScorecardPropertyKeys.ScorecardVersion));
+        this.setTitle("Scoredcard by Ualter Jr. - Release " + ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.ScorecardVersion));
         this.setName("ScorecardGUI");
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
         try {
-        	this.tabResumoNumber = Integer.parseInt(ScorecardProperties.getProperty(ScorecardPropertyKeys.TabResumoGeral));
+        	this.tabResumoNumber = Integer.parseInt(ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.TabResumoGeral));
         } catch (Exception e) {
         	this.tabResumoNumber = null;
         }
@@ -247,7 +248,6 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     }
 
 	private void loadContasCorrentes() {
-		//this.manager = (ScorecardManager)Util.getBean("scorecardManager");
 		ScorecardManager manager = (ScorecardManager)Util.getBean("scorecardManager");
 		List<ContaCorrente> contasCorrentes = manager.listarContaCorrente();
     	Collections.sort(contasCorrentes,ContaCorrenteOrdenador.ORDEM);

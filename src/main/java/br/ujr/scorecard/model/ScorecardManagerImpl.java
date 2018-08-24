@@ -18,6 +18,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import org.springframework.stereotype.Component;
 
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.AtivoDAO;
@@ -58,6 +59,7 @@ import br.ujr.scorecard.util.Util;
  * Facade para a aplicação Scorecard
  * @author <a href="ualter@uol.com.br">Ualter Otoni Azambuja Junior</a>  
  */
+@Component
 public class ScorecardManagerImpl implements ScorecardManager
 {
 	protected ArrayList<ScorecardManagerListener> listeners = new ArrayList<ScorecardManagerListener>();

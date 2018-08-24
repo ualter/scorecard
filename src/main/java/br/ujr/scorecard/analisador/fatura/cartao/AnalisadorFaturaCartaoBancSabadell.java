@@ -26,9 +26,9 @@ import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
-import br.ujr.scorecard.util.ScorecardProperties;
-import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
+import br.ujr.scorecard.util.properties.ScorecardPropertiesUtil;
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
 public class AnalisadorFaturaCartaoBancSabadell {
 	
@@ -73,7 +73,7 @@ public class AnalisadorFaturaCartaoBancSabadell {
 	}
 	
 	private String[] loadConteudo() {
-		String pathCsvFile = ScorecardProperties.getProperty(ScorecardPropertyKeys.BancSabadellCsvPath);
+		String pathCsvFile = ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.BancSabadellCsvPath);
 		if ( pathCsvFile == null ) {
 			throw new RuntimeException("Não foi encontrado a configuração de PATH para os arquivos CSV, chave=" + ScorecardPropertyKeys.BancSabadellCsvPath);
 		}

@@ -68,10 +68,10 @@ import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.transferencia.Transferencia;
-import br.ujr.scorecard.util.ScorecardProperties;
-import br.ujr.scorecard.util.ScorecardPropertyKeys;
 import br.ujr.scorecard.util.Util;
 import br.ujr.scorecard.util.UtilGUI;
+import br.ujr.scorecard.util.properties.ScorecardPropertiesUtil;
+import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
 //public class AnalisadorExtratoCCBanSabadellGUI extends JDialog implements MouseListener, ActionListener, FocusListener {
 public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements MouseListener, ActionListener, FocusListener {
@@ -273,7 +273,7 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 	 * @return
 	 */
 	private ContaCorrente getContaCorrente() {
-		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId( Integer.parseInt(ScorecardProperties.getProperty(ScorecardPropertyKeys.IdCCBanSabadell)) );
+		ContaCorrente cc = this.scorecardManager.getContaCorrentePorId( Integer.parseInt(ScorecardPropertiesUtil.getProperty(ScorecardPropertyKeys.IdCCBanSabadell)) );
 		return cc;
 	}
 
