@@ -17,6 +17,7 @@ import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -32,6 +33,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
+
+import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 
 import br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell.AnalisadorExtratoCCBanSabadellGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.bb.ProcessadorExtratoCCBancoBrasilGUI;
@@ -63,9 +68,16 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     
     private static Logger logger = Logger.getLogger(ScorecardGUI.class);
 	private ResumoPeriodoGeral resumoPeriodoGeral;
+	
+	
+	private final MetricRegistry metrics = new MetricRegistry();
+	final ConsoleReporter reporter = ConsoleReporter.forRegistry(metrics)
+            .convertRatesTo(TimeUnit.SECONDS)
+            .convertDurationsTo(TimeUnit.MILLISECONDS)
+            .build();
    
     public ScorecardGUI() {
-        initComponents();
+    	initComponents(); 	
     }
     
     private void initComponents() {
@@ -248,8 +260,16 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     }
 
 	private void loadContasCorrentes() {
+		final Timer.Context timer1 = metrics.timer("ScorecardConfigUtil.getBean").time();
 		ScorecardManager manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+		timer1.stop();
+		
+		final Timer.Context timer2 = metrics.timer("listarContaCorrente").time();
 		List<ContaCorrente> contasCorrentes = manager.listarContaCorrente();
+		timer2.stop();
+		
+		
+		
     	Collections.sort(contasCorrentes,ContaCorrenteOrdenador.ORDEM);
     	for(ContaCorrente cc : contasCorrentes) {
     	
@@ -267,6 +287,8 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     			tabBancos.addTab(cc.getDescricao(), bankPanel); 
     		}
     	}
+    	
+    	reporter.start(1, TimeUnit.SECONDS);
     	
     	/**
     	 * Resumo Geral
