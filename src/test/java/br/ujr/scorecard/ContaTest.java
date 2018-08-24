@@ -5,11 +5,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.conta.Conta;
-import br.ujr.scorecard.util.Util;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * 
@@ -22,7 +22,7 @@ public class ContaTest extends TestCase
 
     protected void setUp() throws Exception
     {
-    	this.manager = Util.getBean("scorecardManager");
+    	this.manager = ScorecardConfigUtil.getBean("scorecardManager");
     }
 
     public void testProximoNivel() 

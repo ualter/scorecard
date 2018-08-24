@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
-import br.ujr.scorecard.model.passivo.cartao.Cartao;
 import br.ujr.scorecard.util.Util;
 import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
@@ -25,7 +25,7 @@ public abstract class AnalisadorSMSCartaoSantander {
 	public AnalisadorSMSCartaoSantander(Date mesAnoRefencia, CartaoContratado operadora) {
 		try {
 			
-			this.bd = (ScorecardManager)Util.getBean("scorecardManager");
+			this.bd = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 			this.santander = bd.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander));
 			
 			this.mesAnoRefencia = mesAnoRefencia;

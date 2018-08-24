@@ -30,6 +30,7 @@ import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
 import br.ujr.components.gui.field.UjrCurrencyField;
 import br.ujr.components.gui.field.UjrTextField;
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.UtilTableCells;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
 import br.ujr.scorecard.model.ScorecardManager;
@@ -418,7 +419,7 @@ public class OrcamentoFrame extends AbstractDialog implements FocusListener {
 	}
 	
 	public static void main(String[] args) {
-		OrcamentoFrame o = new OrcamentoFrame(null,((ScorecardManager)Util.getBean("scorecardManager")).getContaCorrentePorId(41));
+		OrcamentoFrame o = new OrcamentoFrame(null,((ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager")).getContaCorrentePorId(41));
 		o.setVisible(true);
 	}
 

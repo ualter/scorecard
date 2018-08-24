@@ -11,9 +11,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.gui.view.screen.FocusListenerHelper;
 import br.ujr.scorecard.model.ScorecardManager;
-import br.ujr.scorecard.util.Util;
 
 public abstract class AbstractDialog extends JDialog implements ActionListener, WindowListener {
 	
@@ -30,7 +30,7 @@ public abstract class AbstractDialog extends JDialog implements ActionListener, 
 		super(owner, true);
 		this.owner = owner;
 		this.transparent = transparent;
-		this.scorecardBusiness = (ScorecardManager)Util.getBean("scorecardManager");
+		this.scorecardBusiness = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 		if ( this.isTransparent() ) {
 			this.panMain = new TransparentBackground(this.owner);
 		} else {

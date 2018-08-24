@@ -54,6 +54,7 @@ import br.ujr.components.gui.tabela.OrcamentoOrdenadorTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
 import br.ujr.scorecard.analisador.fatura.cartao.AnalisadorSMSCartaoSaqueSantander;
 import br.ujr.scorecard.analisador.fatura.cartao.LinhaLancamento;
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.gui.view.screen.DepositoFrame;
 import br.ujr.scorecard.gui.view.screen.InvestimentoFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
@@ -189,7 +190,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	protected JPanel panTransferencia;
 	protected JPanel panSaque;
 
-	protected ScorecardManager scorecardManager = (ScorecardManager) Util.getBean("scorecardManager");
+	protected ScorecardManager scorecardManager = (ScorecardManager) ScorecardConfigUtil.getBean("scorecardManager");
 	private static Logger logger = Logger.getLogger("br.ujr.scorecard");
 	protected DefaultModelTabela tableModelResumo;
 	private JLabel lblPeriodoResumo;
@@ -204,7 +205,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		this.owner = owner;
 		this.contaCorrente = contaCorrente;
 		this.scorecardManager.addScorecardManagerListener(this);
-		this.scorecardServices = (ScorecardManager) Util.getBean("scorecardManager");
+		this.scorecardServices = (ScorecardManager) ScorecardConfigUtil.getBean("scorecardManager");
 
 		this.setUpDataInicialFinal();
 		if (this.getContaCorrente().isCheque()) {

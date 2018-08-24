@@ -30,6 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
@@ -352,7 +353,7 @@ public class Importador {
 	}
 	
 	public void doImport() {
-		ScorecardManager manager = (ScorecardManager)Util.getBean("scorecardManager");
+		ScorecardManager manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 		
 		ContaCorrente contaCorrente = manager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander));
 		if ( contaCorrente == null ) {

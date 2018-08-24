@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
@@ -36,7 +37,7 @@ public class AnalisadorFaturaCartaoItau {
 	public AnalisadorFaturaCartaoItau(Date mesAnoRefencia, CartaoContratado cartaoContratado) {
 		try {
 			
-			this.bd = (ScorecardManager)Util.getBean("scorecardManager");
+			this.bd = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 			this.itau = bd.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCItau));
 			
 			this.mesAnoRefencia = mesAnoRefencia;

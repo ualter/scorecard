@@ -56,6 +56,7 @@ import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.components.gui.tabela.DefaultOrdenadorTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
 import br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell.AnalisadorExtratoCCBanSabadell.LinhaExtratoContaCorrenteBanSabadell;
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.gui.view.screen.ContaFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.bankpanel.HeaderListener;
@@ -97,7 +98,7 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 		super(owner);
 
 		this.setModal(true);
-		this.scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
+		this.scorecardManager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 
 		java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 		this.setBounds(((screenSize.width - width) / 2), ((screenSize.height - height) / 2) - 15, width, height);

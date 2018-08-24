@@ -28,6 +28,7 @@ import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
 import br.ujr.components.gui.field.UjrCurrencyField;
 import br.ujr.components.gui.field.UjrTextField;
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.UtilTableCells;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
 import br.ujr.scorecard.model.ScorecardManager;
@@ -595,7 +596,7 @@ public class TransferenciaFrame extends AbstractDialog implements FocusListener 
 	}
 	
 	public static void main(String[] args) {
-		TransferenciaFrame frame = new TransferenciaFrame(null,((ScorecardManager)Util.getBean("scorecardManager")).getContaCorrentePorId(41));
+		TransferenciaFrame frame = new TransferenciaFrame(null,((ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager")).getContaCorrentePorId(41));
 		frame.setVisible(true);
 	}
 

@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.conta.Conta;
-import br.ujr.scorecard.util.Util;
 
 public class AnalisadorSMSCartaoSaqueSantander extends AnalisadorSMSCartaoSantander {
 	
@@ -78,7 +78,7 @@ public class AnalisadorSMSCartaoSaqueSantander extends AnalisadorSMSCartaoSantan
 		} else {
 			id = 868;
 		}
-		ScorecardManager bd = (ScorecardManager)Util.getBean("scorecardManager");
+		ScorecardManager bd = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 		return bd.getContaPorId(id);
 	}
 

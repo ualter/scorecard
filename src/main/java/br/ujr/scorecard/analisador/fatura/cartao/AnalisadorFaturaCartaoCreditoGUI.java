@@ -53,6 +53,7 @@ import br.ujr.components.gui.combo.UjrComboBox;
 import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
 import br.ujr.components.gui.tabela.DefaultModelTabela;
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.gui.view.screen.ContaFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.UtilTableCells;
@@ -344,7 +345,7 @@ public class AnalisadorFaturaCartaoCreditoGUI extends AbstractDialog implements 
 		
 		tableFatura.setRowHeight(18);
 		
-		ScorecardManager manager = (ScorecardManager)Util.getBean("scorecardManager");
+		ScorecardManager manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 		UjrComboBox cmbCC = new UjrComboBox();
 		List<Conta> list = this.scorecardBusiness.listarContas(ContaOrdenador.Descricao);
 		for (Conta conta : list) {
@@ -469,7 +470,7 @@ public class AnalisadorFaturaCartaoCreditoGUI extends AbstractDialog implements 
 		} else
 		if ( e.getActionCommand().indexOf("VERIFICAR") != -1 ){
 			if ( this.scorecardBusiness == null ) {
-				this.scorecardBusiness = (ScorecardManager)Util.getBean("scorecardManager");
+				this.scorecardBusiness = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 			}
 			int banco = getSelectedBanco();
 			if (banco == Util.getInstance().getIdBanco(ScorecardPropertyKeys.IdBancoSantander)) {
@@ -567,7 +568,7 @@ public class AnalisadorFaturaCartaoCreditoGUI extends AbstractDialog implements 
 			}
 			loadingFrame.setMaxProgress(linhasLancamentos.size());
 			
-			ScorecardManager bd = (ScorecardManager)Util.getBean("scorecardManager");
+			ScorecardManager bd = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 			Conta conta = bd.getContaPorId(756);
 			
 			Object row[];

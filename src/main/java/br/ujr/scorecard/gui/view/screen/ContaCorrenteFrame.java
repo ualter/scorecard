@@ -31,6 +31,7 @@ import br.ujr.components.gui.combo.UjrComboBox;
 import br.ujr.components.gui.field.UjrNumberField;
 import br.ujr.components.gui.field.UjrTextField;
 import br.ujr.components.gui.tabela.DefaultModelTabela;
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.banco.Banco;
@@ -52,7 +53,7 @@ public class ContaCorrenteFrame extends AbstractDialog implements FocusListener,
 	protected UjrTextField   txtNumero     = new UjrTextField();
 	protected UjrComboBox    txtBanco      = new UjrComboBox();
 	protected UjrNumberField txtOrdem      = new UjrNumberField();
-	protected ScorecardManager scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
+	protected ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 	private JButton btnExcluir;
 	private JButton btnNovo;
 	private JButton btnOk;
@@ -70,7 +71,7 @@ public class ContaCorrenteFrame extends AbstractDialog implements FocusListener,
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				ContaCorrente cc = ((ScorecardManager)Util.getBean("scorecardManager")).getContaCorrentePorId(64);
+				ContaCorrente cc = ((ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager")).getContaCorrentePorId(64);
 				JFrame frame = new JFrame();
 				frame.setLayout(null);
 				frame.setBounds(10, 10, 200, 200);

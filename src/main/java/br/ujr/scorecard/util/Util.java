@@ -28,7 +28,6 @@ import javax.swing.JComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jfree.util.Log;
-import org.springframework.context.support.GenericXmlApplicationContext;
 
 import br.ujr.scorecard.util.properties.ScorecardPropertiesUtil;
 
@@ -42,8 +41,6 @@ public class Util {
 	private	static DecimalFormatSymbols           dfs        = new DecimalFormatSymbols(locale);
 	private static DecimalFormat                  df         = new DecimalFormat();
 	private static SimpleDateFormat               sdf        = new SimpleDateFormat("dd/MM/yyyy");
-	private static GenericXmlApplicationContext  context;
-	//private static ClassPathXmlApplicationContext  context;
 	private static Util                           me         = new Util();
 	private static File                           imgToolTip = null;
 	
@@ -60,30 +57,6 @@ public class Util {
 	{
 		df.setDecimalFormatSymbols(dfs);
 		df.applyLocalizedPattern("###.###.###.##0,00");
-		
-		context = new GenericXmlApplicationContext();
-		context.load("spring.config.xml");
-		context.refresh();
-		
-//		ConfigurableEnvironment env = context.getEnvironment();
-//		String[] profiles = env.getActiveProfiles();
-//		
-//		boolean loaded = false;
-//		for (String profile : profiles) {
-//			if ( profile.equalsIgnoreCase("dev") || profile.equalsIgnoreCase("default") ) {
-//				context.load("spring.beans-dev.xml");
-//				loaded = true;
-//			} else
-//			if ( profile.equalsIgnoreCase("prod") ) {
-//				context.load("spring.beans-prod.xml");
-//				loaded = true;
-//			}
-//		}
-//		if ( !loaded ) {
-//			context.load("spring.beans-dev.xml");
-//		}
-//		context.refresh();
-		
 	}
 	
 	public static Date today()
@@ -217,16 +190,6 @@ public class Util {
 			//throw new RuntimeException(e);
 			return new BigDecimal(0);
 		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static <T extends Object> T getBean(String bean) {
-		return (T)context.getBean(bean);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static <T extends Object> T getBean(Class clazz) {
-		return (T)context.getBean(clazz);
 	}
 	
 	public static void setToolTip(Component comp,JComponent cmp, String msg) {

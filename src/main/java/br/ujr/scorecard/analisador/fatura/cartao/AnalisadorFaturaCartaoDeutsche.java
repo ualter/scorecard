@@ -3,13 +3,13 @@ package br.ujr.scorecard.analisador.fatura.cartao;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
@@ -38,7 +38,7 @@ public class AnalisadorFaturaCartaoDeutsche {
 	public AnalisadorFaturaCartaoDeutsche(Date mesAnoRefencia, CartaoContratado cartaoContratado) {
 		try {
 			
-			this.bd = (ScorecardManager)Util.getBean("scorecardManager");
+			this.bd = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 			this.deutsche = bd.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCDeutsche));
 			
 			this.mesAnoRefencia = mesAnoRefencia;

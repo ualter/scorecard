@@ -32,13 +32,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell.AnalisadorExtratoCCBanSabadellGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.bb.ProcessadorExtratoCCBancoBrasilGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.deutsche.AnalisadorExtratoCCDeutscheGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.santander.AnalisadorExtratoCCSantanderGUI;
 import br.ujr.scorecard.analisador.fatura.cartao.AnalisadorFaturaCartaoCreditoGUI;
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.gui.view.screen.bankpanel.BankPanel;
 import br.ujr.scorecard.gui.view.screen.passivo.PassivoConstanteFrame;
 import br.ujr.scorecard.gui.view.screen.reports.ResumoMensalFrame;
@@ -248,7 +248,7 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     }
 
 	private void loadContasCorrentes() {
-		ScorecardManager manager = (ScorecardManager)Util.getBean("scorecardManager");
+		ScorecardManager manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 		List<ContaCorrente> contasCorrentes = manager.listarContaCorrente();
     	Collections.sort(contasCorrentes,ContaCorrenteOrdenador.ORDEM);
     	for(ContaCorrente cc : contasCorrentes) {
@@ -273,7 +273,7 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     	 */
     	JPanel panResumoGeral = new JPanel();
     	panResumoGeral.setLayout(null);
-    	resumoPeriodoGeral = new ResumoPeriodoGeral(this,panResumoGeral,((ScorecardManager)Util.getBean("scorecardManager")));
+    	resumoPeriodoGeral = new ResumoPeriodoGeral(this,panResumoGeral,((ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager")));
     	panResumoGeral.setName("RESUMO_GERAL");
 		tabBancos.addTab("Resumo Geral",panResumoGeral);
 		tabBancos.addMouseListener(this);

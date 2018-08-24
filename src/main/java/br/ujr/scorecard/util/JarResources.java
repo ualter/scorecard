@@ -13,6 +13,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
 
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 
 public class JarResources {
@@ -27,7 +28,7 @@ public class JarResources {
 	private static Logger logger = Logger.getLogger(JarResources.class);
 	
 	public synchronized static JarResources getInstance() {
-		br.ujr.scorecard.util.properties.ScorecardProperties scorecardProperties =  Util.getBean(br.ujr.scorecard.util.properties.ScorecardProperties.class);
+		br.ujr.scorecard.util.properties.ScorecardProperties scorecardProperties =  ScorecardConfigUtil.getBean(br.ujr.scorecard.util.properties.ScorecardProperties.class);
 		String pathFolder = scorecardProperties.getProperty(ScorecardPropertyKeys.PathInstallation);
 		String pathFile   = null;
 		File folder = new File(pathFolder);

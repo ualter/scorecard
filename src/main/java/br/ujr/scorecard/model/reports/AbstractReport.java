@@ -6,15 +6,15 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.model.ScorecardManager;
-import br.ujr.scorecard.util.Util;
 
 public abstract class AbstractReport implements Report {
 
 	protected HashMap parameters = new HashMap();
 	protected String  targetFile = null;
 	protected Object[] criteria  = new Object[]{};
-	protected ScorecardManager scorecardManager = (ScorecardManager)Util.getBean("scorecardManager");
+	protected ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 	protected List<ReportManagerListener> listeners = new ArrayList<ReportManagerListener>();
 	
 	public HashMap getParameters() {

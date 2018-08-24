@@ -6,12 +6,10 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.model.ResumoPeriodo;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ativo.Ativo;
@@ -33,6 +31,8 @@ import br.ujr.scorecard.model.passivo.parcela.ParcelaOrdenador;
 import br.ujr.scorecard.model.passivo.saque.Saque;
 import br.ujr.scorecard.model.transferencia.Transferencia;
 import br.ujr.scorecard.util.Util;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * 
@@ -54,7 +54,7 @@ public class ScorecardManagerTest extends TestCase
 
     protected void setUp() throws Exception
     {
-    	this.manager = (ScorecardManager)Util.getBean("scorecardManager");
+    	this.manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
     	if ( this.manager.getMavenTests() != 1) {
     		this.manager = null;
     		throw new RuntimeException("Arquivo de configuração do Spring não está preparado para o ambiente de testes.\n Apontar para o banco de dados de testes");
@@ -1009,7 +1009,7 @@ public class ScorecardManagerTest extends TestCase
     }
     
     public void cadastrarContasCorrentes() {
-    	this.manager = (ScorecardManager)Util.getBean("scorecardManager");
+    	this.manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
     	List<Banco> bancos = this.manager.getBancoPorNome("Banco do Brasil");
     	Banco       banco;
     	if ( bancos.size() < 1) {
@@ -1107,7 +1107,7 @@ public class ScorecardManagerTest extends TestCase
     	//new ScorecardManagerTest().cadastrarContasCorrentes();
     	//junit.textui.TestRunner.run(new ScorecardManagerTest("testGravarSaldoAnterior"));
     	
-    	ScorecardManager mm = (ScorecardManager)Util.getBean("scorecardManager");
+    	ScorecardManager mm = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
     	ContaCorrente cc = mm.getContaCorrentePorId(57);
     	mm.consistirSaldosAnteriores(cc);
     	

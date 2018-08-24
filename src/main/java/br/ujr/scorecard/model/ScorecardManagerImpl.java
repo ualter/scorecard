@@ -307,7 +307,7 @@ public class ScorecardManagerImpl implements ScorecardManager
 	}
 	 
 	public static void main(String[] args) {
-		/*ScorecardManager s = (ScorecardManager)Util.getBean("scorecardManager");
+		/*ScorecardManager s = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 		ResumoPeriodo resumo = s.getResumoPeriodo(200710, 200710);*/
 		
 	}

@@ -12,7 +12,7 @@ public class ImportadorPlanoContas {
 	ScorecardManager manager;
 	
 	/*public ImportadorPlanoContas() {
-		this.manager = (ScorecardManager)Util.getBean("scorecardManager");
+		this.manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 	}
 	
 	public void importar() {

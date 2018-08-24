@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import br.ujr.components.gui.combo.UjrComboBox;
 import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.treecheck.CheckNode;
 import br.ujr.scorecard.gui.view.screen.treecheck.CheckRenderer;
@@ -57,7 +58,7 @@ public class TotalContaContabilFrame extends AbstractDialog  {
 	protected JDateChooser     txtDtIni         = new JDateChooser("MM/yyyy","##/####",'_');
 	protected JDateChooser     txtDtFim         = new JDateChooser("MM/yyyy","##/####",'_');
 	protected UjrComboBox      txtContaCorrente = new UjrComboBox(); 
-	protected ScorecardManager manager = (ScorecardManager)Util.getBean("scorecardManager");
+	protected ScorecardManager manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 	private JButton btnProcessarSaldo;
 	private JButton btnSair;
 	private JTree tree;

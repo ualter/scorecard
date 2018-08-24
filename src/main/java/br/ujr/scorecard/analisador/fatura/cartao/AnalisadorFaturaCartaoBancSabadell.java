@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
@@ -42,7 +43,7 @@ public class AnalisadorFaturaCartaoBancSabadell {
 	
 	public static void main(String[] args) {
 		Date hoje = Calendar.getInstance().getTime();
-		ScorecardManager manager = (ScorecardManager)Util.getBean("scorecardManager");
+		ScorecardManager manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 		ContaCorrente cc = manager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCBanSabadell));
 		List<CartaoContratado> listCartaoContratado = manager.getCartaoContratado(cc);
 		AnalisadorFaturaCartaoBancSabadell a =  new AnalisadorFaturaCartaoBancSabadell(hoje, listCartaoContratado.get(0));
@@ -51,7 +52,7 @@ public class AnalisadorFaturaCartaoBancSabadell {
 	public AnalisadorFaturaCartaoBancSabadell(Date mesAnoRefencia, CartaoContratado cartaoContratado) {
 		try {
 			
-			this.bd = (ScorecardManager)Util.getBean("scorecardManager");
+			this.bd = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 			this.bancSabadell = bd.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCBanSabadell));
 			
 			this.mesAnoRefencia   = mesAnoRefencia;

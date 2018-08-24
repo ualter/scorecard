@@ -8,14 +8,14 @@ import java.io.Reader;
 import java.util.LinkedHashMap;
 
 import br.ujr.scorecard.analisador.extrato.contacorrente.deutsche.AnalisadorExtratoCCDeutsche.LinhaExtratoContaCorrenteDeutsche;
+import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.conta.Conta;
-import br.ujr.scorecard.util.Util;
 
 public class MappingAnalisadorDeutsche {
 	
 	public void checkMappingDescricaoVsContaContabil(String descricao, LinhaExtratoContaCorrenteDeutsche linhaExtratoDeutsche) {
-		ScorecardManager bd = (ScorecardManager)Util.getBean("scorecardManager");
+		ScorecardManager bd = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
 		
 		BufferedReader buffReader = null;
 		try {
