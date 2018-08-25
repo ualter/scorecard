@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -46,6 +47,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 
@@ -54,7 +56,6 @@ import br.ujr.components.gui.tabela.OrcamentoOrdenadorTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
 import br.ujr.scorecard.analisador.fatura.cartao.AnalisadorSMSCartaoSaqueSantander;
 import br.ujr.scorecard.analisador.fatura.cartao.LinhaLancamento;
-import br.ujr.scorecard.config.ScorecardConfigUtil;
 import br.ujr.scorecard.gui.view.screen.DepositoFrame;
 import br.ujr.scorecard.gui.view.screen.InvestimentoFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
@@ -190,7 +191,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	protected JPanel panTransferencia;
 	protected JPanel panSaque;
 
-	protected ScorecardManager scorecardManager = (ScorecardManager) ScorecardConfigUtil.getBean("scorecardManager");
+	protected ScorecardManager scorecardManager = null;
 	private static Logger logger = Logger.getLogger("br.ujr.scorecard");
 	protected DefaultModelTabela tableModelResumo;
 	private JLabel lblPeriodoResumo;
@@ -198,15 +199,16 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private JLabel lblPopupOrcamento;
 	private int popUpOrcamentoX;
 	private int popUpOrcamentoY;
+	
+	private Map<Integer,ImageIcon> tabIconsUnselected = new HashMap<Integer,ImageIcon>();
+	private Map<Integer,ImageIcon> tabIconsSelected   = new HashMap<Integer,ImageIcon>();
 
-	private ScorecardManager scorecardServices;
-
-	public BankPanel(JFrame owner, ContaCorrente contaCorrente) {
-		this.owner = owner;
-		this.contaCorrente = contaCorrente;
+	public BankPanel(JFrame owner, ContaCorrente contaCorrente, ScorecardManager scorecardManager) {
+		this.owner             = owner;
+		this.contaCorrente     = contaCorrente;
+		this.scorecardManager  = scorecardManager;
 		this.scorecardManager.addScorecardManagerListener(this);
-		this.scorecardServices = (ScorecardManager) ScorecardConfigUtil.getBean("scorecardManager");
-
+		
 		this.setUpDataInicialFinal();
 		if (this.getContaCorrente().isCheque()) {
 			this.loadCheques();
@@ -267,8 +269,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			btnConfirmar.addActionListener(this);
 			btnVerificarExtrato.addActionListener(this);
 		}
-		
-		
 		
 		Util.setToolTip(this, btnInserirCheque, "Inserir lançamento");
 		Util.setToolTip(this, btnExcluirCheque, "Excluir lançamento");
@@ -402,9 +402,11 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		panTransferencia = new JPanel(null, true);
 		panSaque = new JPanel(null, true);
 
+		int indexTab = 0;
 		if (this.getContaCorrente().isCheque()) {
 			buildPanelCheque();
 			tabs.addTab("Cheques", panCheque);
+			indexTab++;
 		}
 
 		buildPanelCartoes();
@@ -418,9 +420,19 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		// UIManager.put("TabbedPane.tabInsets", new Insets(1, 5, 1, 5) );
 
 		for (CartaoContratado cartaoContratado : cartoesContratados) {
-			ImageIcon img = new ImageIcon(Util.loadImage(this, cartaoContratado.getLogo()));
-			//tabs.addTab(cartaoContratado.getNome(), img, this.panCartoes.get(cartaoContratado));
-			tabs.addTab("", img, this.panCartoes.get(cartaoContratado));
+			indexTab++;
+			
+			String imageCartao         = cartaoContratado.getLogo();
+			String imageCartaoSelected = StringUtils.replaceAll(imageCartao, "\\.", "_selected.");
+			Image  imgSelected         = Util.loadImageIfExists(this, imageCartaoSelected);
+			
+			ImageIcon imgIconUnSelected = new ImageIcon(Util.loadImage(this, imageCartao));
+			ImageIcon imgIconSelected   = imgSelected != null ? new ImageIcon(imgSelected) : null;
+			
+			this.tabIconsUnselected.put(indexTab,imgIconUnSelected);
+			this.tabIconsSelected.put(indexTab, imgIconSelected);
+			
+			tabs.addTab("", imgIconUnSelected, this.panCartoes.get(cartaoContratado));
 		}
 		
 		tabs.addTab("Saques", panSaque);
@@ -428,11 +440,13 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		tabs.addTab("Transferências", panTransferencia);
 		tabs.addTab("Orçamentos", panOrcamento);
 		tabs.addTab("Ativos", panAtivos);
-		tabs.setBounds(271, 15, 781, 535);
+		tabs.setBounds(271, 15, ((ScorecardGUI)this.owner).largura - 292, ((ScorecardGUI)this.owner).altura - 163);
 		tabs.setVisible(true);
+		tabs.setName("Tabs");
+		tabs.addMouseListener(this);
 
 		this.add(tabs);
-		this.setBounds(0, 0, 1024, 768);
+		//this.setBounds(0, 0, ((ScorecardGUI)this.owner).largura - 289, ((ScorecardGUI)this.owner).altura - 66);
 		this.setVisible(true);
 	}
 
@@ -505,7 +519,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			
 			setGenericBounds(jScrollPane, lblCartao, logo);
 			
-			lblCartao.setBounds(100, 10, 667, 26);
+			lblCartao.setBounds(100, 10, ((ScorecardGUI)this.owner).largura - 406, 26);
 			btnInserirCartao.get(cartaoContratado).setBounds(10, 10, 27, 26);
 			btnExcluirCartao.get(cartaoContratado).setBounds(40, 10, 27, 26);
 			btnConfirmarCartao.get(cartaoContratado).setBounds(70, 10, 27, 26);
@@ -524,11 +538,11 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private void setGenericBounds(JScrollPane scrollPane, JLabel lbl, JLabel logo) {
 		logo.setBounds(10, 10, 40, 26);
 		lbl.setBounds(143, 10, 624, 26);
-		scrollPane.setBounds(10, 41, 758, 458);
+		scrollPane.setBounds(10, 41, ((ScorecardGUI)this.owner).largura - 315, ((ScorecardGUI)this.owner).altura - 276);
 	}
 
 	private int[][] getGenericBounds() {
-		int[][] result = { { 143, 10, 624, 26 }, { 10, 41, 758, 380 } };
+		int[][] result = { { 143, 10, ((ScorecardGUI)this.owner).largura - 449, 26 }, { 10, 41, ((ScorecardGUI)this.owner).largura - 315, 380 } };
 		return result;
 	}
 
@@ -714,7 +728,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 		setGenericBounds(jScrollPane, lblCheques, lblCheques);
 
-		lblCheques.setBounds(100, 10, 667, 26);
+		lblCheques.setBounds(100, 10, ((ScorecardGUI)this.owner).largura - 406, 26);
 		btnInserirCheque.setBounds(10, 10, 27, 26);
 		btnExcluirCheque.setBounds(40, 10, 27, 26);
 		btnConfirmarCheque.setBounds(70, 10, 27, 26);
@@ -853,7 +867,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		lblDepositos.setBackground(Color.GRAY);
 		lblDepositos.setForeground(Color.WHITE);
 		lblDepositos.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		lblDepositos.setBounds(70, 10, genericBounds[0][2] + (genericBounds[0][0] - 70), 26);
+		lblDepositos.setBounds(70, 10, ((ScorecardGUI)this.owner).largura - 376, 26);
 
 		btnInserirDepositos.setBounds(10, 10, 27, 26);
 		btnExcluirDepositos.setBounds(40, 10, 27, 26);
@@ -877,7 +891,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		this.setUpTable(tableSalario, "TABLE_SALARIO");
 		this.layOutTableAtivo(tableSalario);
 
-		int yDiff = 338;
+		int yDiff = 435;
 
 		int[][] genericBounds = this.getGenericBounds();
 		JScrollPane jScrollPane = new JScrollPane(tableSalario);
@@ -913,7 +927,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		this.setUpTable(tableInvestimento, "TABLE_INVESTIMENTO");
 		this.layOutTableAtivo(tableInvestimento);
 
-		int yDiff = 169;
+		int yDiff = 218;
 
 		int[][] genericBounds = this.getGenericBounds();
 		JScrollPane jScrollPane = new JScrollPane(tableInvestimento);
@@ -925,7 +939,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		lblInvestimentos.setBackground(Color.GRAY);
 		lblInvestimentos.setForeground(Color.WHITE);
 		lblInvestimentos.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		lblInvestimentos.setBounds(71, 10 + yDiff, genericBounds[0][2] + (genericBounds[0][0] - 71), 26);
+		lblInvestimentos.setBounds(71, 10 + yDiff,  ((ScorecardGUI)this.owner).largura - 376, 26);
 
 		btnInserirInvestimentos.setBounds(10, 10 + yDiff, 27, 26);
 		btnExcluirInvestimentos.setBounds(40, 10 + yDiff, 27, 26);
@@ -1112,7 +1126,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 		setGenericBounds(jScrollPane, lblOrcamentos, lblOrcamentos);
 
-		lblOrcamentos.setBounds(100, 10, 667, 26);
+		lblOrcamentos.setBounds(100, 10, ((ScorecardGUI)this.owner).largura - 406, 26);
 		btnInserirOrcamento.setBounds(10, 10, 27, 26);
 		btnExcluirOrcamento.setBounds(40, 10, 27, 26);
 		btnDesconsiderarOrcamento.setBounds(70, 10, 27, 26);
@@ -1198,7 +1212,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 		setGenericBounds(jScrollPane, lblDebito, lblDebito);
 
-		lblDebito.setBounds(100, 10, 667, 26);
+		lblDebito.setBounds(100, 10, ((ScorecardGUI)this.owner).largura - 406, 26);
 		btnInserirDebito.setBounds(10, 10, 27, 26);
 		btnExcluirDebito.setBounds(40, 10, 27, 26);
 		btnConfirmarDebito.setBounds(70, 10, 27, 26);
@@ -1234,7 +1248,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 		setGenericBounds(jScrollPane, lblSaque, lblSaque);
 
-		lblSaque.setBounds(130, 10, 627, 26);
+		lblSaque.setBounds(130, 10, ((ScorecardGUI)this.owner).largura - 436, 26);
 		btnInserirSaque.setBounds(10, 10, 27, 26);
 		btnExcluirSaque.setBounds(40, 10, 27, 26);
 		btnConfirmarSaque.setBounds(70, 10, 27, 26);
@@ -1272,7 +1286,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 		setGenericBounds(jScrollPane, lblTransferencia, lblTransferencia);
 
-		lblTransferencia.setBounds(70, 10, 697, 26);
+		lblTransferencia.setBounds(70, 10, ((ScorecardGUI)this.owner).largura - 376, 26);
 		btnInserirTransferencia.setBounds(10, 10, 27, 26);
 		btnExcluirTransferencia.setBounds(40, 10, 27, 26);
 
@@ -1939,8 +1953,28 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 				}
 			}
 		}
+		
+		if ( evt.getComponent() instanceof JTabbedPane ) {
+			JTabbedPane tabbed = (JTabbedPane)evt.getComponent();
+			
+			Integer currentIndexTab  = tabbed.getSelectedIndex();
+			Integer previousIndexTab = 0;
+			
+			Object previousTab = tabbed.getClientProperty("PREVIOUS_TAB");
+			if ( previousTab instanceof Integer ) {
+				previousIndexTab = (Integer)previousTab;
+			}
+			tabbed.putClientProperty("PREVIOUS_TAB", currentIndexTab);
+			
+			if (this.tabIconsSelected.get(currentIndexTab + 1) != null) {
+				tabbed.setIconAt(currentIndexTab, this.tabIconsSelected.get(currentIndexTab + 1));
+			}
+			if (this.tabIconsUnselected.get(previousIndexTab + 1) != null) {
+				tabbed.setIconAt(previousIndexTab, this.tabIconsUnselected.get(previousIndexTab + 1));
+			}
+		}
 	}
-
+	
 	private void openOrcamento() {
 		Orcamento orcamento = this.getSelectedOrcamento();
 		if (orcamento != null) {

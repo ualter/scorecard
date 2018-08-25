@@ -75,7 +75,7 @@ INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES 
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard Itaú',    @contaCorrenteIdItau);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'VISA DB',          @contaCorrenteIdDeutsche);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('1', 'VISA Electron DB', @contaCorrenteIdDeutsche);
-INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard DB',    @contaCorrenteIdDeutsche);
+-- INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard DB',    @contaCorrenteIdDeutsche);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'VISA BS',          @contaCorrenteIdSabadell);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('2', 'Mastercard Debit', @contaCorrenteIdSabadell);
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'VISA Citibank',          @contaCorrenteIdCitiBank);
@@ -114,7 +114,7 @@ ADD COLUMN `LOGO` VARCHAR(80) NULL AFTER `CONTA_CORRENTE_ID`;
 INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'VISA SIN', @contaCorrenteIdSabadell);
 
 UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`NOME` LIKE '%VISA%');
-UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`NOME` LIKE '%VISA Electron%');
+
 UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard.jpg' WHERE (`NOME` LIKE '%Mastercard%');
 
 # Disable Cheques Banc Sabadell
@@ -124,9 +124,30 @@ UPDATE `conta_corrente` SET `HAS_CHEQUE` = 'F' WHERE (`ID` = @contaCorrenteIdSab
 ALTER TABLE `cartao_contratado` 
 ADD COLUMN `DEBITO_CREDITO` VARCHAR(1) NULL DEFAULT 'C' AFTER `LOGO`;
 
+# Tarjeta Visa SIN Banc Sabadell
+INSERT INTO cartao_contratado (`OPERADORA`, `NOME`, `CONTA_CORRENTE_ID`) VALUES ('0', 'Visa SIN', @contaCorrenteIdSabadell);
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa.jpg' WHERE (`NOME` LIKE '%VISA%');
+UPDATE `cartao_contratado` SET `LOGO` = 'VisaElectron.jpg' WHERE (`NOME` LIKE '%VISA Electron%');
+
 # Update Info Cartao Contratado
 UPDATE `cartao_contratado` SET `DEBITO_CREDITO` = 'D' WHERE (`NOME` LIKE '%Electron%');
-UPDATE `cartao_contratado` SET `DEBITO_CREDITO` = 'D' WHERE (`NOME` LIKE '%Mastercard Debit%')
+UPDATE `cartao_contratado` SET `DEBITO_CREDITO` = 'D' WHERE (`NOME` LIKE '%Mastercard Debit%');
+
+
+# Check IDs
+UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard_Debit_BS.png' WHERE (`ID` = '14');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Credit_BS.png' WHERE (`ID` = '13');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_SIN_BS.png' WHERE (`ID` = '18');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Credit_DB.png' WHERE (`ID` = '10');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Debit_DB.png' WHERE (`ID` = '11');
+UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard_Credit_Santander.png' WHERE (`ID` = '6');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Credit_Santander.png' WHERE (`ID` = '4');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Debit_Santander.png' WHERE (`ID` = '5');
+
+
+
+
+
 
 
 

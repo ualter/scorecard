@@ -17,7 +17,6 @@ import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,10 +32,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
-
-import com.codahale.metrics.ConsoleReporter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
 
 import br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell.AnalisadorExtratoCCBanSabadellGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.bb.ProcessadorExtratoCCBancoBrasilGUI;
@@ -60,8 +55,8 @@ import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
  */
 public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowListener, ActionListener, MouseListener {
     
-    private   int         largura           = 1074;
-    private   int         altura            = 763;
+    public    int         largura           = 1124;
+    public    int         altura            = 834;
     private   JTabbedPane tabBancos         = new JTabbedPane();
     private   JPanel      panMain           = null;
     private   Integer     tabResumoNumber   = null;
@@ -69,21 +64,26 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     private static Logger logger = Logger.getLogger(ScorecardGUI.class);
 	private ResumoPeriodoGeral resumoPeriodoGeral;
 	
+	//private final MetricRegistry metricsLevel_1 = new MetricRegistry();
+	//private final MetricRegistry metricsLevel_2 = new MetricRegistry();
 	
-	private final MetricRegistry metrics = new MetricRegistry();
-	final ConsoleReporter reporter = ConsoleReporter.forRegistry(metrics)
-            .convertRatesTo(TimeUnit.SECONDS)
-            .convertDurationsTo(TimeUnit.MILLISECONDS)
-            .build();
+	//private final ConsoleReporter reporterLevel_1 = ConsoleReporter.forRegistry(metricsLevel_1).convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS).build();
+	//private final ConsoleReporter reporterLevel_2 = ConsoleReporter.forRegistry(metricsLevel_2).convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS).build();
    
     public ScorecardGUI() {
-    	initComponents(); 	
+    	//Timer.Context timerInitComponents = metricsLevel_1.timer("ScorecardGUI.initComponents").time();
+    	
+    	initComponents();
+    	
+    	//timerInitComponents.stop();
+    	//reporterLevel_1.start(12, TimeUnit.SECONDS);
+    	//reporterLevel_2.start(10, TimeUnit.SECONDS);
     }
     
     private void initComponents() {
     	java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        this.setBounds(((screenSize.width-largura)/2), ((screenSize.height-737)/2) - 15, largura, 737);
-        this.setPreferredSize(new Dimension(largura, 737));
+        this.setBounds(((screenSize.width-largura)/2), ((screenSize.height-altura)/2) - 15, largura, altura);
+        this.setPreferredSize(new Dimension(largura, altura));
         
     	//this.panMain = new TransparentBackground(this);
         this.panMain = new JPanel();
@@ -91,10 +91,10 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     		
     	this.loadContasCorrentes();
     	
-    	tabBancos.setBounds(1, 63, 1066, 618);
+    	tabBancos.setBounds(1, 63, 1116, altura - 116);
     	this.panMain.add(tabBancos);
     	
-    	this.panMain.setBounds(0,0,largura,768);
+    	this.panMain.setBounds(0,0,largura,altura);
 		this.getContentPane().setLayout(null);
 		this.getContentPane().add(this.panMain);
     	
@@ -237,8 +237,7 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
         Util.setToolTip(this, btnAnalisarExtratoDeutsche, "Analisar Extrato Deutsche Bank em memória");
         toolBar.add(btnAnalisarExtratoDeutsche);
         
-        //JButton btnAnalisarExtratoBanSabadell = new JButton(new ImageIcon(Util.loadImage(this, "deutsche_bank_logo.png")));
-        JButton btnAnalisarExtratoBanSabadell = new JButton("TO DO...");
+        JButton btnAnalisarExtratoBanSabadell = new JButton(new ImageIcon(Util.loadImage(this, "banc_sabadell_logo.png")));
         btnAnalisarExtratoBanSabadell.setActionCommand("ANALISAR_EXTRATO_BANSABADELL");
         btnAnalisarExtratoBanSabadell.addActionListener(this);
         Util.setToolTip(this, btnAnalisarExtratoBanSabadell, "Analisar Extrato Banc Sabadell em arquivo N43 baixado");
@@ -260,46 +259,44 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     }
 
 	private void loadContasCorrentes() {
-		final Timer.Context timer1 = metrics.timer("ScorecardConfigUtil.getBean").time();
+		//Timer.Context timerScorecardConfigUtilGetBean = metricsLevel_2.timer("loadContasCorrentes.ScorecardConfigUtil.getBean").time();
 		ScorecardManager manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
-		timer1.stop();
+		//timerScorecardConfigUtilGetBean.stop();
 		
-		final Timer.Context timer2 = metrics.timer("listarContaCorrente").time();
+		//Timer.Context timerListarContaCorrente = metricsLevel_2.timer("loadContasCorrentes.listarContaCorrente").time();
 		List<ContaCorrente> contasCorrentes = manager.listarContaCorrente();
-		timer2.stop();
+		//timerListarContaCorrente.stop();
 		
 		
-		
+		//Timer.Context timerLoadAllBankPanels = metricsLevel_2.timer("loadContasCorrentes.loadAllBankPanels").time();
     	Collections.sort(contasCorrentes,ContaCorrenteOrdenador.ORDEM);
     	for(ContaCorrente cc : contasCorrentes) {
-    	
-    		/**
-    		 * Filtrar bancos/contas desativadas
-    		 */
     		if ( cc.getBanco().isAtivo() ) {
     			/**
     			 * Verifica se os saldos anteriores dos 5 meses passados já foram processados(gerados)
     			 * Caso não: serão gerados!
     			 */
     			manager.consistirSaldosAnteriores(cc);
-    			BankPanel bankPanel = new BankPanel(this,cc);
+    			//Timer.Context timerBankPanel = metricsLevel_2.timer("loadContasCorrentes.new BankPanel(...)").time();
+    			BankPanel bankPanel = new BankPanel(this,cc,manager);
+    			//timerBankPanel.stop();
     			bankPanel.setName(cc.getBanco().getNome());
     			tabBancos.addTab(cc.getDescricao(), bankPanel); 
     		}
     	}
-    	
-    	reporter.start(1, TimeUnit.SECONDS);
+    	//timerLoadAllBankPanels.stop();
     	
     	/**
     	 * Resumo Geral
     	 */
     	JPanel panResumoGeral = new JPanel();
     	panResumoGeral.setLayout(null);
-    	resumoPeriodoGeral = new ResumoPeriodoGeral(this,panResumoGeral,((ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager")));
+    	//Timer.Context timerResumoPeriodoGeral = metricsLevel_2.timer("resumoPeriodoGeral").time();
+    	resumoPeriodoGeral = new ResumoPeriodoGeral(this,panResumoGeral,manager);
+    	//timerResumoPeriodoGeral.stop();
     	panResumoGeral.setName("RESUMO_GERAL");
 		tabBancos.addTab("Resumo Geral",panResumoGeral);
 		tabBancos.addMouseListener(this);
-    	
 	}
 	
     public void refreshContas() {

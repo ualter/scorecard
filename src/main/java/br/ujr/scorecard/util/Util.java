@@ -329,14 +329,20 @@ public class Util {
 		return Long.parseLong( df4.format(ano) + df2.format(mes));
 	}
 	
+	public static Image loadImageIfExists(Component component, String imageName) {
+		if ( getInstance().getClass().getResource("/images/" + imageName) == null ) {
+			return null;
+		}
+		return component.getToolkit().getImage(getInstance().getClass().getResource("/images/" + imageName)); 
+	}
+	
 	public static Image loadImage(Component component, String imageName) {
 		if ( getInstance().getClass().getResource("/images/" + imageName) == null ) {
 			String msg = "Image " + "/images/" + imageName + ", nao encontrada!!!";
 			logger.warn(msg);
 			System.out.println(msg);
 		}
-		Image image = component.getToolkit().getImage(getInstance().getClass().getResource("/images/" + imageName)); 
-		return image;
+		return component.getToolkit().getImage(getInstance().getClass().getResource("/images/" + imageName)); 
 	}
 	
 	public static int calcDateDifference(int calendarItem, java.util.Date d1, java.util.Date d2) {

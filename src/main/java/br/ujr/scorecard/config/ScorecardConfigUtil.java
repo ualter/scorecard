@@ -9,9 +9,16 @@ public class ScorecardConfigUtil {
 	// Genesis
 	static 
 	{
+		//MetricRegistry metrics = new MetricRegistry();
+		//Timer.Context timerSpringConfig = metrics.timer("springConfig").time();
+		//ConsoleReporter reporter = ConsoleReporter.forRegistry(metrics).convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS).build();
+		
 		context = new GenericXmlApplicationContext();
 		context.load("spring.config.xml");
 		context.refresh();
+		
+		//timerSpringConfig.stop();
+		//reporter.start(8, TimeUnit.SECONDS);
 	}
 	
 	@SuppressWarnings("unchecked")
