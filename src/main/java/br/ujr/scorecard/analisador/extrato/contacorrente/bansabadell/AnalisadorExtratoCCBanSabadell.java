@@ -3,6 +3,7 @@ package br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
@@ -174,6 +175,10 @@ public class AnalisadorExtratoCCBanSabadell {
                                .map(Path::toAbsolutePath)
                                .sorted()
                                .collect(Collectors.toList());
+		} catch (NoSuchFileException e) {
+			String msg = "Não foi encontrado nenhum arquivo N43 no diretório: " + pathN43Files;
+			logger.warn(msg);
+			return msg;
 		} catch(IOException e) {
 			logger.error(e);
 			throw new RuntimeException(e.getMessage(),e);

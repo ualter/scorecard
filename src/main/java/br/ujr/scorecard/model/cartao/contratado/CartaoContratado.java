@@ -13,6 +13,7 @@ public class CartaoContratado extends BusinessObject implements Comparable<Carta
 	private ContaCorrente contaCorrente;
 	private String logo;
 	private String categoria;
+	private Integer ordem;
 	
 	public enum CategoriaCartao {
 		DEBITO("D"), CREDITO("C");
@@ -58,6 +59,15 @@ public class CartaoContratado extends BusinessObject implements Comparable<Carta
 
 	public void setContaCorrente(ContaCorrente contaCorrente) {
 		this.contaCorrente = contaCorrente;
+	}
+	
+
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
 	}
 
 	public boolean equals(Object obj)
@@ -134,4 +144,5 @@ public class CartaoContratado extends BusinessObject implements Comparable<Carta
 		}
 		throw new RuntimeException("Valor de Categoria Cartao desconhecida: \"" + this.getCategoria() + "\"");
 	}
+	
 }

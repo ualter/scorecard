@@ -31,7 +31,8 @@
 	    </many-to-one>
 	    
 	    <property name="logo"/>
-	    <property name="categoria" column="DEBITO_CREDITO"/> 
+	    <property name="categoria" column="DEBITO_CREDITO"/>
+	    <property name="ordem" column="ORDER"/> 
 	    
 	</class>
     

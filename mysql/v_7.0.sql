@@ -51,8 +51,9 @@ UPDATE `banco` SET `IS_ATIVO` = 'F' WHERE (`ID` = @bancoIdItau );
 ALTER TABLE `conta_corrente` 
 ADD COLUMN `HAS_CHEQUE` VARCHAR(1) NULL DEFAULT 'T' AFTER `ORDEM`;
 
-# Update Cuenta Corriente Banc Sabadell
-UPDATE `conta_corrente` SET `HAS_CHEQUE` = 'F' WHERE (`ID` = @bancoIdSabadell);
+# Update Cuenta Corriente Banc Sabadell & Deutsche
+UPDATE `conta_corrente` SET `HAS_CHEQUE` = 'F' WHERE (`ID` = @contaCorrenteIdSabadell);
+UPDATE `conta_corrente` SET `HAS_CHEQUE` = 'F' WHERE (`ID` = @contaCorrenteIdDeutsche);
 
 # Create Table cartao_contratado
 DROP TABLE IF EXISTS `cartao_contratado`;
@@ -143,6 +144,23 @@ UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Debit_DB.png' WHERE (`ID` = '11');
 UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard_Credit_Santander.png' WHERE (`ID` = '6');
 UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Credit_Santander.png' WHERE (`ID` = '4');
 UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Debit_Santander.png' WHERE (`ID` = '5');
+
+# Update Order
+UPDATE `conta_corrente` SET `ORDEM` = '1' WHERE (`ID` = @contaCorrenteIdSabadell);
+UPDATE `conta_corrente` SET `ORDEM` = '3' WHERE (`ID` = contaCorrenteIdSantander);
+UPDATE `conta_corrente` SET `ORDEM` = '9' WHERE (`ID` = @contaCorrenteIdItau);
+UPDATE `conta_corrente` SET `ORDEM` = '9' WHERE (`ID` = @contaCorrenteIdCitiBank);
+
+# Order Cartao Contratado
+ALTER TABLE `cartao_contratado` ADD COLUMN `ORDER` INT(2) NULL DEFAULT 1 AFTER `DEBITO_CREDITO`;
+
+UPDATE `cartao_contratado` SET `ORDER` = '2' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdDeutsche AND NOME = 'VISA DB');
+UPDATE `cartao_contratado` SET `ORDER` = '2' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdSabadell AND NOME = 'VISA BS');
+UPDATE `cartao_contratado` SET `ORDER` = '3' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdSabadell AND NOME = 'Visa SIN');
+
+# Update Nome VISA SIN BS
+UPDATE `cartao_contratado` SET `NOME` = 'VISA SIN' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdSabadell AND NOME = 'Visa SIN');
+
 
 
 

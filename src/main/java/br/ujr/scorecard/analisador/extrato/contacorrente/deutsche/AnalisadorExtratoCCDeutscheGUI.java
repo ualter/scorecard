@@ -79,7 +79,7 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 	 */
 	private static final long serialVersionUID = 1005761561571805210L;
 	private int							width		= 1235;
-	private int							height		= 602;
+	private int							height		= 652;
 	private JPanel						panMain		= null;
 
 	private JTable						tabNaoEncontrados;
@@ -138,13 +138,13 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		this.layOutTableNaoEncontrados();
 		JScrollPane jScrollPaneTabNaoEncontrados = new JScrollPane(tabNaoEncontrados);
 		jScrollPaneTabNaoEncontrados.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-		jScrollPaneTabNaoEncontrados.setBounds(10, 50, 1209, 400);
+		jScrollPaneTabNaoEncontrados.setBounds(10, 70, 1209, 430);
 		this.tabNaoEncontrados.setEnabled(false);
 
 		JLabel lblCodigo = new JLabel("Mês/Ano:");
 		lblCodigo.setFont(new Font("Verdana", Font.BOLD, 10));
-		lblCodigo.setBounds(10, 18, 80, 20);
-		this.txtDtRef.setBounds(70, 18, 75, 20);
+		lblCodigo.setBounds(10, 28, 80, 20);
+		this.txtDtRef.setBounds(70, 28, 75, 20);
 		this.txtDtRef.setEnabled(true);
 		this.txtDtRef.setFocusable(true);
 		this.txtDtRef.setFont(new Font("Courier New", Font.PLAIN, 11));
@@ -158,7 +158,10 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		lblLctoNaoEncontrados.setBackground(Color.BLUE);
 		lblLctoNaoEncontrados.setForeground(Color.WHITE);
 		lblLctoNaoEncontrados.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		lblLctoNaoEncontrados.setBounds(150, 10, 1068, 35);
+		lblLctoNaoEncontrados.setBounds(150, 10, 1007, 55);
+		
+		JLabel logoBanco = new JLabel(new ImageIcon(Util.loadImage(this, "deutsche_bank_logo.png")));
+		logoBanco.setBounds(1165, 12, 48, 48);
 
 		btnTranferir = new JButton(" Transferir");
 		btnTranferir.setIcon(new ImageIcon(Util.loadImage(this, "salvar.png")));
@@ -196,9 +199,10 @@ public class AnalisadorExtratoCCDeutscheGUI extends AbstractDialog implements Mo
 		panelBtn.add(btnRemover);
 		panelBtn.add(btnContaContabil);
 		panelBtn.add(btnSair);
-		panelBtn.setBounds(10, 460, 1209, 100);
+		panelBtn.setBounds(10, 510, 1209, 100);
 
 		this.panMain.add(lblLctoNaoEncontrados);
+		this.panMain.add(logoBanco);
 		this.panMain.add(jScrollPaneTabNaoEncontrados);
 		this.panMain.add(lblCodigo);
 		this.panMain.add(txtDtRef);

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -85,6 +86,7 @@ import br.ujr.scorecard.model.ativo.deposito.Deposito;
 import br.ujr.scorecard.model.ativo.investimento.Investimento;
 import br.ujr.scorecard.model.ativo.salario.Salario;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
+import br.ujr.scorecard.model.cartao.contratado.CartaoContratadoSorter;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.extrato.LinhaExtratoCartao;
 import br.ujr.scorecard.model.extrato.VerificarExtratoCartao;
@@ -402,11 +404,11 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		panTransferencia = new JPanel(null, true);
 		panSaque = new JPanel(null, true);
 
-		int indexTab = 0;
+		AtomicInteger indexTab = new AtomicInteger(0);
 		if (this.getContaCorrente().isCheque()) {
 			buildPanelCheque();
 			tabs.addTab("Cheques", panCheque);
-			indexTab++;
+			indexTab.getAndIncrement();
 		}
 
 		buildPanelCartoes();
@@ -417,10 +419,9 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		buildPanelTransferencia();
 		buildPanelSaque();
 
-		// UIManager.put("TabbedPane.tabInsets", new Insets(1, 5, 1, 5) );
-
-		for (CartaoContratado cartaoContratado : cartoesContratados) {
-			indexTab++;
+		cartoesContratados.sort(CartaoContratadoSorter.ORDEM);
+		cartoesContratados.forEach(cartaoContratado -> {
+			indexTab.getAndIncrement();
 			
 			String imageCartao         = cartaoContratado.getLogo();
 			String imageCartaoSelected = StringUtils.replaceAll(imageCartao, "\\.", "_selected.");
@@ -429,12 +430,12 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			ImageIcon imgIconUnSelected = new ImageIcon(Util.loadImage(this, imageCartao));
 			ImageIcon imgIconSelected   = imgSelected != null ? new ImageIcon(imgSelected) : null;
 			
-			this.tabIconsUnselected.put(indexTab,imgIconUnSelected);
-			this.tabIconsSelected.put(indexTab, imgIconSelected);
+			this.tabIconsUnselected.put(indexTab.get(),imgIconUnSelected);
+			this.tabIconsSelected.put(indexTab.get(), imgIconSelected);
 			
 			tabs.addTab("", imgIconUnSelected, this.panCartoes.get(cartaoContratado));
-		}
-		
+		});
+
 		tabs.addTab("Saques", panSaque);
 		tabs.addTab("Débitos C/C", panDebito);
 		tabs.addTab("Transferências", panTransferencia);
@@ -446,7 +447,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		tabs.addMouseListener(this);
 
 		this.add(tabs);
-		//this.setBounds(0, 0, ((ScorecardGUI)this.owner).largura - 289, ((ScorecardGUI)this.owner).altura - 66);
+		tabs.setIconAt(0, this.tabIconsSelected.get(1));
 		this.setVisible(true);
 	}
 
