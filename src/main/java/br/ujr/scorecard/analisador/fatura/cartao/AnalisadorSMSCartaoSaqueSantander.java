@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.ujr.scorecard.config.ScorecardConfigUtil;
+import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.conta.Conta;
@@ -78,7 +78,7 @@ public class AnalisadorSMSCartaoSaqueSantander extends AnalisadorSMSCartaoSantan
 		} else {
 			id = 868;
 		}
-		ScorecardManager bd = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+		ScorecardManager bd = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
 		return bd.getContaPorId(id);
 	}
 

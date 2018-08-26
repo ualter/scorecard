@@ -2,7 +2,7 @@ package br.ujr.scorecard.config;
 
 import org.springframework.context.support.GenericXmlApplicationContext;
 
-public class ScorecardConfigUtil {
+public class ScorecardConfigBootStrap {
 	
 	private static GenericXmlApplicationContext context;
 	

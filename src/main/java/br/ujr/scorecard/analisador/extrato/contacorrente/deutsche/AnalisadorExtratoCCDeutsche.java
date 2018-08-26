@@ -15,7 +15,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import br.ujr.scorecard.config.ScorecardConfigUtil;
+import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
@@ -38,7 +38,7 @@ import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
 public class AnalisadorExtratoCCDeutsche {
 
 	private List<LinhaExtratoContaCorrenteDeutsche> extratoContaCorrente = new ArrayList<LinhaExtratoContaCorrenteDeutsche>();
-	private ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+	private ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
 	private ContaCorrente cc;
 	private Set<Passivo> passivos;
 	private List<Ativo> ativos;
@@ -467,7 +467,7 @@ public class AnalisadorExtratoCCDeutsche {
 		Cartao  cartao  = new Cartao();
 		
 		
-		ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+		ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
 		List<CartaoContratado> listCartaoContratados = scorecardManager.getCartoesContaCorrente(contaCorrente);
 		
 		listCartaoContratados.stream()

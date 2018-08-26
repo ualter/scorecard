@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import br.ujr.scorecard.config.ScorecardConfigUtil;
+import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
@@ -38,7 +38,7 @@ public class AnalisadorFaturaCartaoDeutsche {
 	public AnalisadorFaturaCartaoDeutsche(Date mesAnoRefencia, CartaoContratado cartaoContratado) {
 		try {
 			
-			this.bd = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+			this.bd = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
 			this.deutsche = bd.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCDeutsche));
 			
 			this.mesAnoRefencia = mesAnoRefencia;

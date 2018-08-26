@@ -26,7 +26,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import br.ujr.scorecard.config.ScorecardConfigUtil;
+import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
@@ -44,7 +44,7 @@ public class ContaFrame extends JDialog implements ActionListener, MouseListener
     protected HashMap widths  = new HashMap(); 
     protected HashMap heights = new HashMap();
     
-	private ScorecardManager manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+	private ScorecardManager manager = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
     private String          titulo  = "Contas Contábeis";
     private String          modoEdicao;
     

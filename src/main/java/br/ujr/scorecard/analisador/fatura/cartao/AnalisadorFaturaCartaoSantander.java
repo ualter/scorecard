@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import br.ujr.scorecard.config.ScorecardConfigUtil;
+import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
@@ -39,7 +39,7 @@ public class AnalisadorFaturaCartaoSantander {
 	public AnalisadorFaturaCartaoSantander(Date mesAnoRefencia, CartaoContratado cartaoContratado) {
 		try {
 			
-			this.bd = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+			this.bd = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
 			this.santander = bd.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCSantander));
 			
 			this.mesAnoRefencia   = mesAnoRefencia;

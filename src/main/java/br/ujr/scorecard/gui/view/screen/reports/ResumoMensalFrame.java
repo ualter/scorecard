@@ -21,7 +21,7 @@ import javax.swing.SwingWorker;
 import br.ujr.components.gui.combo.UjrComboBox;
 import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
-import br.ujr.scorecard.config.ScorecardConfigUtil;
+import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
 import br.ujr.scorecard.model.ScorecardManager;
@@ -39,7 +39,7 @@ public class ResumoMensalFrame extends AbstractDialog  {
 	protected JDateChooser     txtDtIni         = new JDateChooser("MM/yyyy","##/####",'_');
 	protected JDateChooser     txtDtFim         = new JDateChooser("MM/yyyy","##/####",'_');
 	protected UjrComboBox      txtContaCorrente = new UjrComboBox(); 
-	protected ScorecardManager scoreBusinessDelegate = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+	protected ScorecardManager scoreBusinessDelegate = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
 	private JButton btnProcessarSaldo;
 	private JButton btnSair;
 	

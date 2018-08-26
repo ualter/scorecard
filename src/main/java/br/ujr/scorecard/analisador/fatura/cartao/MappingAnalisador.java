@@ -7,14 +7,14 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.LinkedHashMap;
 
-import br.ujr.scorecard.config.ScorecardConfigUtil;
+import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.conta.Conta;
 
 public class MappingAnalisador {
 	
 	public void checkMappingDescricaoVsContaContabil(String descricao, LinhaLancamento linhaFatura) {
-		ScorecardManager bd = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+		ScorecardManager bd = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
 		
 		BufferedReader buffReader = null;
 		try {

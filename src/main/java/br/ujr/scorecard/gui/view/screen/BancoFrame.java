@@ -29,7 +29,7 @@ import javax.swing.table.TableColumn;
 import br.ujr.components.gui.field.UjrNumberField;
 import br.ujr.components.gui.field.UjrTextField;
 import br.ujr.components.gui.tabela.DefaultModelTabela;
-import br.ujr.scorecard.config.ScorecardConfigUtil;
+import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.gui.view.utils.AbstractDialog;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.banco.Banco;
@@ -49,7 +49,7 @@ public class BancoFrame extends AbstractDialog implements FocusListener, MouseLi
 	protected UjrTextField  txtCodigo     = new UjrTextField();
 	protected UjrNumberField  txtDiaVencVisa       = new UjrNumberField();
 	protected UjrNumberField  txtDiaVencMastercard = new UjrNumberField();
-	protected ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+	protected ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
 	private JButton btnExcluir;
 	private JButton btnNovo;
 	private JButton btnOk;

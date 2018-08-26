@@ -38,7 +38,7 @@ import br.ujr.scorecard.analisador.extrato.contacorrente.bb.ProcessadorExtratoCC
 import br.ujr.scorecard.analisador.extrato.contacorrente.deutsche.AnalisadorExtratoCCDeutscheGUI;
 import br.ujr.scorecard.analisador.extrato.contacorrente.santander.AnalisadorExtratoCCSantanderGUI;
 import br.ujr.scorecard.analisador.fatura.cartao.AnalisadorFaturaCartaoCreditoGUI;
-import br.ujr.scorecard.config.ScorecardConfigUtil;
+import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.gui.view.screen.bankpanel.BankPanel;
 import br.ujr.scorecard.gui.view.screen.passivo.PassivoConstanteFrame;
 import br.ujr.scorecard.gui.view.screen.reports.ResumoMensalFrame;
@@ -260,7 +260,7 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
 
 	private void loadContasCorrentes() {
 		//Timer.Context timerScorecardConfigUtilGetBean = metricsLevel_2.timer("loadContasCorrentes.ScorecardConfigUtil.getBean").time();
-		ScorecardManager manager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+		ScorecardManager manager = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
 		//timerScorecardConfigUtilGetBean.stop();
 		
 		//Timer.Context timerListarContaCorrente = metricsLevel_2.timer("loadContasCorrentes.listarContaCorrente").time();

@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jfree.util.Log;
 
-import br.ujr.scorecard.config.ScorecardConfigUtil;
+import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.model.ScorecardManager;
 import br.ujr.scorecard.model.ativo.Ativo;
 import br.ujr.scorecard.model.ativo.deposito.Deposito;
@@ -38,7 +38,7 @@ public class ProcessadorExtratoCCBancoBrasil {
 
 	private String pathExtrato = "";
 	private List<LinhaExtratoContaCorrenteBancoBrasil> extratoContaCorrente = new ArrayList<LinhaExtratoContaCorrenteBancoBrasil>();
-	private ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager");
+	private ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
 	private ContaCorrente cc;
 	private Set<Passivo> passivos;
 	private List<Ativo> ativos;

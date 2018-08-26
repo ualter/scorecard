@@ -28,7 +28,7 @@ import br.ujr.components.gui.field.JDateChooser;
 import br.ujr.components.gui.field.JTextFieldDateEditor;
 import br.ujr.components.gui.field.UjrCurrencyField;
 import br.ujr.components.gui.field.UjrTextField;
-import br.ujr.scorecard.config.ScorecardConfigUtil;
+import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.gui.view.screen.ContaFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.UtilTableCells;
@@ -406,7 +406,7 @@ public class SaqueFrame extends AbstractDialog implements FocusListener {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ContaCorrente corrente = ((ScorecardManager)ScorecardConfigUtil.getBean("scorecardManager")).getContaCorrentePorId(64);
+		ContaCorrente corrente = ((ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager")).getContaCorrentePorId(64);
 		SaqueFrame frame = new SaqueFrame(null,corrente);
 		frame.setVisible(true);
 
