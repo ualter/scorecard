@@ -12,5 +12,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="br.ujr.scorecard.gui.view.screen.ScorecardGUI"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Scorecard"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dspring.profiles.active=dev -Dscorecard.os=mac"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dspring.profiles.active=prod -Dscorecard.os=win"/>
 </launchConfiguration>
