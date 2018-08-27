@@ -136,18 +136,18 @@ UPDATE `cartao_contratado` SET `DEBITO_CREDITO` = 'D' WHERE (`NOME` LIKE '%Maste
 
 
 # Check IDs
-UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard_Debit_BS.png' WHERE (`ID` = '14');
-UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Credit_BS.png' WHERE (`ID` = '13');
-UPDATE `cartao_contratado` SET `LOGO` = 'Visa_SIN_BS.png' WHERE (`ID` = '18');
-UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Credit_DB.png' WHERE (`ID` = '10');
-UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Debit_DB.png' WHERE (`ID` = '11');
-UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard_Credit_Santander.png' WHERE (`ID` = '6');
-UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Credit_Santander.png' WHERE (`ID` = '4');
-UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Debit_Santander.png' WHERE (`ID` = '5');
+UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard_Debit_BS.png' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdSabadell AND NOME = 'Mastercard Debit');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Credit_BS.png' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdSabadell AND NOME = 'VISA BS');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_SIN_BS.png' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdSabadell AND NOME = 'VISA SIN');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Credit_DB.png' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdDeutsche AND NOME = 'VISA DB');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Debit_DB.png' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdDeutsche AND NOME = 'VISA Electron DB');
+UPDATE `cartao_contratado` SET `LOGO` = 'Mastercard_Credit_Santander.png' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdSantander AND NOME = 'Mastercard Santander');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Credit_Santander.png' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdSantander AND NOME = 'VISA Santander');
+UPDATE `cartao_contratado` SET `LOGO` = 'Visa_Debit_Santander.png' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdSantander AND NOME = 'VISA Electron Santander');
 
 # Update Order
 UPDATE `conta_corrente` SET `ORDEM` = '1' WHERE (`ID` = @contaCorrenteIdSabadell);
-UPDATE `conta_corrente` SET `ORDEM` = '3' WHERE (`ID` = contaCorrenteIdSantander);
+UPDATE `conta_corrente` SET `ORDEM` = '3' WHERE (`ID` = @contaCorrenteIdSantander);
 UPDATE `conta_corrente` SET `ORDEM` = '9' WHERE (`ID` = @contaCorrenteIdItau);
 UPDATE `conta_corrente` SET `ORDEM` = '9' WHERE (`ID` = @contaCorrenteIdCitiBank);
 
