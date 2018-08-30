@@ -114,7 +114,9 @@ public class ProcessarSaldosFrame extends AbstractDialog implements FocusListene
 		this.txtContaCorrente.setEditable(false);
 		List<ContaCorrente> ccs = scorecardManager.listarContaCorrente();
 		for(ContaCorrente cc : ccs) {
-			this.txtContaCorrente.addItem(cc);
+			if ( cc.getBanco().isAtivo() ) {
+				this.txtContaCorrente.addItem(cc);
+			}
 		}
 		
 		panel.add(lblCodigo);

@@ -474,9 +474,10 @@ public class AnalisadorExtratoCCDeutsche {
 		                     .filter(cc -> cc.getNome().equalsIgnoreCase(tipo))
 		                     .forEach(cc -> {
 			cartao.setOperadora(cc.getCartaoOperadora());
+			cartao.setCartaoContratado(cc);
 		});
 		
-		if ( cartao.getEnumOperadora() != null ) {
+		if ( cartao.getCartaoContratado() != null ) {
 			passivo = cartao;
 		} else
 		if ( StringUtils.equalsIgnoreCase("Saque",tipo)) {

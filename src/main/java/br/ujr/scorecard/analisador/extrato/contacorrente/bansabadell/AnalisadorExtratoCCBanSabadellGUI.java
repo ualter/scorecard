@@ -562,7 +562,7 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 							checkBotoes(row);
 						}
 					} else {
-						if (StringUtils.equalsIgnoreCase("Visa Electron", vlr) || StringUtils.equalsIgnoreCase("Saque", vlr) || StringUtils.equalsIgnoreCase("Cheque", vlr)
+						if (StringUtils.contains("Visa", vlr) || StringUtils.contains("Mastercard", vlr) || StringUtils.equalsIgnoreCase("Saque", vlr) || StringUtils.equalsIgnoreCase("Cheque", vlr)
 								|| StringUtils.equalsIgnoreCase("Débito", vlr)) {
 							JOptionPane.showMessageDialog(null, "Este registro é um lançamento positivo, não pode ser passivo!", "Atenção", JOptionPane.ERROR_MESSAGE);
 							modelTabNaoEncontrados.setValueAt("", row, COLUMN_COMBO_IDENT);

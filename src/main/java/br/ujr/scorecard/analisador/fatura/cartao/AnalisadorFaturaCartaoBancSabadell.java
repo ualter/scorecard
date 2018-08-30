@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -42,11 +43,11 @@ public class AnalisadorFaturaCartaoBancSabadell {
 	private static Logger logger = Logger.getLogger(AnalisadorFaturaCartaoBancSabadell.class);
 	
 	public static void main(String[] args) {
-		Date hoje = Calendar.getInstance().getTime();
-		ScorecardManager manager = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
-		ContaCorrente cc = manager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCBanSabadell));
-		List<CartaoContratado> listCartaoContratado = manager.getCartaoContratado(cc);
-		AnalisadorFaturaCartaoBancSabadell a =  new AnalisadorFaturaCartaoBancSabadell(hoje, listCartaoContratado.get(0));
+//		Date hoje = Calendar.getInstance().getTime();
+//		ScorecardManager manager = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
+//		ContaCorrente cc = manager.getContaCorrentePorId(Util.getInstance().getIdContaCorrenteBanco(ScorecardPropertyKeys.IdCCBanSabadell));
+//		List<CartaoContratado> listCartaoContratado = manager.getCartaoContratado(cc);
+//		AnalisadorFaturaCartaoBancSabadell a =  new AnalisadorFaturaCartaoBancSabadell(hoje, listCartaoContratado.get(0));
 	}
 	
 	public AnalisadorFaturaCartaoBancSabadell(Date mesAnoRefencia, CartaoContratado cartaoContratado) {
@@ -121,7 +122,7 @@ public class AnalisadorFaturaCartaoBancSabadell {
 			    	String   valor     = columns[3];
 			    	String   moeda     = columns[4];
 			    	
-			    	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+			    	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy",new Locale("en", "US"));
 			    	Date dataMovimento;
 					try {
 						dataMovimento = sdf.parse(data.trim());
