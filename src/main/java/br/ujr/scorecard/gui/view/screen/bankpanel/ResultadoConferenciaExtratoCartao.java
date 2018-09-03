@@ -68,12 +68,12 @@ public class ResultadoConferenciaExtratoCartao extends JDialog implements KeyLis
 	
 	private int selectedRowtableLancamentosFaltando = -1;
 	private int selectedRowtableLancamentosRestando = -1;
-	private Cartao.Operadora operadora;
+	private Cartao.CartaoCatalogo operadora;
 	
 	private static Logger logger = Logger.getLogger("br.ujr.scorecard");
 	
 	@SuppressWarnings("serial")
-	public ResultadoConferenciaExtratoCartao(Cartao.Operadora operadora, BankPanel bankPanel, ScorecardManager scorecard, ContaCorrente contaCorrente,
+	public ResultadoConferenciaExtratoCartao(Cartao.CartaoCatalogo operadora, BankPanel bankPanel, ScorecardManager scorecard, ContaCorrente contaCorrente,
 			String valorTotal, List<LinhaExtratoCartao> linhasFaltando, List<Passivo> passivosRestando) {
 		
 		super(bankPanel.getOwner(),true);

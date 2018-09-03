@@ -93,7 +93,7 @@ public abstract class AbstractCartaoFrame extends PassivoFrame {
 		return this.banco;
 	}
 	
-	public abstract Cartao.Operadora getOperadora();
+	public abstract Cartao.CartaoCatalogo getOperadora();
 	
 	protected void savePassivo() {
 		if ( isValidValueOfFields() ){
@@ -171,7 +171,7 @@ public abstract class AbstractCartaoFrame extends PassivoFrame {
 		}
 	}
 	
-	public String getFirstDateVencimento(Banco banco, Cartao.Operadora operadora) {
+	public String getFirstDateVencimento(Banco banco, Cartao.CartaoCatalogo operadora) {
 		Calendar today = Calendar.getInstance();
 		switch(operadora) {
 			case VISA:

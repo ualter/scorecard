@@ -22,7 +22,7 @@ BEGIN
 
   
   DECLARE cartaoPassivo_Cursor CURSOR FOR
-   SELECT cartao.passivo_id, cartao.operadora, passivo.CONTA_CORRENTE_ID, cc.DESCRICAO, passivo.HISTORICO
+   SELECT cartao.passivo_id, cartao.cartao, passivo.CONTA_CORRENTE_ID, cc.DESCRICAO, passivo.HISTORICO
    FROM cartao cartao
    INNER JOIN passivo passivo on cartao.PASSIVO_ID = passivo.id
    INNER JOIN conta_corrente cc on passivo.CONTA_CORRENTE_ID = cc.id;

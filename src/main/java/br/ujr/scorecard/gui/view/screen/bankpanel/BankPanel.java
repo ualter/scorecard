@@ -93,7 +93,7 @@ import br.ujr.scorecard.model.extrato.VerificarExtratoCartao;
 import br.ujr.scorecard.model.orcamento.Orcamento;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
-import br.ujr.scorecard.model.passivo.cartao.Cartao.Operadora;
+import br.ujr.scorecard.model.passivo.cartao.Cartao.CartaoCatalogo;
 import br.ujr.scorecard.model.passivo.cheque.Cheque;
 import br.ujr.scorecard.model.passivo.debitocc.DebitoCC;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
@@ -1551,7 +1551,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		String file = "";
 		DefaultModelTabela model = new DefaultModelTabela(null, null);
 		JTable table = new JTable();
-		Operadora operadora = null;
+		CartaoCatalogo operadora = null;
 
 //		if (actionCommand.indexOf("MASTERCARD") != -1) {
 //			file  = ScorecardProperties.getProperty(ScorecardPropertyKeys.ArquivoFaturaMastercard);
@@ -1639,7 +1639,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			Cartao cartao = (Cartao)this.scorecardManager.getPassivoPorId(cartaoId);
 			return cartao;
 		} else {
-			JOptionPane.showMessageDialog(this, "Selecione o registro do " + cartaoContratado.getOperadora(),"Cartões",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Selecione o registro do " + cartaoContratado.getCartao(),"Cartões",JOptionPane.WARNING_MESSAGE);
 		}
 		return null;
 	}
@@ -1965,13 +1965,16 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			if ( previousTab instanceof Integer ) {
 				previousIndexTab = (Integer)previousTab;
 			}
+			
 			tabbed.putClientProperty("PREVIOUS_TAB", currentIndexTab);
 			
-			if (this.tabIconsSelected.get(currentIndexTab + 1) != null) {
-				tabbed.setIconAt(currentIndexTab, this.tabIconsSelected.get(currentIndexTab + 1));
-			}
-			if (this.tabIconsUnselected.get(previousIndexTab + 1) != null) {
-				tabbed.setIconAt(previousIndexTab, this.tabIconsUnselected.get(previousIndexTab + 1));
+			if ( currentIndexTab != previousIndexTab ) {
+				if (this.tabIconsSelected.get(currentIndexTab + 1) != null) {
+					tabbed.setIconAt(currentIndexTab, this.tabIconsSelected.get(currentIndexTab + 1));
+				}
+				if (this.tabIconsUnselected.get(previousIndexTab + 1) != null) {
+					tabbed.setIconAt(previousIndexTab, this.tabIconsUnselected.get(previousIndexTab + 1));
+				}
 			}
 		}
 	}
@@ -2388,7 +2391,6 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		
 		if ( e.getSource() instanceof JTable ) {
 			JTable t             = (JTable)e.getSource();
 			String nameComponent = t.getName();

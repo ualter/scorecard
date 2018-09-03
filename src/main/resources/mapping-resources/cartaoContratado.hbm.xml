@@ -16,7 +16,7 @@
         	-->
 	    </id>
 	    
-	    <property name="operadora"/>
+	    <property name="cartao"/>
 	    <property name="nome"/>
 	    
 	    <!-- 

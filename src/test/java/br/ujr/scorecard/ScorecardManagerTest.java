@@ -184,7 +184,7 @@ public class ScorecardManagerTest extends TestCase
         cartao.setDataMovimento("02/10/2004");
         cartao.setHistorico("Livro Stephen King");
         cartao.setConta(contaLazer);
-        cartao.setOperadora(Cartao.Operadora.VISA);
+        cartao.setOperadora(Cartao.CartaoCatalogo.VISA);
         parc = new Parcela();
         parc.setDataVencimento("13/10/2004");
         parc.setEfetivado(false);
@@ -197,7 +197,7 @@ public class ScorecardManagerTest extends TestCase
         cartao.setDataMovimento("18/10/2004");
         cartao.setHistorico("Gasolina");
         cartao.setConta(contaCombustivel);
-        cartao.setOperadora(Cartao.Operadora.MASTERCARD);
+        cartao.setOperadora(Cartao.CartaoCatalogo.MASTERCARD);
         parc = new Parcela();
         parc.setDataVencimento("28/10/2004");
         parc.setEfetivado(false);
@@ -210,7 +210,7 @@ public class ScorecardManagerTest extends TestCase
         cartao.setDataMovimento("21/10/2004");
         cartao.setHistorico("Almoço");
         cartao.setConta(contaAlmoco);
-        cartao.setOperadora(Cartao.Operadora.VISA_ELECTRON);
+        cartao.setOperadora(Cartao.CartaoCatalogo.VISA_ELECTRON);
         parc = new Parcela();
         parc.setDataVencimento("21/10/2004");
         parc.setEfetivado(false);
@@ -592,7 +592,7 @@ public class ScorecardManagerTest extends TestCase
         visa.setDataMovimento(Util.parseDate("05/01/2008"));
         visa.setHistorico("Lodetti");
         visa.setConta(cMercado);
-        visa.setOperadora(Cartao.Operadora.VISA_ELECTRON);
+        visa.setOperadora(Cartao.CartaoCatalogo.VISA_ELECTRON);
         parc = new Parcela();
         parc.setDataVencimento("05/01/2008");
         parc.setEfetivado(true);
@@ -605,7 +605,7 @@ public class ScorecardManagerTest extends TestCase
         visa.setDataMovimento(Util.parseDate("08/01/2008"));
         visa.setHistorico("Carrefour");
         visa.setConta(cMercado);
-        visa.setOperadora(Cartao.Operadora.VISA);
+        visa.setOperadora(Cartao.CartaoCatalogo.VISA);
         parc = new Parcela();
         parc.setDataVencimento("08/01/2008");
         parc.setEfetivado(true);
@@ -618,7 +618,7 @@ public class ScorecardManagerTest extends TestCase
         visa.setDataMovimento(Util.parseDate("08/02/2008"));
         visa.setHistorico("Extra");
         visa.setConta(cMercado);
-        visa.setOperadora(Cartao.Operadora.VISA);
+        visa.setOperadora(Cartao.CartaoCatalogo.VISA);
         parc = new Parcela();
         parc.setDataVencimento("08/02/2008");
         parc.setEfetivado(true);
@@ -746,7 +746,7 @@ public class ScorecardManagerTest extends TestCase
         mastercard.setDataMovimento(Util.today());
         mastercard.setHistorico("Cinemark");
         mastercard.setConta(cCinema);
-        mastercard.setOperadora(Cartao.Operadora.MASTERCARD);
+        mastercard.setOperadora(Cartao.CartaoCatalogo.MASTERCARD);
         Parcela parc = new Parcela();
         parc.setDataVencimento("28/08/2006");
         parc.setEfetivado(true);
@@ -764,7 +764,7 @@ public class ScorecardManagerTest extends TestCase
         visa.setDataMovimento(Util.today());
         visa.setHistorico("Viagem Praia");
         visa.setConta(cCinema);
-        visa.setOperadora(Cartao.Operadora.VISA);
+        visa.setOperadora(Cartao.CartaoCatalogo.VISA);
         parc = new Parcela();
         parc.setDataVencimento("12/09/2006");
         parc.setEfetivado(true);
@@ -792,7 +792,7 @@ public class ScorecardManagerTest extends TestCase
         Assert.assertTrue(visa.getNomeOperadora().equalsIgnoreCase("VISA"));
         Assert.assertTrue(visa.getParcela().getValor().floatValue() == 1500f);
         
-        Set<Cartao> set = this.manager.getCartaoPorOperadora(contaCorrente, Cartao.Operadora.MASTERCARD, 200609, 200609);
+        Set<Cartao> set = this.manager.getCartaoPorOperadora(contaCorrente, Cartao.CartaoCatalogo.MASTERCARD, 200609, 200609);
         Assert.assertTrue(set.size() == 1);
         
         this.manager.deletePassivo(mastercard);

@@ -43,7 +43,7 @@ import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.PassivoDAO;
 import br.ujr.scorecard.model.passivo.PassivoOrdenador;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
-import br.ujr.scorecard.model.passivo.cartao.Cartao.Operadora;
+import br.ujr.scorecard.model.passivo.cartao.Cartao.CartaoCatalogo;
 import br.ujr.scorecard.model.passivo.cartao.CartaoDAO;
 import br.ujr.scorecard.model.passivo.cheque.Cheque;
 import br.ujr.scorecard.model.passivo.cheque.ChequeDAO;
@@ -203,7 +203,7 @@ public class ScorecardManagerImpl implements ScorecardManager
 	{
 		return this.getChequeDAO().getChequePorNumero(numero);
 	}
-	public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, Cartao.Operadora enumOperadora, long referenciaInicial, long referenciaFinal)
+	public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, Cartao.CartaoCatalogo enumOperadora, long referenciaInicial, long referenciaFinal)
     {
 	    Set<Cartao> cartoes = this.getCartaoDAO().getCartaoPorOperadora(contaCorrente, enumOperadora, referenciaInicial, referenciaFinal);
 	    /** 
@@ -1017,7 +1017,7 @@ public class ScorecardManagerImpl implements ScorecardManager
 		return this.getTransferenciasPorReferencia(contaCorrente, Util.extrairReferencia(referenciaInicial), Util.extrairReferencia(referenciaFinal));
 	}
 	
-	public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, Operadora enumOperadora, Date referenciaInicial, Date referenciaFinal) {
+	public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, CartaoCatalogo enumOperadora, Date referenciaInicial, Date referenciaFinal) {
 		return this.getCartaoPorOperadora(contaCorrente, enumOperadora, Util.extrairReferencia(referenciaInicial), Util.extrairReferencia(referenciaFinal));
 	}
 	

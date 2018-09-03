@@ -10,12 +10,13 @@ import br.ujr.scorecard.model.passivo.Passivo;
  */
 public class Cartao extends Passivo
 {
-	public enum Operadora 
+	public enum CartaoCatalogo 
 	{
-		VISA, VISA_ELECTRON, MASTERCARD;
+		VISA, VISA_ELECTRON, MASTERCARD, VISA_SIN;
 	}
 	
-	private int operadora;
+	//Todo: refactoring de operadora para um catalogo de cartoes
+	private int cartaoCatalogo;
 	private CartaoContratado cartaoContratado;
 	
 	public Cartao()
@@ -23,25 +24,25 @@ public class Cartao extends Passivo
 		super();
 	}
 	
-	public int getOperadora()
+	public int getCartaoCatalogo()
 	{
-		return operadora;
+		return cartaoCatalogo;
 	}
-	public void setOperadora(int i)
+	public void setCartaoCatalogo(int i)
 	{
-		operadora = i;
+		cartaoCatalogo = i;
 	}
-	public void setOperadora(Operadora enumOperadora)
+	public void setOperadora(CartaoCatalogo enumOperadora)
 	{
-		this.operadora = enumOperadora.ordinal();
+		this.cartaoCatalogo = enumOperadora.ordinal();
 	}
-	public Cartao.Operadora getEnumOperadora() {
-		return Operadora.values()[this.operadora];
+	public Cartao.CartaoCatalogo getEnumOperadora() {
+		return CartaoCatalogo.values()[this.cartaoCatalogo];
 	}
 	
 	public String getNomeOperadora()
 	{
-		Operadora enumOperadora = Operadora.values()[this.operadora];
+		CartaoCatalogo enumOperadora = CartaoCatalogo.values()[this.cartaoCatalogo];
 		return enumOperadora.name();
 	}
 

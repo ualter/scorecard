@@ -799,10 +799,10 @@ public class AnalisadorFaturaCartaoCreditoGUI extends AbstractDialog implements 
 		if ("BANCO".equalsIgnoreCase(cmb.getName())) {
 			int diaVcto = 0;
 			Banco banco = (Banco)cmb.getSelectedItem();
-			if ( cmbCartao.getSelectedItem() != null && cmbCartao.getSelectedItem().toString().contains(Cartao.Operadora.MASTERCARD.name()) ) {
+			if ( cmbCartao.getSelectedItem() != null && cmbCartao.getSelectedItem().toString().contains(Cartao.CartaoCatalogo.MASTERCARD.name()) ) {
 				diaVcto = banco.getDiaVencimentoMastercard();
 			} else
-			if ( cmbCartao.getSelectedItem() != null && cmbCartao.getSelectedItem().toString().contains(Cartao.Operadora.VISA.name()) ) {
+			if ( cmbCartao.getSelectedItem() != null && cmbCartao.getSelectedItem().toString().contains(Cartao.CartaoCatalogo.VISA.name()) ) {
 				diaVcto = banco.getDiaVencimentoVisa();
 			}
 			Calendar cal = Calendar.getInstance();

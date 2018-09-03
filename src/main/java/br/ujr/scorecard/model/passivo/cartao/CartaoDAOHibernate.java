@@ -19,14 +19,14 @@ public class CartaoDAOHibernate extends HibernateDaoSupport implements CartaoDAO
 	private static Logger logger = Logger.getLogger(CartaoDAOHibernate.class);
 	
 	@SuppressWarnings("unchecked")
-	public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, Cartao.Operadora enumOperadora, long referenciaInicial, long referenciaFinal) {
+	public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, Cartao.CartaoCatalogo enumOperadora, long referenciaInicial, long referenciaFinal) {
 		try {
 			Set<Cartao> result = new HashSet<Cartao>();
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append(" select P.passivo, P from Parcela as P ");
 			strQuery.append(" where P.referencia >= ?0 and P.referencia <= ?1 ");
 			strQuery.append(" and P.passivo.contaCorrente.id = ?2 ");
-			strQuery.append(" and P.passivo.operadora = ?3 ");
+			strQuery.append(" and P.passivo.cartaoCatalogo = ?3 ");
 			
 			List list = this.getHibernateTemplate().find(strQuery.toString(),
 					new Object[]{referenciaInicial,referenciaFinal,contaCorrente.getId(),enumOperadora.ordinal()});

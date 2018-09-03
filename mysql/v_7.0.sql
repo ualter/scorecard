@@ -162,6 +162,9 @@ UPDATE `cartao_contratado` SET `ORDER` = '3' WHERE (`CONTA_CORRENTE_ID` = @conta
 UPDATE `cartao_contratado` SET `NOME` = 'VISA SIN' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdSabadell AND NOME = 'Visa SIN');
 
 
+# 7.1 - Updates
+ALTER TABLE `cartao_contratado` CHANGE COLUMN `OPERADORA` `CARTAO` INT(10) NOT NULL ;
+UPDATE `cartao_contratado` SET `CARTAO` = '3' WHERE (`CONTA_CORRENTE_ID` = @contaCorrenteIdSabadell AND NOME = 'Visa SIN');
 
 
 

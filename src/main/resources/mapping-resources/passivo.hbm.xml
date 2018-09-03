@@ -62,7 +62,7 @@
 	    
 	    <joined-subclass name="br.ujr.scorecard.model.passivo.cartao.Cartao" table="CARTAO">
 	    	<key column="PASSIVO_ID"/>
-	    	<property name="operadora"/>
+	    	<property name="cartaoCatalogo" column="CARTAO_CATALOGO"/>
 	    	<!--  
 		    Cartao associa-se a 1 CartaoContratado
 		    -->

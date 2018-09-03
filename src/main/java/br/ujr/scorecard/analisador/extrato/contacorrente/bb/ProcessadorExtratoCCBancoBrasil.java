@@ -23,7 +23,7 @@ import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
-import br.ujr.scorecard.model.passivo.cartao.Cartao.Operadora;
+import br.ujr.scorecard.model.passivo.cartao.Cartao.CartaoCatalogo;
 import br.ujr.scorecard.model.passivo.cheque.Cheque;
 import br.ujr.scorecard.model.passivo.debitocc.DebitoCC;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
@@ -413,7 +413,7 @@ public class ProcessadorExtratoCCBancoBrasil {
 		
 		if ( StringUtils.equalsIgnoreCase("Visa Electron",tipo)) {
 			passivo = new Cartao();
-			((Cartao)passivo).setOperadora(Operadora.VISA_ELECTRON);
+			((Cartao)passivo).setOperadora(CartaoCatalogo.VISA_ELECTRON);
 		} else
 		if ( StringUtils.equalsIgnoreCase("Saque",tipo)) {
 			passivo = new Saque();

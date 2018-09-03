@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
-import br.ujr.scorecard.model.passivo.cartao.Cartao.Operadora;
+import br.ujr.scorecard.model.passivo.cartao.Cartao.CartaoCatalogo;
 
 /**
  * @author ualter.junior
@@ -23,7 +23,7 @@ public class CartaoFrame extends AbstractCartaoFrame {
 	}
 
 	@Override
-	public Operadora getOperadora() {
+	public CartaoCatalogo getOperadora() {
 		return this.cartaoContratado.getCartaoOperadora();
 	}
 

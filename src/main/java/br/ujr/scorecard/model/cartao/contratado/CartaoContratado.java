@@ -8,7 +8,7 @@ import br.ujr.scorecard.model.persistence.BusinessObject;
 
 public class CartaoContratado extends BusinessObject implements Comparable<CartaoContratado> {
 	
-	private Integer operadora;
+	private Integer cartao;
 	private String nome;
 	private ContaCorrente contaCorrente;
 	private String logo;
@@ -37,12 +37,12 @@ public class CartaoContratado extends BusinessObject implements Comparable<Carta
 		this.logo = logoFile;
 	}
 
-	public Integer getOperadora() {
-		return operadora;
+	public Integer getCartao() {
+		return cartao;
 	}
 
-	public void setOperadora(Integer operadora) {
-		this.operadora = operadora;
+	public void setCartao(Integer operadora) {
+		this.cartao = operadora;
 	}
 
 	public String getNome() {
@@ -119,8 +119,8 @@ public class CartaoContratado extends BusinessObject implements Comparable<Carta
 		//return "CartaoContratado [operadora=" + operadora + ", nome=" + nome + ", contaCorrente=" + contaCorrente + "]";
 	}
 	
-	public Cartao.Operadora getCartaoOperadora() {
-		return Cartao.Operadora.values()[this.getOperadora()];
+	public Cartao.CartaoCatalogo getCartaoOperadora() {
+		return Cartao.CartaoCatalogo.values()[this.getCartao()];
 	}
 
 	public String getCategoria() {

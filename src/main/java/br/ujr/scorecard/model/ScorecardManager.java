@@ -24,7 +24,7 @@ import br.ujr.scorecard.model.orcamento.Orcamento;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.PassivoOrdenador;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
-import br.ujr.scorecard.model.passivo.cartao.Cartao.Operadora;
+import br.ujr.scorecard.model.passivo.cartao.Cartao.CartaoCatalogo;
 import br.ujr.scorecard.model.passivo.cheque.Cheque;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
 import br.ujr.scorecard.model.passivo.parcela.ParcelaOrdenador;
@@ -76,7 +76,7 @@ public interface ScorecardManager
 
     public Cheque getChequePorNumero(ContaCorrente contaCorrente, String numero);
 
-    public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, Cartao.Operadora enumOperadora, long referenciaInicial, long referenciaFinal);
+    public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, Cartao.CartaoCatalogo enumOperadora, long referenciaInicial, long referenciaFinal);
 
     public void saveAtivo(Ativo ativo);
 
@@ -211,7 +211,7 @@ public interface ScorecardManager
     
     public List<Transferencia> getTransferenciasPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal);
     
-    public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, Operadora enumOperadora, Date referenciaInicial, Date referenciaFinal);
+    public Set<Cartao> getCartaoPorOperadora(ContaCorrente contaCorrente, CartaoCatalogo enumOperadora, Date referenciaInicial, Date referenciaFinal);
     
     public Set<Passivo> getEspecificoPassivoPorReferencia(ContaCorrente contaCorrente, Class clazz, java.util.Date referenciaInicial, java.util.Date referenciaFinal);
     

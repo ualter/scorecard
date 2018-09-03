@@ -41,7 +41,7 @@ import br.ujr.scorecard.model.cc.ContaCorrente;
 import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
-import br.ujr.scorecard.model.passivo.cartao.Cartao.Operadora;
+import br.ujr.scorecard.model.passivo.cartao.Cartao.CartaoCatalogo;
 import br.ujr.scorecard.model.passivo.cheque.Cheque;
 import br.ujr.scorecard.model.passivo.debitocc.DebitoCC;
 import br.ujr.scorecard.model.passivo.parcela.Parcela;
@@ -724,15 +724,15 @@ public class Importador {
 		} else
 		if ( "VISA".equals(tipo.trim()) ) {
 			passivo = new Cartao();
-			((Cartao)passivo).setOperadora(Operadora.VISA);
+			((Cartao)passivo).setOperadora(CartaoCatalogo.VISA);
 		} else
 		if ( "MASTER".equals(tipo.trim()) ) {
 			passivo = new Cartao();
-			((Cartao)passivo).setOperadora(Operadora.MASTERCARD);
+			((Cartao)passivo).setOperadora(CartaoCatalogo.MASTERCARD);
 		} else
 		if ( "ELECTR".equals(tipo.trim()) ) {
 			passivo = new Cartao();
-			((Cartao)passivo).setOperadora(Operadora.VISA_ELECTRON);
+			((Cartao)passivo).setOperadora(CartaoCatalogo.VISA_ELECTRON);
 		} else
 		if ( "DEBITO".equals(tipo.trim()) ) {
 			passivo = new DebitoCC();
