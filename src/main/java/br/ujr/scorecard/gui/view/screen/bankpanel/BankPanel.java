@@ -43,7 +43,10 @@ import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -204,6 +207,11 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	
 	private Map<Integer,ImageIcon> tabIconsUnselected = new HashMap<Integer,ImageIcon>();
 	private Map<Integer,ImageIcon> tabIconsSelected   = new HashMap<Integer,ImageIcon>();
+
+	private float valorTotalOrcamento;
+	private float valorTotalRealizado;
+
+	private JLabel lblOrcamentoTotal;
 
 	public BankPanel(JFrame owner, ContaCorrente contaCorrente, ScorecardManager scorecardManager) {
 		this.owner             = owner;
@@ -1124,10 +1132,21 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		lblOrcamentos.setBackground(Color.GRAY);
 		lblOrcamentos.setForeground(Color.WHITE);
 		lblOrcamentos.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
+		
 		setGenericBounds(jScrollPane, lblOrcamentos, lblOrcamentos);
+		
+		String vlrLabelTotal = calculateOrcamentoLabelResumo();
+		
+		lblOrcamentoTotal = new JLabel(vlrLabelTotal, SwingConstants.CENTER);
+		lblOrcamentoTotal.setFont(new Font("Verdana", Font.BOLD, 10));
+		lblOrcamentoTotal.setOpaque(true);
+		lblOrcamentoTotal.setBackground(Color.GRAY);
+		lblOrcamentoTotal.setForeground(Color.GREEN);
+		lblOrcamentoTotal.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
 
-		lblOrcamentos.setBounds(100, 10, ((ScorecardGUI)this.owner).largura - 406, 26);
+		lblOrcamentos.setBounds(100, 10, ((ScorecardGUI)this.owner).largura - 920, 26);
+		lblOrcamentoTotal.setBounds(lblOrcamentos.getWidth() + 103, 10, 511, 26);
 		btnInserirOrcamento.setBounds(10, 10, 27, 26);
 		btnExcluirOrcamento.setBounds(40, 10, 27, 26);
 		btnDesconsiderarOrcamento.setBounds(70, 10, 27, 26);
@@ -1151,10 +1170,44 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		this.tableOrcamento.addMouseListener(new PopupOrcamentoMouseListener(this));
 
 		panOrcamento.add(lblOrcamentos);
+		panOrcamento.add(lblOrcamentoTotal);
 		panOrcamento.add(jScrollPane);
 		panOrcamento.add(btnInserirOrcamento);
 		panOrcamento.add(btnExcluirOrcamento);
 		panOrcamento.add(btnDesconsiderarOrcamento);
+	}
+
+	private String calculateOrcamentoLabelResumo() {
+		BigDecimal resultadoOrcamento = new BigDecimal(this.valorTotalOrcamento - this.valorTotalRealizado);
+		
+		StringBuffer sb = new StringBuffer();
+		sb
+		  .append("<html><font style='font-family:Consolas;font-size:9px;color:white'>")
+		  .append("Orçado.....: ")
+		  .append("</font>")
+		  .append("<font style='font-family:Consolas;font-size:10px;color:yellow'>")
+		  .append("$ ")
+		  .append(Util.formatCurrency(new BigDecimal(this.valorTotalOrcamento)))
+		  .append("</font>")
+		  .append("<font style='font-family:Consolas;font-size:9px;color:white'>")
+		  .append("  -  ")
+		  .append("</font>")
+		  .append("<html><font style='font-family:Consolas;font-size:9px;color:white'>")
+		  .append("Realizado..: ")
+		  .append("</font>")
+		  .append("<font style='font-family:Consolas;font-size:10px;color:yellow'>")
+		  .append("$ ")
+		  .append(Util.formatCurrency(new BigDecimal(this.valorTotalRealizado)))
+		  .append("</font>")
+		  .append("<html><font style='font-family:Consolas;font-size:9px;color:white'>")
+		  .append("  =  ")
+		  .append("</font>")
+		  .append("<font style='font-family:Consolas;font-size:10px;color:#FFFFCC;font-weight:bold'>")
+		  .append("$ ")
+		  .append(Util.formatCurrency(resultadoOrcamento))
+		  .append("</font></html>");
+		
+		return sb.toString();
 	}
 
 	private class PopupOrcamentoMouseListener extends MouseAdapter {
@@ -1989,6 +2042,8 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 	public void actionOrcamento(Orcamento orcamento) {
 		this.updateViewOrcamento();
+		String vlrLabelTotal = calculateOrcamentoLabelResumo();
+		lblOrcamentoTotal.setText(vlrLabelTotal);
 		this.updateResumoPeriodo();
 	}
 
@@ -2248,6 +2303,8 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 				this.periodoDataInicial, this.periodoDataFinal);
 		List<Orcamento> orcamentos = new ArrayList<Orcamento>(setOrcamentos);
 		Object row[];
+		valorTotalOrcamento = 0;
+		valorTotalRealizado = 0;
 		for (Orcamento orcamento : orcamentos) {
 			row = new Object[] { orcamento.getMesAno(), Util.formatCurrency(orcamento.getOrcado()),
 					Util.formatCurrency(orcamento.getRealizado()),
@@ -2255,6 +2312,8 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 					" " + orcamento.getContaAssociada().getNivel() + " " + orcamento.getContaAssociada().getDescricao(),
 					orcamento.getId(), false };
 			this.tableModelOrcamento.addRow(row);
+			valorTotalOrcamento += orcamento.getOrcado().floatValue();
+			valorTotalRealizado += orcamento.getRealizado().floatValue();
 		}
 	}
 
