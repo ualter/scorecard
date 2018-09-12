@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
+import org.jfree.util.Log;
 
 import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.model.ScorecardManager;
@@ -466,42 +468,48 @@ public class AnalisadorExtratoCCDeutsche {
 		Parcela parcela = new Parcela();
 		Cartao  cartao  = new Cartao();
 		
+		try {
 		
-		ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
-		List<CartaoContratado> listCartaoContratados = scorecardManager.getCartoesContaCorrente(contaCorrente);
-		
-		listCartaoContratados.stream()
-		                     .filter(cc -> cc.getNome().equalsIgnoreCase(tipo))
-		                     .forEach(cc -> {
-			cartao.setOperadora(cc.getCartaoOperadora());
-			cartao.setCartaoContratado(cc);
-		});
-		
-		if ( cartao.getCartaoContratado() != null ) {
-			passivo = cartao;
-		} else
-		if ( StringUtils.equalsIgnoreCase("Saque",tipo)) {
-			passivo = new Saque();
-		} else
-		if ( StringUtils.equalsIgnoreCase("Cheque",tipo)) {
-			passivo = new Cheque();
-			parcela.setCheque(true);
-			parcela.setNumeroCheque(linha.getHistorico());
-		} else
-		if ( StringUtils.equalsIgnoreCase("Débito",tipo)) {
-			passivo = new DebitoCC();
+			ScorecardManager scorecardManager = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
+			List<CartaoContratado> listCartaoContratados = scorecardManager.getCartoesContaCorrente(contaCorrente);
+			
+			listCartaoContratados.stream()
+			                     .filter(cc -> cc.getNome().equalsIgnoreCase(tipo))
+			                     .forEach(cc -> {
+				cartao.setOperadora(cc.getCartaoOperadora());
+				cartao.setCartaoContratado(cc);
+			});
+			
+			if ( cartao.getCartaoContratado() != null ) {
+				passivo = cartao;
+			} else
+			if ( StringUtils.equalsIgnoreCase("Saque",tipo)) {
+				passivo = new Saque();
+			} else
+			if ( StringUtils.equalsIgnoreCase("Cheque",tipo)) {
+				passivo = new Cheque();
+				parcela.setCheque(true);
+				parcela.setNumeroCheque(linha.getHistorico());
+			} else
+			if ( StringUtils.equalsIgnoreCase("Débito",tipo)) {
+				passivo = new DebitoCC();
+			}
+			
+			passivo.setContaCorrente(contaCorrente);
+			passivo.setHistorico(linha.getHistorico());
+			passivo.setDataMovimento(linha.getDataOperacaoAsDate());
+			passivo.setConta(conta);
+			parcela.setDataVencimento(linha.getDataOperacao());
+			parcela.setEfetivado(true);
+			parcela.setNumero(1);
+			parcela.setReferencia(linha.getDataOperacaoAsDate());
+			parcela.setValor(linha.getValorAsBigDecimal().multiply(new BigDecimal(-1)));
+			passivo.addParcela(parcela);
+		} catch (Throwable e) {
+			Log.error(e);
+			System.out.println(ExceptionUtils.getStackTrace(e));
+			throw new RuntimeException(e.getMessage(), e);
 		}
-		
-		passivo.setContaCorrente(contaCorrente);
-		passivo.setHistorico(linha.getHistorico());
-		passivo.setDataMovimento(linha.getDataOperacaoAsDate());
-		passivo.setConta(conta);
-		parcela.setDataVencimento(linha.getDataOperacao());
-		parcela.setEfetivado(true);
-		parcela.setNumero(1);
-		parcela.setReferencia(linha.getDataOperacaoAsDate());
-		parcela.setValor(linha.getValorAsBigDecimal().multiply(new BigDecimal(-1)));
-		passivo.addParcela(parcela);
 		return passivo;
 	}
 

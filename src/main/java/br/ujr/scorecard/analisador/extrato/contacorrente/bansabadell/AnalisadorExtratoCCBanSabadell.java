@@ -207,7 +207,7 @@ public class AnalisadorExtratoCCBanSabadell {
 		    			 LinhaExtratoContaCorrenteBanSabadell linhaExtratoContaCorrenteBanSabadell = new LinhaExtratoContaCorrenteBanSabadell();
 		    			 linhaExtratoContaCorrenteBanSabadell.setDataOperacao(values.get("dataOperacao"));
 		    			 linhaExtratoContaCorrenteBanSabadell.setValor(values.get("valor"), values.get("negativePositive"));
-		    			 linhaExtratoContaCorrenteBanSabadell.setHistorico(line.substring(4,42));
+		    			 linhaExtratoContaCorrenteBanSabadell.setHistorico(line.substring(4,60));
 		    			 mappingAnalisadorBanSabadell.checkMappingDescricaoVsContaContabil(linhaExtratoContaCorrenteBanSabadell.getHistorico(),linhaExtratoContaCorrenteBanSabadell);
 		    			 this.extratoContaCorrente.add(linhaExtratoContaCorrenteBanSabadell);
 		    			 values.clear();
