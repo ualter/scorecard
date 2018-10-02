@@ -43,10 +43,7 @@ import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -1889,6 +1886,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 				bankPanel.updateViewInvestimento();
 				loadingFrame.setStatus("Carregando Orçamento", 5);
 				bankPanel.updateViewOrcamento();
+				bankPanel.updateLabelOrcamento();
 				loadingFrame.setStatus("Carregando Salário", 6);
 				bankPanel.updateViewSalario();
 				loadingFrame.setStatus("Carregando Transferências", 7);
@@ -2011,6 +2009,11 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		if ( evt.getComponent() instanceof JTabbedPane ) {
 			JTabbedPane tabbed = (JTabbedPane)evt.getComponent();
 			
+			
+			if ( "Orçamentos".equalsIgnoreCase(tabbed.getTitleAt(tabbed.getSelectedIndex()))) {
+				updateLabelOrcamento();
+			}
+			
 			Integer currentIndexTab  = tabbed.getSelectedIndex();
 			Integer previousIndexTab = 0;
 			
@@ -2030,6 +2033,11 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 				}
 			}
 		}
+	}
+
+	private void updateLabelOrcamento() {
+		String vlrLabelTotal = calculateOrcamentoLabelResumo();
+		this.lblOrcamentoTotal.setText(vlrLabelTotal);
 	}
 	
 	private void openOrcamento() {
