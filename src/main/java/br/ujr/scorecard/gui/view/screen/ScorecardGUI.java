@@ -49,6 +49,7 @@ import br.ujr.scorecard.model.cc.ContaCorrenteOrdenador;
 import br.ujr.scorecard.util.Util;
 import br.ujr.scorecard.util.properties.ScorecardPropertiesUtil;
 import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
+import groovy.util.Eval;
 
 /**
  * @author ualter.junior

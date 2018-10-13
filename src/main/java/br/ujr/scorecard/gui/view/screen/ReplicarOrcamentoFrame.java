@@ -520,7 +520,7 @@ public class ReplicarOrcamentoFrame extends AbstractDialog implements FocusListe
 		protected String doInBackground() throws Exception {
 			loadingFrame = new LoadingFrame();
 			loadingFrame.showLoadinFrame();
-			Set<Orcamento> orcamentos = scorecardBusiness.getOrcamentosPorReferencia(contaCorrente, ref, ref);
+			Set<Orcamento> orcamentos = scorecardBusiness.getOrcamentosPorReferencia(contaCorrente, ref, ref, null);
 			loadingFrame.setMaxProgress(orcamentos.size());
 
 			Object row[];

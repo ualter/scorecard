@@ -17,6 +17,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -71,6 +73,8 @@ import br.ujr.scorecard.gui.view.screen.cellrenderer.MonetarioTableCellRenderer;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.OrcamentoTableCellRenderer;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.ParcelaTableAtivoCellRenderer;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.ParcelaTableCellRenderer;
+import br.ujr.scorecard.gui.view.screen.cellrenderer.PredicateRenderer;
+import br.ujr.scorecard.gui.view.screen.cellrenderer.RendererRules;
 import br.ujr.scorecard.gui.view.screen.cellrenderer.ResumoTableCellRenderer;
 import br.ujr.scorecard.gui.view.screen.passivo.CartaoFrame;
 import br.ujr.scorecard.gui.view.screen.passivo.ChequeFrame;
@@ -88,9 +92,11 @@ import br.ujr.scorecard.model.ativo.salario.Salario;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratado;
 import br.ujr.scorecard.model.cartao.contratado.CartaoContratadoSorter;
 import br.ujr.scorecard.model.cc.ContaCorrente;
+import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.extrato.LinhaExtratoCartao;
 import br.ujr.scorecard.model.extrato.VerificarExtratoCartao;
 import br.ujr.scorecard.model.orcamento.Orcamento;
+import br.ujr.scorecard.model.orcamento.PassivosForaOrcamento;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
 import br.ujr.scorecard.model.passivo.cartao.Cartao.CartaoCatalogo;
@@ -165,6 +171,9 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 	protected DefaultModelTabela tableModelOrcamento;
 	protected JTable tableOrcamento;
+	
+	protected DefaultModelTabela tableModelNaoOrcado;
+	protected JTable tableNaoOrcado;
 
 	protected DefaultModelTabela tableModelInvestimento;
 	protected JTable tableInvestimento;
@@ -207,8 +216,10 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 
 	private float valorTotalOrcamento;
 	private float valorTotalRealizado;
+	private float valorTotalNaoOrcado;
 
 	private JLabel lblOrcamentoTotal;
+	private JLabel lblNaoOrcadoTotal;
 
 	public BankPanel(JFrame owner, ContaCorrente contaCorrente, ScorecardManager scorecardManager) {
 		this.owner             = owner;
@@ -998,6 +1009,69 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		restanteColumn.setPreferredWidth(110);
 		contaColumn.setPreferredWidth(349);
 	}
+	
+	private void layOutTableNaoOrcado() {
+		TableColumn vencimentoColumn = tableNaoOrcado.getColumnModel().getColumn(0);
+		TableColumn valorColumn      = tableNaoOrcado.getColumnModel().getColumn(1);
+		TableColumn historicoColumn  = tableNaoOrcado.getColumnModel().getColumn(2);
+		TableColumn parcelaColumn    = tableNaoOrcado.getColumnModel().getColumn(3);
+		TableColumn efetivadoColumn  = tableNaoOrcado.getColumnModel().getColumn(4);
+		TableColumn contaColumn      = tableNaoOrcado.getColumnModel().getColumn(5);
+		
+		Color foregroundColor        = Color.DARK_GRAY;
+		
+		RendererRules rendererRules  = new RendererRules((tab,row) -> {
+			
+			RendererRules.Format header = new RendererRules.Format();
+			header.setFont(new Font("Arial",Font.BOLD,12));
+			header.setBackground(new Color(185, 244, 168));
+			
+			RendererRules.Format lines = new RendererRules.Format();
+			lines.setFont(new Font("Courier New",Font.PLAIN,11));
+			lines.setForeground(new Color(43, 69, 70));
+			
+			String value = (String)tab.getValueAt(row, 0);
+			if ( StringUtils.isBlank(value) ) {
+				return header;
+			}
+			return lines;
+		});
+		
+		
+		DefaultTableCellRenderer vencimentoRenderer = new ParcelaTableCellRenderer(SwingConstants.CENTER, foregroundColor, rendererRules);
+		DefaultTableCellRenderer valorRenderer      = new MonetarioTableCellRenderer(foregroundColor, rendererRules);
+		DefaultTableCellRenderer historicoRenderer  = new ParcelaTableCellRenderer(" ", foregroundColor, rendererRules);
+		DefaultTableCellRenderer parcelaRenderer    = new ParcelaTableCellRenderer(SwingConstants.CENTER, foregroundColor, rendererRules);
+		TableCellRenderer efetivadoRenderer         = new EfetivadoTableCellRenderer(rendererRules);
+		DefaultTableCellRenderer contaRenderer      = new ParcelaTableCellRenderer(SwingConstants.LEADING, foregroundColor, rendererRules);
+		
+		SortButtonRenderer renderer = new SortButtonRenderer();
+		for(int i = 0; i < tableNaoOrcado.getColumnModel().getColumnCount(); i++) {
+			tableNaoOrcado.getColumnModel().getColumn(i).setHeaderRenderer(renderer);
+		}
+		JTableHeader header = tableNaoOrcado.getTableHeader();
+		header.addMouseListener(new HeaderListener(header, renderer, (DefaultModelTabela)tableNaoOrcado.getModel()));
+		
+		vencimentoRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+		valorRenderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		historicoRenderer.setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
+		parcelaRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+		contaRenderer.setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
+		
+		vencimentoColumn.setCellRenderer(vencimentoRenderer);
+		valorColumn.setCellRenderer(valorRenderer);
+		historicoColumn.setCellRenderer(historicoRenderer);
+		parcelaColumn.setCellRenderer(parcelaRenderer);
+		efetivadoColumn.setCellRenderer(efetivadoRenderer);
+		contaColumn.setCellRenderer(contaRenderer);
+		
+		vencimentoColumn.setPreferredWidth(84);
+		valorColumn.setPreferredWidth(109);
+		historicoColumn.setPreferredWidth(407);
+		parcelaColumn.setPreferredWidth(50);
+		efetivadoColumn.setPreferredWidth(55);
+		contaColumn.setPreferredWidth(70);
+	}
 
 	private void layOutTableTransferencia() {
 		this.tableTransferencia.removeColumn(this.tableTransferencia.getColumnModel().getColumn(4));
@@ -1131,6 +1205,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		lblOrcamentos.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		setGenericBounds(jScrollPane, lblOrcamentos, lblOrcamentos);
+		jScrollPane.setBounds(10, 41, ((ScorecardGUI)this.owner).largura - 315, ((ScorecardGUI)this.owner).altura - 575);
 		
 		String vlrLabelTotal = calculateOrcamentoLabelResumo();
 		
@@ -1165,10 +1240,47 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		this.popupMenuOrcamento.add(itemPopupOrcamento01);
 		this.popupMenuOrcamento.add(itemPopupOrcamento02);
 		this.tableOrcamento.addMouseListener(new PopupOrcamentoMouseListener(this));
+		
+		
+		JLabel lblNaoOrcado = new JLabel("Não Orçado", SwingConstants.CENTER);
+		lblNaoOrcado.setFont(new Font("Verdana", Font.BOLD, 10));
+		lblNaoOrcado.setOpaque(true);
+		lblNaoOrcado.setBackground(Color.GRAY);
+		lblNaoOrcado.setForeground(Color.WHITE);
+		lblNaoOrcado.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		lblNaoOrcado.setBounds(10, 310, 200, 26);
+		
+		
+		String vlrLabelTotalNaoOrcado = calculateLabelNaoOrcado();
+		
+		lblNaoOrcadoTotal = new JLabel(vlrLabelTotalNaoOrcado, SwingConstants.CENTER);
+		lblNaoOrcadoTotal.setFont(new Font("Verdana", Font.BOLD, 10));
+		lblNaoOrcadoTotal.setOpaque(true);
+		lblNaoOrcadoTotal.setBackground(Color.GRAY);
+		lblNaoOrcadoTotal.setForeground(Color.GREEN);
+		lblNaoOrcadoTotal.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		lblNaoOrcadoTotal.setBounds(213,310,605,26);
+		
+		// Nao Orcado Area GUI Components
+		this.tableNaoOrcado = new JTable(this.tableModelNaoOrcado) {
+			private static final long serialVersionUID = 4634987309460177002L;
 
+			@Override
+			public boolean isCellEditable(int arg0, int arg1) {
+				return false;
+			}
+		};
+		this.setUpTable(tableNaoOrcado, "TABLE_NAO_ORCADO");
+		this.layOutTableNaoOrcado();
+		JScrollPane jScrollPaneNaoOrcado = new JScrollPane(tableNaoOrcado);
+		jScrollPaneNaoOrcado.setBounds(10, 342, ((ScorecardGUI)this.owner).largura - 315, ((ScorecardGUI)this.owner).altura - 580);
+
+		panOrcamento.add(lblNaoOrcado);
+		panOrcamento.add(lblNaoOrcadoTotal);
 		panOrcamento.add(lblOrcamentos);
 		panOrcamento.add(lblOrcamentoTotal);
 		panOrcamento.add(jScrollPane);
+		panOrcamento.add(jScrollPaneNaoOrcado);
 		panOrcamento.add(btnInserirOrcamento);
 		panOrcamento.add(btnExcluirOrcamento);
 		panOrcamento.add(btnDesconsiderarOrcamento);
@@ -1202,6 +1314,40 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		  .append("<font style='font-family:Consolas;font-size:10px;color:#FFFFCC;font-weight:bold'>")
 		  .append("$ ")
 		  .append(Util.formatCurrency(resultadoOrcamento))
+		  .append("</font></html>");
+		
+		return sb.toString();
+	}
+	
+	private String calculateLabelNaoOrcado() {
+		BigDecimal resultadoTotalOrcamento = new BigDecimal(this.valorTotalOrcamento - this.valorTotalRealizado);
+		BigDecimal resultadoSaldoFinal     = new BigDecimal(resultadoTotalOrcamento.floatValue() - this.valorTotalNaoOrcado);
+		
+		StringBuffer sb = new StringBuffer();
+		sb
+		  .append("<html><font style='font-family:Consolas;font-size:9px;color:white'>")
+		  .append("(Orçado - Realizado)..: ")
+		  .append("</font>")
+		  .append("<font style='font-family:Consolas;font-size:10px;color:yellow'>")
+		  .append("$ ")
+		  .append(Util.formatCurrency(resultadoTotalOrcamento))
+		  .append("</font>")
+		  .append("<font style='font-family:Consolas;font-size:9px;color:white'>")
+		  .append("  -  ")
+		  .append("</font>")
+		  .append("<html><font style='font-family:Consolas;font-size:9px;color:white'>")
+		  .append("Não Orçado..: ")
+		  .append("</font>")
+		  .append("<font style='font-family:Consolas;font-size:10px;color:yellow'>")
+		  .append("$ ")
+		  .append(Util.formatCurrency(new BigDecimal(this.valorTotalNaoOrcado)))
+		  .append("</font>")
+		  .append("<html><font style='font-family:Consolas;font-size:9px;color:white'>")
+		  .append("  =  ")
+		  .append("</font>")
+		  .append("<font style='font-family:Consolas;font-size:10px;color:#FFFFCC;font-weight:bold'>")
+		  .append("$ ")
+		  .append(Util.formatCurrency(resultadoSaldoFinal))
 		  .append("</font></html>");
 		
 		return sb.toString();
@@ -1887,6 +2033,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 				loadingFrame.setStatus("Carregando Orçamento", 5);
 				bankPanel.updateViewOrcamento();
 				bankPanel.updateLabelOrcamento();
+				bankPanel.updateLabelNaoOrcado();
 				loadingFrame.setStatus("Carregando Salário", 6);
 				bankPanel.updateViewSalario();
 				loadingFrame.setStatus("Carregando Transferências", 7);
@@ -2012,6 +2159,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			
 			if ( "Orçamentos".equalsIgnoreCase(tabbed.getTitleAt(tabbed.getSelectedIndex()))) {
 				updateLabelOrcamento();
+				updateLabelNaoOrcado();
 			}
 			
 			Integer currentIndexTab  = tabbed.getSelectedIndex();
@@ -2038,6 +2186,11 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private void updateLabelOrcamento() {
 		String vlrLabelTotal = calculateOrcamentoLabelResumo();
 		this.lblOrcamentoTotal.setText(vlrLabelTotal);
+	}
+	
+	private void updateLabelNaoOrcado() {
+		String vlrLabelTotal = calculateLabelNaoOrcado();
+		this.lblNaoOrcadoTotal.setText(vlrLabelTotal);
 	}
 	
 	private void openOrcamento() {
@@ -2075,7 +2228,9 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	public void updateViewOrcamento() {
 		this.loadOrcamento();
 		this.tableOrcamento.setModel(this.tableModelOrcamento);
+		this.tableNaoOrcado.setModel(this.tableModelNaoOrcado);
 		this.layOutTableOrcamento();
+		this.layOutTableNaoOrcado();
 		tableOrcamento.removeColumn(tableOrcamento.getColumnModel().getColumn(5));
 	}
 
@@ -2307,9 +2462,11 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private void loadOrcamento() {
 		this.tableModelOrcamento = new DefaultModelTabela(null,
 				new Object[] { "Ref.", "Orçado", "Realizado", "Restante", "Conta", "ID", "SELECTED" });
-		Set<Orcamento> setOrcamentos = this.scorecardManager.getOrcamentosPorReferencia(this.getContaCorrente(),
-				this.periodoDataInicial, this.periodoDataFinal);
-		List<Orcamento> orcamentos = new ArrayList<Orcamento>(setOrcamentos);
+		
+		List<PassivosForaOrcamento> listPassivosForaOrcamento = new ArrayList<PassivosForaOrcamento>();
+		Set<Orcamento>              setOrcamentos             = this.scorecardManager.getOrcamentosPorReferencia(this.getContaCorrente(), this.periodoDataInicial, this.periodoDataFinal, listPassivosForaOrcamento);
+		List<Orcamento>             orcamentos                = new ArrayList<Orcamento>(setOrcamentos);
+		
 		Object row[];
 		valorTotalOrcamento = 0;
 		valorTotalRealizado = 0;
@@ -2322,6 +2479,51 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 			this.tableModelOrcamento.addRow(row);
 			valorTotalOrcamento += orcamento.getOrcado().floatValue();
 			valorTotalRealizado += orcamento.getRealizado().floatValue();
+		}
+		
+		this.tableModelNaoOrcado = new DefaultModelTabela(null,
+				new Object[]{"Vencimento","Valor","Historico","Parcela","Efetivado","C.Contábil"});
+		
+		LocalDate localDateInicial = this.periodoDataInicial.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate localDateFinal   = this.periodoDataFinal.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		
+		this.valorTotalNaoOrcado = 0;
+		
+		for(PassivosForaOrcamento p : listPassivosForaOrcamento) {
+			
+			Conta conta = this.scorecardManager.getContasPorNivel(p.getContaContabil()).get(0);
+			String rowGroupLabel = p.getContaContabil() + " - " +  conta.getDescricao();
+			row = new Object[] {
+				"",Util.formatCurrency(p.getTotal()),rowGroupLabel,"",false,""	
+			};
+			this.tableModelNaoOrcado.addRow(row);
+			
+			for(Passivo pass : p.getPassivos()) {
+				for(Parcela parcela : pass.getParcelas()) {
+					
+					LocalDate localDateParcela = new java.util.Date(parcela.getDataVencimento().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					
+					if ( (localDateParcela.isEqual(localDateInicial) || localDateParcela.isAfter(localDateInicial) )
+						&& 
+						 (localDateParcela.isEqual(localDateFinal) || localDateParcela.isBefore(localDateFinal) )
+					   ) {
+						
+						//System.out.println(localDateParcela +  " - " + pass.getHistorico() + " - " + parcela.getValor());
+						
+						row = new Object[] {
+							Util.formatDate(parcela.getDataVencimento()),
+							Util.formatCurrency(parcela.getValor()),
+							pass.getHistorico(),
+							parcela.getNumero() + "/" + parcela.getNumeroParcelas(),
+							parcela.isEfetivado(),
+							pass.getConta().getNivel()	
+						};
+						this.tableModelNaoOrcado.addRow(row);
+						
+						this.valorTotalNaoOrcado += parcela.getValor().floatValue();
+					}
+				}
+			}
 		}
 	}
 

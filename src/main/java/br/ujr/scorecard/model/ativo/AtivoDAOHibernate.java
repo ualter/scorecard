@@ -36,6 +36,7 @@ public class AtivoDAOHibernate extends HibernateDaoSupport implements AtivoDAO {
 		}
 	}
 
+	@Transactional
 	public void remove(Ativo ativo) {
 		try {
 			this.getHibernateTemplate().delete(ativo);

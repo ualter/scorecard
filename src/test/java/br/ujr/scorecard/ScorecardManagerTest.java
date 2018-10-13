@@ -631,7 +631,7 @@ public class ScorecardManagerTest extends TestCase
         // Mercado 01/2008 = 440,28 
         // Almoço  02/2008 =  10,00
         // Mercado 02/2008 = 340,00
-        Set<Orcamento> orcamentos = this.manager.getOrcamentosPorReferencia(contaCorrente, 200801, 200801);
+        Set<Orcamento> orcamentos = this.manager.getOrcamentosPorReferencia(contaCorrente, 200801, 200801, null);
         for(Orcamento o : orcamentos) {
         	if ( o.getContaAssociada().getDescricao().equals("ALMOÇO") ) {
         		Assert.assertEquals(o.getRealizado().doubleValue(), 47.04d);
@@ -641,7 +641,7 @@ public class ScorecardManagerTest extends TestCase
     		}
         }
         
-        Set<Orcamento> orcamentos2 = this.manager.getOrcamentosPorReferencia(contaCorrente, 200801, 200802);
+        Set<Orcamento> orcamentos2 = this.manager.getOrcamentosPorReferencia(contaCorrente, 200801, 200802, null);
         for(Orcamento o : orcamentos2) {
         	if ( o.getContaAssociada().getDescricao().equals("ALMOÇO") ) {
         		Assert.assertEquals(o.getRealizado().doubleValue(), 57.04d);

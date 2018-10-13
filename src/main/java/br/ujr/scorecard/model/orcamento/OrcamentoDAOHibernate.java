@@ -1,6 +1,7 @@
 package br.ujr.scorecard.model.orcamento;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -144,7 +145,7 @@ public class OrcamentoDAOHibernate extends HibernateDaoSupport implements Orcame
 	 * É calculado também o que foi realizado, a soma do que foi gasto, ou seja, todas as parcelas dos passivos que pertencem 
 	 * a Conta Contábil associado ao Orçamento, ou que seja descendente na hierarquia de Contas Contábeis da Conta Contábil associada ao Orçamento. 
 	 */
-	public Set<Orcamento> findByReferencia(ContaCorrente contaCorrente, long referenciaInicial, long referenciaFinal) {
+	public Set<Orcamento> findByReferencia(ContaCorrente contaCorrente, long referenciaInicial, long referenciaFinal, List<PassivosForaOrcamento> listaPassivosForaOrcamento) {
 		try {
 			Set<Orcamento> result = new HashSet<Orcamento>();
 			/**
@@ -186,16 +187,16 @@ public class OrcamentoDAOHibernate extends HibernateDaoSupport implements Orcame
 				values = new Object[]{referenciaInicial,referenciaFinal};
 			}
 			List listSomaParcelas = this.getHibernateTemplate().findByNamedParam(strQuery.toString(), params, values);
-			HashMap<String,BigDecimal> somaPorNivelContaNoPeriodo = new HashMap<String,BigDecimal>();
+			HashMap<String,Object[]> somaPorNivelContaNoPeriodo = new HashMap<String,Object[]>();
 			for(Iterator iterator = listSomaParcelas.iterator(); iterator.hasNext();) {
 				Object[]   row      = (Object[]) iterator.next();
 				String     nivel  = (String)row[0];
 				BigDecimal total    = (BigDecimal)row[1];
 				if ( somaPorNivelContaNoPeriodo.containsKey(nivel) ) {
-					total = total.add((BigDecimal)somaPorNivelContaNoPeriodo.get(nivel));
-					somaPorNivelContaNoPeriodo.put(nivel, total);
+					total = total.add((BigDecimal)somaPorNivelContaNoPeriodo.get(nivel)[0]);
+					somaPorNivelContaNoPeriodo.put(nivel, new Object[] {total,false});
 				}
-				somaPorNivelContaNoPeriodo.put(nivel, total);
+				somaPorNivelContaNoPeriodo.put(nivel, new Object[] {total,false});
 			}
 			
 			/**
@@ -224,7 +225,8 @@ public class OrcamentoDAOHibernate extends HibernateDaoSupport implements Orcame
 						 * Caso positivo faz parte do realizado deste Orçamento, soma-se ao total realizado do mesmo.
 						 */
 						if ( jahRealizado == null ) jahRealizado = new BigDecimal(0);
-						jahRealizado = jahRealizado.add((BigDecimal)somaPorNivelContaNoPeriodo.get(key));
+						jahRealizado = jahRealizado.add((BigDecimal)somaPorNivelContaNoPeriodo.get(key)[0]);
+						somaPorNivelContaNoPeriodo.get(key)[1] = true;
 					}
 				}
 				
@@ -234,6 +236,30 @@ public class OrcamentoDAOHibernate extends HibernateDaoSupport implements Orcame
 				orcamento.setRealizado(orcamento.getRealizado().add(jahRealizado));
 				result.add(orcamento);
 			}
+			
+			// Calculate the part that is not tabulated at the Budget (Orçamento)
+			if ( listaPassivosForaOrcamento != null ) {
+				listaPassivosForaOrcamento.clear();
+			}
+			for( String key : somaPorNivelContaNoPeriodo.keySet()) {
+				Object[] row        = somaPorNivelContaNoPeriodo.get(key);
+				boolean  tabulated  = (Boolean)row[1];
+				if ( !tabulated ) {
+					if ( contaCorrente != null  ) {
+						PassivosForaOrcamento passivosForaOrcamento = new PassivosForaOrcamento();
+						passivosForaOrcamento.setContaContabil(key);
+						passivosForaOrcamento.setContaCorrente(contaCorrente);
+						passivosForaOrcamento.setTotal((BigDecimal)row[0]);
+						Set<Passivo> passivosNotTabulated = this.listPassivosOrcamento(contaCorrente, referenciaInicial, referenciaFinal, key);
+						passivosForaOrcamento.setPassivos(passivosNotTabulated);
+						if ( listaPassivosForaOrcamento == null ) {
+							listaPassivosForaOrcamento = new ArrayList<PassivosForaOrcamento>();
+						}
+						listaPassivosForaOrcamento.add(passivosForaOrcamento);
+					}
+				}
+			}
+			
 			return result;
 		} catch (DataAccessException e) {
 			log.error(e.getMessage(),e);

@@ -21,6 +21,7 @@ import br.ujr.scorecard.model.conta.Conta;
 import br.ujr.scorecard.model.conta.ContaOrdenador;
 import br.ujr.scorecard.model.observacao.Observacao;
 import br.ujr.scorecard.model.orcamento.Orcamento;
+import br.ujr.scorecard.model.orcamento.PassivosForaOrcamento;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.PassivoOrdenador;
 import br.ujr.scorecard.model.passivo.cartao.Cartao;
@@ -168,7 +169,7 @@ public interface ScorecardManager
     
     public Set<Orcamento> getOrcamentoPorDescricao(String descricao);
     
-    public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, long referenciaInicial, long referenciaFinal);
+    public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, long referenciaInicial, long referenciaFinal, List<PassivosForaOrcamento> listaPassivosForaOrcamento);
     
     public void saveTransferencia(Transferencia transferencia);
 
@@ -215,7 +216,7 @@ public interface ScorecardManager
     
     public Set<Passivo> getEspecificoPassivoPorReferencia(ContaCorrente contaCorrente, Class clazz, java.util.Date referenciaInicial, java.util.Date referenciaFinal);
     
-    public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal);
+    public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal, List<PassivosForaOrcamento> listaPassivosForaOrcamento);
 
 	public CartaoContratado getCartaoContratado(Integer keyCartaoContratado);
 	

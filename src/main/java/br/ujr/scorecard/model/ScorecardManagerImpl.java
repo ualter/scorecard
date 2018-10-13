@@ -39,6 +39,7 @@ import br.ujr.scorecard.model.observacao.Observacao;
 import br.ujr.scorecard.model.observacao.ObservacaoDAO;
 import br.ujr.scorecard.model.orcamento.Orcamento;
 import br.ujr.scorecard.model.orcamento.OrcamentoDAO;
+import br.ujr.scorecard.model.orcamento.PassivosForaOrcamento;
 import br.ujr.scorecard.model.passivo.Passivo;
 import br.ujr.scorecard.model.passivo.PassivoDAO;
 import br.ujr.scorecard.model.passivo.PassivoOrdenador;
@@ -506,7 +507,7 @@ public class ScorecardManagerImpl implements ScorecardManager
 	    negativo = negativo.add(resumo.getInvestimentos());
 	    BigDecimal valorOrcadoRestante = new BigDecimal(0);
 	    if ( considerarOrcamento ) {
-	    	Set<Orcamento> setOrcamentos = this.getOrcamentosPorReferencia(contaCorrente, referenciaInicial, referenciaFinal);
+	    	Set<Orcamento> setOrcamentos = this.getOrcamentosPorReferencia(contaCorrente, referenciaInicial, referenciaFinal, null);
 	    	for (Iterator iteratorOrcamentos = setOrcamentos.iterator(); iteratorOrcamentos.hasNext();) {
 	    		Orcamento orcamento = (Orcamento) iteratorOrcamentos.next();
 
@@ -776,8 +777,8 @@ public class ScorecardManagerImpl implements ScorecardManager
 		return this.getOrcamentoDAO().findById(id);
 	}
 
-	public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, long referenciaInicial, long referenciaFinal) {
-		return this.getOrcamentoDAO().findByReferencia(contaCorrente, referenciaInicial, referenciaFinal);
+	public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, long referenciaInicial, long referenciaFinal, List<PassivosForaOrcamento> listaPassivosForaOrcamento) {
+		return this.getOrcamentoDAO().findByReferencia(contaCorrente, referenciaInicial, referenciaFinal, listaPassivosForaOrcamento);
 	}
 
 	public boolean saveOrcamento(Orcamento orcamento) {
@@ -1025,8 +1026,8 @@ public class ScorecardManagerImpl implements ScorecardManager
 		return this.getEspecificoPassivoPorReferencia(contaCorrente, clazz, Util.extrairReferencia(referenciaInicial), Util.extrairReferencia(referenciaFinal));
 	}
 	
-	public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal) {
-		return this.getOrcamentosPorReferencia(contaCorrente, Util.extrairReferencia(referenciaInicial), Util.extrairReferencia(referenciaFinal));
+	public Set<Orcamento> getOrcamentosPorReferencia(ContaCorrente contaCorrente, Date referenciaInicial, Date referenciaFinal, List<PassivosForaOrcamento> listaPassivosForaOrcamento) {
+		return this.getOrcamentosPorReferencia(contaCorrente, Util.extrairReferencia(referenciaInicial), Util.extrairReferencia(referenciaFinal), listaPassivosForaOrcamento);
 	}
 
 	@Override
