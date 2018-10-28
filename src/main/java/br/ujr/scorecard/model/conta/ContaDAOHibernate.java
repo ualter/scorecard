@@ -2,6 +2,8 @@ package br.ujr.scorecard.model.conta;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
@@ -12,6 +14,7 @@ public class ContaDAOHibernate extends HibernateDaoSupport implements ContaDAO {
 
 	private static Logger log = Logger.getLogger(ContaDAOHibernate.class);
 	
+	@Transactional
 	public void remove(Conta conta) {
 		try {
 			this.getHibernateTemplate().delete(conta);
@@ -21,7 +24,8 @@ public class ContaDAOHibernate extends HibernateDaoSupport implements ContaDAO {
 		}
 
 	}
-
+	
+	@Transactional
 	public Conta save(Conta conta) {
 		/*
 		 * Another way 
