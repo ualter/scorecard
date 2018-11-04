@@ -698,18 +698,18 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 	private void setUpDataInicialFinal() {
 		// Get movimentos for testing
 		// TODO: Apagar estas linha depois dos testes
-//		int mesAtual = 5;
-//		int anoAtual = 2018;
-//		int diaFinal = 30;
-//		this.periodoDataInicial = Util.parseDate(1, mesAtual, anoAtual);
-//		this.periodoDataFinal = Util.parseDate(diaFinal, mesAtual, anoAtual);
-
-		// ORIGINAL
-		int mesAtual = Calendar.getInstance().get(Calendar.MONTH) + 1;
-		int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
-		int diaFinal = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
+		int mesAtual = 10;
+		int anoAtual = 2018;
+		int diaFinal = 31;
 		this.periodoDataInicial = Util.parseDate(1, mesAtual, anoAtual);
 		this.periodoDataFinal = Util.parseDate(diaFinal, mesAtual, anoAtual);
+
+		// ORIGINAL
+//		int mesAtual = Calendar.getInstance().get(Calendar.MONTH) + 1;
+//		int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
+//		int diaFinal = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
+//		this.periodoDataInicial = Util.parseDate(1, mesAtual, anoAtual);
+//		this.periodoDataFinal = Util.parseDate(diaFinal, mesAtual, anoAtual);
 	}
 
 	private void setUpTable(JTable table, String name) {
@@ -2489,6 +2489,9 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		
 		this.valorTotalNaoOrcado = 0;
 		
+		System.out.println("\n**********");
+		System.out.println(this.getContaCorrente().getDescricao());
+		
 		for(PassivosForaOrcamento p : listPassivosForaOrcamento) {
 			
 			Conta conta = this.scorecardManager.getContasPorNivel(p.getContaContabil()).get(0);
@@ -2508,7 +2511,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 						 (localDateParcela.isEqual(localDateFinal) || localDateParcela.isBefore(localDateFinal) )
 					   ) {
 						
-						//System.out.println(localDateParcela +  " - " + pass.getHistorico() + " - " + parcela.getValor());
+						System.out.println(localDateParcela +  " - " + pass.getHistorico() + " - " + parcela.getValor());
 						
 						row = new Object[] {
 							Util.formatDate(parcela.getDataVencimento()),
@@ -2520,10 +2523,13 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 						};
 						this.tableModelNaoOrcado.addRow(row);
 						
+						System.out.println(parcela.getValor().floatValue());
 						this.valorTotalNaoOrcado += parcela.getValor().floatValue();
 					}
 				}
 			}
+			
+			System.out.println("valorTotalNaoOrcado..:" + this.valorTotalNaoOrcado);
 		}
 	}
 

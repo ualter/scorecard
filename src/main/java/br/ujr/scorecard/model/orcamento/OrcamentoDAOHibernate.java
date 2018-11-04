@@ -92,13 +92,22 @@ public class OrcamentoDAOHibernate extends HibernateDaoSupport implements Orcame
 	}
 	
 	public Set<Passivo> listPassivosOrcamento(ContaCorrente contaCorrente, long referenciaInicial, long referenciaFinal, String nivelConta) {
+		return this.listPassivosOrcamento(contaCorrente, referenciaInicial, referenciaFinal, nivelConta, true);
+	}
+	
+	public Set<Passivo> listPassivosOrcamento(ContaCorrente contaCorrente, long referenciaInicial, long referenciaFinal, String nivelConta, boolean includeChildren) {
 		try {
 			
-			String nivelContaFilhas = nivelConta + ".%";
-			if ( checkContaMestre(nivelConta) ) {
-				nivelConta = prepareForContaMestre(nivelConta);
-				nivelContaFilhas = nivelConta + "%";
-				nivelConta = nivelConta + ".0";
+			String nivelContaFilhas = nivelConta;
+			String jpaQlComparator  = " = ";
+			if ( includeChildren ) {
+				jpaQlComparator  = " like ";
+				nivelContaFilhas = nivelConta + ".%";
+				if ( checkContaMestre(nivelConta) ) {
+					nivelConta = prepareForContaMestre(nivelConta);
+					nivelContaFilhas = nivelConta + "%";
+					nivelConta = nivelConta + ".0";
+				}
 			}
 			
 			Set<Passivo> passivos = new HashSet<Passivo>();
@@ -110,7 +119,7 @@ public class OrcamentoDAOHibernate extends HibernateDaoSupport implements Orcame
 			strQuery.append("  select P, P.passivo from Parcela as P ");
 			strQuery.append("   where P.referencia >= :dataIni and P.referencia <= :dataFim");
 			strQuery.append("   and P.passivo.contaCorrente.id = :contaCorrente");
-			strQuery.append("   and (P.passivo.conta.nivel = :nivelConta OR P.passivo.conta.nivel like :nivelContaFilhas) ");
+			strQuery.append("   and (P.passivo.conta.nivel = :nivelConta OR P.passivo.conta.nivel ").append(jpaQlComparator).append(":nivelContaFilhas) ");
 			values = new Object[]{referenciaInicial,referenciaFinal,contaCorrente.getId(),nivelConta, nivelContaFilhas};
 			List listPassivos = this.getHibernateTemplate().findByNamedParam(strQuery.toString(), params, values);
 			for(Iterator iterator = listPassivos.iterator(); iterator.hasNext();) {
@@ -250,7 +259,7 @@ public class OrcamentoDAOHibernate extends HibernateDaoSupport implements Orcame
 						passivosForaOrcamento.setContaContabil(key);
 						passivosForaOrcamento.setContaCorrente(contaCorrente);
 						passivosForaOrcamento.setTotal((BigDecimal)row[0]);
-						Set<Passivo> passivosNotTabulated = this.listPassivosOrcamento(contaCorrente, referenciaInicial, referenciaFinal, key);
+						Set<Passivo> passivosNotTabulated = this.listPassivosOrcamento(contaCorrente, referenciaInicial, referenciaFinal, key, false);
 						passivosForaOrcamento.setPassivos(passivosNotTabulated);
 						if ( listaPassivosForaOrcamento == null ) {
 							listaPassivosForaOrcamento = new ArrayList<PassivosForaOrcamento>();
