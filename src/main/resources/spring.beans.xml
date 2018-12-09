@@ -60,16 +60,15 @@
        </property>
    </bean>
    
+   <tx:annotation-driven transaction-manager="transactionManager" />
+   
    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
       <property name="sessionFactory" ref="scorecardSessionFactory" />
    </bean>
    
-   <tx:annotation-driven transaction-manager="transactionManager" />
-   
-   <bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
-	   <property name="sessionFactory">
-	     <ref bean="scorecardSessionFactory"/>
-	   </property>
+   <bean id="template" class="org.springframework.orm.hibernate5.HibernateTemplate">
+	   <property name="sessionFactory"       ref="scorecardSessionFactory"/>
+	   <property name="checkWriteOperations" value="false"/> 
    </bean>
    
    <!-- Data Access Object's -->

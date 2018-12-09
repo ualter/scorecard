@@ -5,14 +5,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.com.ujr.utils.TimeTracker;
+import br.com.ujr.utils.TimeTracker.TimeTrack;
 import br.ujr.scorecard.model.cc.ContaCorrente;
-import br.ujr.scorecard.model.passivo.cartao.Cartao;
 
 public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoDAO {
 
@@ -88,15 +88,23 @@ public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoD
 	@Transactional
 	public Passivo save(Passivo passivo) {
 		try {
+			TimeTracker t1 = new TimeTracker();
+			t1.startTracking("Passivo.save");
+			
 			boolean isNew = passivo.getId() > 0 ? false : true;
 			if ( isNew ) 
 			{
 				this.getHibernateTemplate().save(passivo);
+				this.getHibernateTemplate().flush();
 			} 
 			else 
 			{
 				this.getHibernateTemplate().update(passivo);
+				this.getHibernateTemplate().flush();
 			}
+			
+			System.out.println(t1.endTracking("APassivo.saveQUI").formattedTimeLabel());
+			
 			return passivo;
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
