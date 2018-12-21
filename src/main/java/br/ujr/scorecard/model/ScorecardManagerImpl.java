@@ -174,15 +174,30 @@ public class ScorecardManagerImpl implements ScorecardManager
 		return list;
 	}
 	
-	public void savePassivo(Passivo passivo)
+	public void savePassivo(Passivo passivo) {
+		this.savePassivo(passivo, true);
+	}
+	public void savePassivo(Passivo passivo, boolean notify)
 	{
 		this.getPassivoDAO().save(passivo);
-		
+		if ( notify ) {
+			for(ScorecardManagerListener l : listeners) {
+				l.actionPassivo(passivo);
+			}
+		}
+	}
+	
+	public void notifyActionPassivo(Passivo passivo) {
 		for(ScorecardManagerListener l : listeners) {
 			l.actionPassivo(passivo);
 		}
 	}
+	
 	public void deletePassivo(Passivo passivo)
+	{
+		this.deletePassivo(passivo, true);
+	}
+	public void deletePassivo(Passivo passivo, boolean notify)
 	{
 		this.getPassivoDAO().remove(passivo);
 	}

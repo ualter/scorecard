@@ -88,9 +88,6 @@ public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoD
 	@Transactional
 	public Passivo save(Passivo passivo) {
 		try {
-			TimeTracker t1 = new TimeTracker();
-			t1.startTracking("Passivo.save");
-			
 			boolean isNew = passivo.getId() > 0 ? false : true;
 			if ( isNew ) 
 			{
@@ -102,9 +99,6 @@ public class PassivoDAOHibernate extends HibernateDaoSupport implements PassivoD
 				this.getHibernateTemplate().update(passivo);
 				this.getHibernateTemplate().flush();
 			}
-			
-			System.out.println(t1.endTracking("APassivo.saveQUI").formattedTimeLabel());
-			
 			return passivo;
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);

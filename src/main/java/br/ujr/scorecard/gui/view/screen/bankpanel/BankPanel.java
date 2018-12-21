@@ -2464,6 +2464,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 				new Object[] { "Ref.", "Orçado", "Realizado", "Restante", "Conta", "ID", "SELECTED" });
 		
 		List<PassivosForaOrcamento> listPassivosForaOrcamento = new ArrayList<PassivosForaOrcamento>();
+		//TODO: Analisar lentidao em nesta carga, verificar como melhorar performance
 		Set<Orcamento>              setOrcamentos             = this.scorecardManager.getOrcamentosPorReferencia(this.getContaCorrente(), this.periodoDataInicial, this.periodoDataFinal, listPassivosForaOrcamento);
 		List<Orcamento>             orcamentos                = new ArrayList<Orcamento>(setOrcamentos);
 		
@@ -2491,6 +2492,7 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		
 		for(PassivosForaOrcamento p : listPassivosForaOrcamento) {
 			
+			//TODO: Analisar lentidao em nesta carga, verificar como melhorar performance, verificar se é possivel carregar a Conta junto com a carga do objeto listPassivosForaOrcamento 
 			Conta conta = this.scorecardManager.getContasPorNivel(p.getContaContabil()).get(0);
 			String rowGroupLabel = p.getContaContabil() + " - " +  conta.getDescricao();
 			row = new Object[] {

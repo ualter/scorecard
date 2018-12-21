@@ -53,9 +53,15 @@ public interface ScorecardManager
     
     public List<Conta> listarContas(ContaOrdenador<Conta> contaComparator);
 
+    public void savePassivo(Passivo passivo, boolean notify);
+    
     public void savePassivo(Passivo passivo);
 
+    public void deletePassivo(Passivo passivo, boolean notify);
+    
     public void deletePassivo(Passivo passivo);
+    
+    public void notifyActionPassivo(Passivo passivo);
     
     public List<CartaoContratado>  getCartoesContaCorrente(ContaCorrente contaCorrente);
 

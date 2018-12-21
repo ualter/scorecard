@@ -88,7 +88,8 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 	private static Logger				logger		= Logger.getLogger(AnalisadorExtratoCCBanSabadellGUI.class);
 
 	private JDateChooser				txtDtRef	= new JDateChooser("MM/yyyy", "##/####", '_');
-	private ScorecardManager	scorecardManager;
+	private ScorecardManager	        scorecardManager;
+	private Passivo                     lastPassivoSaved;
 
 	public AnalisadorExtratoCCBanSabadellGUI() {
 		this(null);
@@ -269,6 +270,17 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 	}
 
 	private void sair() {
+		if ( this.lastPassivoSaved != null ) {
+			UtilGUI.coverBlinder(this);
+			LoadingFrame loadingFrame = new LoadingFrame(true);
+			loadingFrame.setMessage("Atualizando Orçamento e Resumo do Período...");
+			loadingFrame.showLoadinFrame();
+			
+			this.scorecardManager.notifyActionPassivo( this.lastPassivoSaved );
+			
+			UtilGUI.uncoverBlinder(this);
+			loadingFrame.dispose();
+		}
 		this.dispose();
 	}
 
@@ -747,7 +759,8 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 				scorecardManager.saveTransferencia(transferencia);
 			} else if (linha.isPassivo()) {
 				Passivo passivo = AnalisadorExtratoCCBanSabadell.converterLinhaPassivo(linha, conta, cc, tipo);
-				scorecardManager.savePassivo(passivo);
+				scorecardManager.savePassivo(passivo, false);
+				this.frame.lastPassivoSaved = passivo;
 			} else if (linha.isAtivo()) {
 				Ativo ativo = AnalisadorExtratoCCBanSabadell.converterLinhaAtivo(linha, conta, cc, tipo);
 				scorecardManager.saveAtivo(ativo);
