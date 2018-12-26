@@ -1,22 +1,49 @@
 package br.com.ujr.utils;
 
+import java.text.DecimalFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class TimeTracker {
 	
-	private Map<String,TimeTrack> times = new HashMap<String,TimeTrack>();
+	private Map<String,TimeTrack> times     = new HashMap<String,TimeTrack>();
+	private Map<String,Integer>   sequences = new HashMap<String,Integer>();
+	
+	private int sequence;
+	
+	private static TimeTracker me = new TimeTracker();
 
-	public TimeTracker() {
+	private TimeTracker() {
 	}
 	
-	public void startTracking(String description) {
+	public static TimeTracker getInstance() {
+		return me;
+	}
+	
+	
+	public String startTracking(String description) {
+		sequences.put(description,++sequence);
 		times.put(description, new TimeTrack());
+		return String.format("%s @@@ START %s--> %s ###"
+				,df.format(sequences.get(description))
+				,StringUtils.rightPad(description + " ", 80,"-")
+				,times.get(description).getTimeStartFormatted());
 	}
 	
 	private String descriptionTmpEnd;
-	public TimeTracker endTracking(String description) {
+	
+	public String endTracking(String description) {
+		return this.endTrackingTimeTracker(description).formattedTimeLabel();
+	}
+	
+	public TimeTracker endTrackingTimeTracker(String description) {
 		if ( !times.containsKey(description)) {
 			throw new RuntimeException(description + " Not found");
 		}
@@ -29,8 +56,15 @@ public class TimeTracker {
 		return times.get(this.descriptionTmpEnd).getTimeSpenFormatted();
 	}
 	
+	
+	private DecimalFormat df = new DecimalFormat("###,#00");
+	
 	public String formattedTimeLabel() {
-		return String.format("### Time Spent (%s) --> %s ###",this.descriptionTmpEnd,times.get(this.descriptionTmpEnd).getTimeSpenFormatted());
+		return String.format("%s ### END   %s--> %s ### (Total Spent..: %s)"
+															  ,df.format(sequences.get(this.descriptionTmpEnd))
+				 											  ,StringUtils.rightPad(this.descriptionTmpEnd + " ", 80,"-")
+				                                              ,times.get(this.descriptionTmpEnd).getTimeEndFormatted() 
+				                                              ,times.get(this.descriptionTmpEnd).getTimeSpenFormatted());
 	}
 	
 	public static class TimeTrack {
@@ -65,6 +99,15 @@ public class TimeTracker {
 			return resultTime;
 		}
 		
+		public String formatMillisAtDateTime(long milis ) {
+			return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(new Date(milis).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		}
+		public String getTimeStartFormatted() {
+			return this.formatMillisAtDateTime(this.startTime);
+		}
+		public String getTimeEndFormatted() {
+			return this.formatMillisAtDateTime(this.endTime);
+		}
 		public String getTimeSpenFormatted() {
 			return timeSpenFormatted;
 		}

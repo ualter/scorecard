@@ -49,7 +49,6 @@ import br.ujr.scorecard.model.cc.ContaCorrenteOrdenador;
 import br.ujr.scorecard.util.Util;
 import br.ujr.scorecard.util.properties.ScorecardPropertiesUtil;
 import br.ujr.scorecard.util.properties.ScorecardPropertyKeys;
-import groovy.util.Eval;
 
 /**
  * @author ualter.junior
@@ -74,7 +73,13 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     public ScorecardGUI() {
     	//Timer.Context timerInitComponents = metricsLevel_1.timer("ScorecardGUI.initComponents").time();
     	
+    	//UtilGUI.coverBlinder(this);
+    	
+    	//System.out.println(TimeTracker.getInstance().startTracking("ScorecardGUI"));
     	initComponents();
+    	//System.out.println(TimeTracker.getInstance().endTracking("ScorecardGUI"));
+    	//UtilGUI.uncoverBlinder(this);
+		
     	
     	//timerInitComponents.stop();
     	//reporterLevel_1.start(12, TimeUnit.SECONDS);
@@ -260,17 +265,12 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     }
 
 	private void loadContasCorrentes() {
-		//Timer.Context timerScorecardConfigUtilGetBean = metricsLevel_2.timer("loadContasCorrentes.ScorecardConfigUtil.getBean").time();
 		ScorecardManager manager = (ScorecardManager)ScorecardConfigBootStrap.getBean("scorecardManager");
-		//timerScorecardConfigUtilGetBean.stop();
 		
-		//Timer.Context timerListarContaCorrente = metricsLevel_2.timer("loadContasCorrentes.listarContaCorrente").time();
 		List<ContaCorrente> contasCorrentes = manager.listarContaCorrente();
-		//timerListarContaCorrente.stop();
-		
-		
-		//Timer.Context timerLoadAllBankPanels = metricsLevel_2.timer("loadContasCorrentes.loadAllBankPanels").time();
     	Collections.sort(contasCorrentes,ContaCorrenteOrdenador.ORDEM);
+    	
+    	//System.out.println(TimeTracker.getInstance().startTracking("manager.consistirSaldosAnteriores(cc)"));
     	for(ContaCorrente cc : contasCorrentes) {
     		if ( cc.getBanco().isAtivo() ) {
     			/**
@@ -278,23 +278,20 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
     			 * Caso não: serão gerados!
     			 */
     			manager.consistirSaldosAnteriores(cc);
-    			//Timer.Context timerBankPanel = metricsLevel_2.timer("loadContasCorrentes.new BankPanel(...)").time();
     			BankPanel bankPanel = new BankPanel(this,cc,manager);
-    			//timerBankPanel.stop();
     			bankPanel.setName(cc.getBanco().getNome());
     			tabBancos.addTab(cc.getDescricao(), bankPanel); 
     		}
     	}
-    	//timerLoadAllBankPanels.stop();
+    	//System.out.println(TimeTracker.getInstance().endTracking("manager.consistirSaldosAnteriores(cc)"));
     	
+    	//timerLoadAllBankPanels.stop();
     	/**
     	 * Resumo Geral
     	 */
     	JPanel panResumoGeral = new JPanel();
     	panResumoGeral.setLayout(null);
-    	//Timer.Context timerResumoPeriodoGeral = metricsLevel_2.timer("resumoPeriodoGeral").time();
     	resumoPeriodoGeral = new ResumoPeriodoGeral(this,panResumoGeral,manager);
-    	//timerResumoPeriodoGeral.stop();
     	panResumoGeral.setName("RESUMO_GERAL");
 		tabBancos.addTab("Resumo Geral",panResumoGeral);
 		tabBancos.addMouseListener(this);
@@ -320,11 +317,18 @@ public class ScorecardGUI extends JFrame implements WindowFocusListener, WindowL
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+    	
+    	LoadingFrame loadingFrame = new LoadingFrame(true);
+		loadingFrame.setMessage("Carregando...");
+		loadingFrame.showLoadinFrame();
+		
     	SwingUtilities.invokeLater(new Runnable(){
 			public void run() {
 				new ScorecardGUI();
+				loadingFrame.dispose();
 			}
     	});
+    	
     }
     
     public Rectangle getSizeScreen()

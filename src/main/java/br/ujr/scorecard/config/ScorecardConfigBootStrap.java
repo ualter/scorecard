@@ -2,6 +2,8 @@ package br.ujr.scorecard.config;
 
 import org.springframework.context.support.GenericXmlApplicationContext;
 
+import br.com.ujr.utils.TimeTracker;
+
 public class ScorecardConfigBootStrap {
 	
 	private static GenericXmlApplicationContext context;
@@ -9,16 +11,12 @@ public class ScorecardConfigBootStrap {
 	// Genesis
 	static 
 	{
-		//MetricRegistry metrics = new MetricRegistry();
-		//Timer.Context timerSpringConfig = metrics.timer("springConfig").time();
-		//ConsoleReporter reporter = ConsoleReporter.forRegistry(metrics).convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS).build();
 		
+		//System.out.println(TimeTracker.getInstance().startTracking("context.load(\"spring.config.xml\")"));
 		context = new GenericXmlApplicationContext();
 		context.load("spring.config.xml");
 		context.refresh();
-		
-		//timerSpringConfig.stop();
-		//reporter.start(8, TimeUnit.SECONDS);
+		//System.out.println(TimeTracker.getInstance().endTracking("context.load(\"spring.config.xml\")"));
 	}
 	
 	@SuppressWarnings("unchecked")
