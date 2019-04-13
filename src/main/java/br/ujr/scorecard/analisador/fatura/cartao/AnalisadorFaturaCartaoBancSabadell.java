@@ -120,7 +120,6 @@ public class AnalisadorFaturaCartaoBancSabadell {
 			    	String   historico = columns[1];
 			    	String   banco     = columns[2];
 			    	String   valor     = columns[3];
-			    	String   moeda     = columns[4];
 			    	
 			    	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy",new Locale("en", "US"));
 			    	Date dataMovimento;

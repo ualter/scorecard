@@ -23,6 +23,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
@@ -33,6 +34,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -55,7 +57,6 @@ import br.ujr.components.gui.field.JTextFieldDateEditor;
 import br.ujr.components.gui.tabela.DefaultModelTabela;
 import br.ujr.components.gui.tabela.DefaultOrdenadorTabela;
 import br.ujr.components.gui.tabela.SortButtonRenderer;
-import br.ujr.scorecard.analisador.extrato.contacorrente.bansabadell.AnalisadorExtratoCCBanSabadell.LinhaExtratoContaCorrenteBanSabadell;
 import br.ujr.scorecard.config.ScorecardConfigBootStrap;
 import br.ujr.scorecard.gui.view.screen.ContaFrame;
 import br.ujr.scorecard.gui.view.screen.LoadingFrame;
@@ -112,7 +113,7 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 		this.getContentPane().setLayout(null);
 		this.getContentPane().add(this.panMain);
 
-		this.setTitle("Scoredcard - Analisador Extrato Conta Corrente via Arquivo N43:    B A N C    S A B A D E L L");
+		this.setTitle("Scoredcard - Analisador Extrato Conta Corrente via Arquivo N43/Excel:    B A N C    S A B A D E L L");
 		this.setName("AnalisadorExtratoContaCorrenteBanSabadell");
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -144,13 +145,25 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 
 		JLabel lblCodigo = new JLabel("Mês/Ano:");
 		lblCodigo.setFont(new Font("Verdana", Font.BOLD, 10));
-		lblCodigo.setBounds(10, 28, 80, 20);
-		this.txtDtRef.setBounds(70, 28, 75, 20);
+		lblCodigo.setBounds(10, 15, 80, 20);
+		this.txtDtRef.setBounds(70, 15, 75, 20);
 		this.txtDtRef.setEnabled(true);
 		this.txtDtRef.setFocusable(true);
 		this.txtDtRef.setFont(new Font("Courier New", Font.PLAIN, 11));
 		((JTextFieldDateEditor) this.txtDtRef.getDateEditor()).addFocusListener(this);
 		((JTextFieldDateEditor) this.txtDtRef.getDateEditor()).setName("MES_ANO");
+		
+		JRadioButton n43RadioButton   = new JRadioButton("N43");
+		n43RadioButton.setBounds(20, 40, 50, 20);
+		n43RadioButton.setActionCommand("N43");
+		JRadioButton excelRadioButton = new JRadioButton("Excel");
+		excelRadioButton.setActionCommand("EXCEL");
+		excelRadioButton.setBounds(70, 40, 65, 20);
+		groupRadioButtonFormatFile = new ButtonGroup();
+	    groupRadioButtonFormatFile.add(n43RadioButton);
+	    groupRadioButtonFormatFile.add(excelRadioButton);
+	    excelRadioButton.setSelected(true);
+		
 
 		JLabel lblLctoNaoEncontrados = new JLabel("Lançamentos    B A N C    S A B A D E L L    não encontrados na Base de Dados", SwingConstants.LEFT);
 		lblLctoNaoEncontrados.setFont(new Font("Arial", Font.BOLD, 13));
@@ -208,6 +221,8 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 		this.panMain.add(lblCodigo);
 		this.panMain.add(txtDtRef);
 		this.panMain.add(panelBtn);
+		this.panMain.add(n43RadioButton);
+		this.panMain.add(excelRadioButton);
 		
 		KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 		tabNaoEncontrados.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, "SELECT_CONTA_CONTABIL_CELL");
@@ -313,10 +328,16 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 	}
 
 	private void carregarTabNaoEncontrados(long ref) {
-		AnalisadorExtratoCCBanSabadell analisador = new AnalisadorExtratoCCBanSabadell(ref);
+		AnalisadorExtratoBanSabadell analisador;
+		if ( "N43".equals(this.groupRadioButtonFormatFile.getSelection().getActionCommand()) ) {
+			analisador = new AnalisadorExtratoCCN43BanSabadell(ref);
+		} else {
+			analisador = new AnalisadorExtratoCCExcelBanSabadell(ref);
+		}
+		
 		String status = analisador.analisarExtrato();
 		if (status == null) {
-			List<AnalisadorExtratoCCBanSabadell.LinhaExtratoContaCorrenteBanSabadell> listaNaoEncontrados = analisador.getLancamentosNaoExistentesBaseDados();
+			List<LinhaExtratoContaCorrenteBanSabadell> listaNaoEncontrados = analisador.getLancamentosNaoExistentesBaseDados();
 			for (LinhaExtratoContaCorrenteBanSabadell linha : listaNaoEncontrados) {
 				Object row[] = new Object[] { 
 						Util.formatDate(linha.getDataOperacaoAsDate()), 
@@ -346,6 +367,7 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 	private JButton				btnRemover;
 	private JButton				btnSair;
 	private JButton				btnContaContabil;
+	private ButtonGroup groupRadioButtonFormatFile;
 
 	private void layOutTableNaoEncontrados() {
 		tabNaoEncontrados.removeColumn(tabNaoEncontrados.getColumnModel().getColumn(COLUMN_OBJECT));
@@ -754,15 +776,15 @@ public class AnalisadorExtratoCCBanSabadellGUI extends AbstractDialog implements
 
 		protected String doInBackground() throws Exception {
 			if ("Transferência".equalsIgnoreCase(tipo)) {
-				Transferencia transferencia = AnalisadorExtratoCCBanSabadell.converterLinhaTransferencia(linha, conta, cc, tipo);
+				Transferencia transferencia = AnalisadorExtratoCCN43BanSabadell.converterLinhaTransferencia(linha, conta, cc, tipo);
 				transferencia.setAtivoTransferido(getContaCorrenteAlvoTransferencia(), getContaContabilDeposito(), Deposito.class, "Depósito Banc Sabadell");
 				scorecardManager.saveTransferencia(transferencia);
 			} else if (linha.isPassivo()) {
-				Passivo passivo = AnalisadorExtratoCCBanSabadell.converterLinhaPassivo(linha, conta, cc, tipo);
+				Passivo passivo = AnalisadorExtratoCCN43BanSabadell.converterLinhaPassivo(linha, conta, cc, tipo);
 				scorecardManager.savePassivo(passivo, false);
 				this.frame.lastPassivoSaved = passivo;
 			} else if (linha.isAtivo()) {
-				Ativo ativo = AnalisadorExtratoCCBanSabadell.converterLinhaAtivo(linha, conta, cc, tipo);
+				Ativo ativo = AnalisadorExtratoCCN43BanSabadell.converterLinhaAtivo(linha, conta, cc, tipo);
 				scorecardManager.saveAtivo(ativo);
 			}
 			return null;

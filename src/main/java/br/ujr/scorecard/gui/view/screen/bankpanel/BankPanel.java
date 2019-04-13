@@ -2225,13 +2225,14 @@ public class BankPanel extends JPanel implements ActionListener, MouseListener, 
 		this.updateResumoPeriodo();
 	}
 
+	// VERIFICAR!!!   Este update está demorando muito! Tirar, realizar sob demanda explicita, nao automaticamente
 	public void updateViewOrcamento() {
-		this.loadOrcamento();
+		/*this.loadOrcamento();
 		this.tableOrcamento.setModel(this.tableModelOrcamento);
 		this.tableNaoOrcado.setModel(this.tableModelNaoOrcado);
 		this.layOutTableOrcamento();
 		this.layOutTableNaoOrcado();
-		tableOrcamento.removeColumn(tableOrcamento.getColumnModel().getColumn(5));
+		tableOrcamento.removeColumn(tableOrcamento.getColumnModel().getColumn(5));*/
 	}
 
 	public void updateViewCheque() {
